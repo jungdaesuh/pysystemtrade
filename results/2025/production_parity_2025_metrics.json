@@ -1,0 +1,14 @@
+{
+  "trading_days": 165.0,
+  "ann_vol": 1.7090199145786233,
+  "ann_return": -1.168627368556998,
+  "sharpe": -0.6837997372576756,
+  "cagr": -0.9508775016464824,
+  "total_return": -0.8566197443346301,
+  "worst_drawdown": -0.8678065494253757,
+  "start_date": "2025-01-01 00:00:00",
+  "end_date": "2025-08-19 00:00:00",
+  "turnover": 0.0,
+  "percent_path": "results/2025/production_parity_2025_percent.csv",
+  "value_path": "results/2025/production_parity_2025_value_terms.csv"
+}

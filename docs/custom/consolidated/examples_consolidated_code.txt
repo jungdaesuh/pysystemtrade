@@ -1,0 +1,763 @@
+=== Source Code Consolidation ===
+
+
+================================================================================
+File: __init__.py
+================================================================================
+
+
+
+================================================================================
+File: introduction/__init__.py
+================================================================================
+
+
+
+================================================================================
+File: introduction/asimpletradingrule.py
+================================================================================
+
+import matplotlib
+
+matplotlib.use("TkAgg")
+"""
+
+Work up a minimum example of a trend following system
+
+"""
+
+# Get some data
+
+from sysdata.sim.csv_futures_sim_data import csvFuturesSimData
+
+""""
+Let's get some data
+
+We can get data from various places; however for now we're going to use
+prepackaged 'legacy' data stored in csv files
+"""
+
+data = csvFuturesSimData()
+
+print(data)
+"""
+We get stuff out of data with methods
+"""
+print(data.get_instrument_list())
+print(data.get_raw_price("EDOLLAR").tail(5))
+"""
+data can also behave in a dict like manner (though it's not a dict)
+"""
+
+print(data["VIX"])
+print(data.keys())
+
+"""
+Not all the instruments are easily identifiable
+"""
+
+print(data.get_instrument_object_with_meta_data("MUMMY"))
+
+
+"""
+
+... however this will only access prices
+(note these prices have already been backadjusted for rolls)
+
+We have extra futures data here
+
+"""
+
+print(data.get_instrument_raw_carry_data("EDOLLAR").tail(6))
+"""
+Technical note: csvFuturesSimData inherits from FuturesData which itself inherits
+from simData
+The chain is 'data specific' <- 'asset class specific' <- 'generic'
+
+Let's create a simple trading rule
+
+No capping or scaling
+"""
+
+from sysquant.estimators.vol import robust_vol_calc
+
+
+def calc_ewmac_forecast(price, Lfast, Lslow=None):
+    """
+    Calculate the ewmac trading rule forecast, given a price and EWMA speeds
+    Lfast, Lslow and vol_lookback
+
+    """
+    # price: This is the stitched price series
+    # We can't use the price of the contract we're trading, or the volatility
+    # will be jumpy
+    # And we'll miss out on the rolldown. See
+    # https://qoppac.blogspot.com/2015/05/systems-building-futures-rolling.html
+
+    price = price.resample("1B").last()
+
+    if Lslow is None:
+        Lslow = 4 * Lfast
+
+    # We don't need to calculate the decay parameter, just use the span
+    # directly
+    fast_ewma = price.ewm(span=Lfast).mean()
+    slow_ewma = price.ewm(span=Lslow).mean()
+    raw_ewmac = fast_ewma - slow_ewma
+
+    vol = robust_vol_calc(price.diff())
+    return raw_ewmac / vol
+
+
+"""
+Try it out
+
+(this isn't properly scaled at this stage of course)
+"""
+instrument_code = "VIX"
+price = data.daily_prices(instrument_code)
+ewmac = calc_ewmac_forecast(price, 32, 128)
+ewmac2 = calc_ewmac_forecast(price, 16, 64)
+
+ewmac.columns = ["forecast"]
+print(ewmac.tail(5))
+
+from matplotlib.pyplot import show
+
+ewmac.plot()
+show()
+"""
+Did we make money?
+"""
+
+from systems.accounts.account_forecast import pandl_for_instrument_forecast
+
+account = pandl_for_instrument_forecast(forecast=ewmac, price=price)
+
+account.curve()
+
+account.curve().plot()
+show()
+
+print(account.percent.stats())
+
+
+================================================================================
+File: introduction/simplesystem.py
+================================================================================
+
+"""
+Let's recap:
+
+We got some data and created a trading rule
+"""
+from sysdata.sim.csv_futures_sim_data import csvFuturesSimData
+
+data = csvFuturesSimData()
+
+from systems.provided.rules.ewmac import ewmac_forecast_with_defaults as ewmac
+
+"""
+Okay, I wonder how this would work for a number of instruments?
+
+For this we need to build a system
+
+A system is made up of SystemStages - essentially stages in the process, and it
+needs data, and perhaps a configuration
+
+The minimum stage you would have would be Rules - which is where you put
+trading rules
+"""
+
+from systems.forecasting import Rules
+
+"""
+We can create rules in a number of different ways
+
+Note that to make our rule work it needs to have
+"""
+my_rules = Rules(ewmac)
+print(my_rules.trading_rules())
+
+my_rules = Rules(dict(ewmac=ewmac))
+print(my_rules.trading_rules())
+
+from systems.basesystem import System
+
+my_system = System([my_rules], data)
+print(my_system)
+
+print(my_system.rules.get_raw_forecast("SOFR", "ewmac").tail(5))
+"""
+Define a TradingRule
+"""
+
+from systems.trading_rules import TradingRule
+
+ewmac_rule = TradingRule(ewmac)
+my_rules = Rules(dict(ewmac=ewmac_rule))
+ewmac_rule
+"""
+... or two...
+"""
+
+ewmac_8 = TradingRule((ewmac, [], dict(Lfast=8, Lslow=32)))
+ewmac_32 = TradingRule(dict(function=ewmac, other_args=dict(Lfast=32, Lslow=128)))
+my_rules = Rules(dict(ewmac8=ewmac_8, ewmac32=ewmac_32))
+print(my_rules.trading_rules()["ewmac32"])
+
+my_system = System([my_rules], data)
+my_system.rules.get_raw_forecast("SOFR", "ewmac32").tail(5)
+
+from sysdata.config.configdata import Config
+
+my_config = Config()
+my_config
+
+empty_rules = Rules()
+my_config.trading_rules = dict(ewmac8=ewmac_8, ewmac32=ewmac_32)
+my_system = System([empty_rules], data, my_config)
+my_system.rules.get_raw_forecast("SOFR", "ewmac32").tail(5)
+
+from systems.forecast_scale_cap import ForecastScaleCap
+
+# we can estimate these ourselves
+my_config.instruments = ["US10", "SOFR", "CORN", "SP500_micro"]
+my_config.use_forecast_scale_estimates = True
+
+fcs = ForecastScaleCap()
+my_system = System([fcs, my_rules], data, my_config)
+my_config.forecast_scalar_estimate["pool_instruments"] = False
+print(my_system.forecastScaleCap.get_forecast_scalar("SOFR", "ewmac32").tail(5))
+
+# or we can use the values from the book
+my_config.forecast_scalars = dict(ewmac8=5.3, ewmac32=2.65)
+my_config.use_forecast_scale_estimates = False
+fcs = ForecastScaleCap()
+my_system = System([fcs, my_rules], data, my_config)
+print(my_system.forecastScaleCap.get_capped_forecast("SOFR", "ewmac32").tail(5))
+"""
+combine some rules
+"""
+
+from systems.forecast_combine import ForecastCombine
+
+# defaults
+combiner = ForecastCombine()
+my_system = System([fcs, my_rules, combiner], data, my_config)
+print(my_system.combForecast.get_forecast_weights("SOFR").tail(5))
+print(my_system.combForecast.get_forecast_diversification_multiplier("SOFR").tail(5))
+
+# estimates:
+from systems.accounts.accounts_stage import Account
+from systems.rawdata import RawData
+from systems.positionsizing import PositionSizing
+
+my_account = Account()
+combiner = ForecastCombine()
+raw_data = RawData()
+position_size = PositionSizing()
+
+
+my_config.forecast_weight_estimate = dict(method="one_period")
+my_config.use_forecast_weight_estimates = True
+my_config.use_forecast_div_mult_estimates = True
+
+my_system = System(
+    [my_account, fcs, my_rules, combiner, raw_data, position_size], data, my_config
+)
+
+print(my_system.combForecast.get_forecast_weights("US10").tail(5))
+print(my_system.combForecast.get_forecast_diversification_multiplier("US10").tail(5))
+
+# fixed:
+my_config.forecast_weights = dict(ewmac8=0.5, ewmac32=0.5)
+my_config.forecast_div_multiplier = 1.1
+my_config.use_forecast_weight_estimates = False
+my_config.use_forecast_div_mult_estimates = False
+
+combiner = ForecastCombine()
+my_system = System(
+    [fcs, empty_rules, combiner, raw_data, position_size], data, my_config
+)  # no need for accounts if no estimation done
+my_system.combForecast.get_combined_forecast("SOFR").tail(5)
+
+# size positions
+
+possizer = PositionSizing()
+my_config.percentage_vol_target = 25
+my_config.notional_trading_capital = 500000
+my_config.base_currency = "GBP"
+
+my_system = System([fcs, my_rules, combiner, possizer, raw_data], data, my_config)
+
+print(my_system.positionSize.get_price_volatility("SOFR").tail(5))
+print(my_system.positionSize.get_block_value("SOFR").tail(5))
+print(my_system.positionSize.get_underlying_price("SOFR"))
+print(my_system.positionSize.get_instrument_value_vol("SOFR").tail(5))
+print(my_system.positionSize.get_average_position_at_subsystem_level("SOFR").tail(5))
+print(my_system.positionSize.get_vol_target_dict())
+print(my_system.positionSize.get_subsystem_position("SOFR").tail(5))
+
+# portfolio - estimated
+from systems.portfolio import Portfolios
+
+portfolio = Portfolios()
+
+my_config.use_instrument_weight_estimates = True
+my_config.use_instrument_div_mult_estimates = True
+my_config.instrument_weight_estimate = dict(method="shrinkage", date_method="in_sample")
+
+my_system = System(
+    [my_account, fcs, my_rules, combiner, possizer, portfolio, raw_data],
+    data,
+    my_config,
+)
+
+print(my_system.portfolio.get_instrument_weights().tail(5))
+print(my_system.portfolio.get_instrument_diversification_multiplier().tail(5))
+
+# or fixed
+portfolio = Portfolios()
+my_config.use_instrument_weight_estimates = False
+my_config.use_instrument_div_mult_estimates = False
+my_config.instrument_weights = dict(US10=0.1, SOFR=0.4, CORN=0.3, SP500=0.2)
+my_config.instrument_div_multiplier = 1.5
+
+my_system = System(
+    [fcs, my_rules, combiner, possizer, portfolio, raw_data], data, my_config
+)
+
+print(my_system.portfolio.get_notional_position("SOFR").tail(5))
+"""
+Have we made some dosh?
+"""
+
+my_system = System(
+    [fcs, my_rules, combiner, possizer, portfolio, my_account, raw_data],
+    data,
+    my_config,
+)
+profits = my_system.accounts.portfolio()
+print(profits.percent.stats())
+
+# have costs data now
+print(profits.gross.percent.stats())
+print(profits.net.percent.stats())
+"""
+Another approach is to create a config object
+"""
+my_config = Config(
+    dict(
+        trading_rules=dict(ewmac8=ewmac_8, ewmac32=ewmac_32),
+        instrument_weights=dict(US10=0.1, SOFR=0.4, CORN=0.3, SP500_micro=0.2),
+        instrument_div_multiplier=1.5,
+        forecast_scalars=dict(ewmac8=5.3, ewmac32=2.65),
+        forecast_weights=dict(ewmac8=0.5, ewmac32=0.5),
+        forecast_div_multiplier=1.1,
+        percentage_vol_target=25.00,
+        notional_trading_capital=500000,
+        base_currency="GBP",
+    )
+)
+print(my_config)
+my_system = System(
+    [
+        Account(),
+        Portfolios(),
+        PositionSizing(),
+        ForecastCombine(),
+        ForecastScaleCap(),
+        Rules(),
+        RawData(),
+    ],
+    data,
+    my_config,
+)
+print(my_system.portfolio.get_notional_position("SOFR").tail(5))
+"""
+... or to import one
+"""
+my_config = Config("systems.provided.example.simplesystemconfig.yaml")
+print(my_config)
+my_system = System(
+    [
+        Account(),
+        Portfolios(),
+        PositionSizing(),
+        ForecastCombine(),
+        ForecastScaleCap(),
+        Rules(),
+        RawData(),
+    ],
+    data,
+    my_config,
+)
+print(my_system.rules.get_raw_forecast("SOFR", "ewmac32").tail(5))
+print(my_system.rules.get_raw_forecast("SOFR", "ewmac8").tail(5))
+print(my_system.forecastScaleCap.get_capped_forecast("SOFR", "ewmac32").tail(5))
+print(my_system.forecastScaleCap.get_forecast_scalar("SOFR", "ewmac32"))
+print(my_system.combForecast.get_combined_forecast("SOFR").tail(5))
+print(my_system.combForecast.get_forecast_weights("SOFR").tail(5))
+
+print(my_system.positionSize.get_subsystem_position("SOFR").tail(5))
+
+print(my_system.portfolio.get_notional_position("SOFR").tail(5))
+
+
+================================================================================
+File: introduction/prebakedsystems.py
+================================================================================
+
+from systems.provided.example.simplesystem import simplesystem
+
+my_system = simplesystem()
+print(my_system)
+print(my_system.portfolio.get_notional_position("SOFR").tail(5))
+
+from sysdata.sim.csv_futures_sim_data import csvFuturesSimData
+from sysdata.config.configdata import Config
+
+"""
+Now loading config and data
+"""
+
+my_config = Config("systems.provided.example.simplesystemconfig.yaml")
+my_data = csvFuturesSimData()
+my_system = simplesystem(config=my_config, data=my_data)
+print(my_system.portfolio.get_notional_position("SOFR").tail(5))
+"""
+Let's get the chapter 15 system
+"""
+
+from systems.provided.futures_chapter15.basesystem import futures_system
+from matplotlib.pyplot import show
+
+system = futures_system()
+print(system.accounts.portfolio().sharpe())
+system.accounts.portfolio().curve().plot()
+show()
+"""
+Same for estimated system
+"""
+
+from systems.provided.futures_chapter15.estimatedsystem import futures_system
+
+system = futures_system()
+print(system.accounts.portfolio().sharpe())
+system.accounts.portfolio().curve().plot()
+system.cache.pickle("private.this_system_name.pck")
+show()
+
+del system  # just to make sure
+system = futures_system()
+system.cache.unpickle("private.this_system_name.pck")
+# this will run much faster and reuse previous calculations
+system.accounts.portfolio().sharpe()
+
+
+================================================================================
+File: production/private_config_example.yaml
+================================================================================
+
+# YAML
+# This is an example of the variables you need to set
+# in your private_config.yaml file in the ~/pysystemtrade/private folder
+#
+
+####################################################################################################
+#
+# MUST BE SET! Not in defaults.yaml
+#
+
+broker_account: 'UXXXXXX' # your account number at IB
+
+####################################################################################################
+#
+# OPTIONAL: Not in defaults.yaml
+#
+
+# email address variables - If missing emails won't be sent and you will have to check logs/echos
+
+email_address: 'some_address@server.com' # add your address here
+email_pwd: 'terrible_mash_of_stuff_for_security' # your password
+email_server: 'the_outgoing_smtp_server' # the smtp server
+# email_port: 587 # for future use: currently hardcoded at 587.
+# email_security: 'SSL or TLS' # for future use
+
+####################################################################################################
+#
+# OVERRIDES: In defaults.yaml and will override
+#
+
+# ib_data
+
+ib_ipaddress: 'localhost' # this changes if you set up elsewhere
+ib_port: 4001 # the default for the ib Gateway
+ib_idoffset: 1 # the default
+
+#Mongo db variables
+
+mongo_host: 'localhost' # can be elsewhere
+mongo_db: 'production' # fits with all the documentation
+
+
+
+================================================================================
+File: production/example_of_custom_run_system.py
+================================================================================
+
+from syscore.constants import arg_not_supplied
+
+from sysdata.data_blob import dataBlob
+
+from sysproduction.data.sim_data import get_sim_data_object_for_production
+from sysproduction.strategy_code.run_dynamic_optimised_system import (
+    runSystemCarryTrendDynamic,
+)
+
+from syslogging.logger import *
+
+from systems.basesystem import System
+
+
+class runMySystemCarryTrendDynamic(runSystemCarryTrendDynamic):
+    # DO NOT CHANGE THE NAME OF THIS FUNCTION; IT IS HARDCODED INTO CONFIGURATION FILES
+    # BECAUSE IT IS ALSO USED TO LOAD BACKTESTS
+    def system_method(
+        self, notional_trading_capital: float = None, base_currency: str = None
+    ) -> System:
+        data = self.data
+        backtest_config_filename = self.backtest_config_filename
+
+        system = production_carry_trend_dynamic_system(
+            data,
+            backtest_config_filename,
+            log=data.log,
+            notional_trading_capital=notional_trading_capital,
+            base_currency=base_currency,
+        )
+
+        return system
+
+
+def production_carry_trend_dynamic_system(
+    data: dataBlob,
+    config_filename: str,
+    log=get_logger("futures_system"),
+    notional_trading_capital: float = arg_not_supplied,
+    base_currency: str = arg_not_supplied,
+) -> System:
+    sim_data = get_sim_data_object_for_production(data)
+    config = Config(config_filename)
+
+    # Overwrite capital and base currency
+    if notional_trading_capital is not arg_not_supplied:
+        config.notional_trading_capital = notional_trading_capital
+
+    if base_currency is not arg_not_supplied:
+        config.base_currency = base_currency
+
+    system = futures_system(data=sim_data, config=config)
+    system._log = log
+
+    return system
+
+
+from sysdata.config.configdata import Config
+
+from systems.forecasting import Rules
+from systems.basesystem import System
+from systems.forecast_combine import ForecastCombine
+from private.systems.arch.carrytrend.forecastScaleCap import volAttenForecastScaleCap
+from private.systems.arch.carrytrend import myFuturesRawData
+from systems.positionsizing import PositionSizing
+from systems.portfolio import Portfolios
+from systems.provided.dynamic_small_system_optimise.optimised_positions_stage import (
+    optimisedPositions,
+)
+from systems.risk import Risk
+from systems.provided.dynamic_small_system_optimise.accounts_stage import (
+    accountForOptimisedStage,
+)
+
+
+def futures_system(data, config):
+    system = System(
+        [
+            Risk(),
+            accountForOptimisedStage(),
+            optimisedPositions(),
+            Portfolios(),
+            PositionSizing(),
+            myFuturesRawData(),
+            ForecastCombine(),
+            volAttenForecastScaleCap(),
+            Rules(),
+        ],
+        data,
+        config,
+    )
+
+    return system
+
+
+================================================================================
+File: data/subscription_test.py
+================================================================================
+
+import asyncio
+import logging
+from typing import Dict
+from typing import List
+
+import ib_insync
+from ib_insync import ContractDetails
+from ib_insync import Future
+from ib_insync import IB
+
+from sysbrokers.IB.config.ib_instrument_config import IBconfig, read_ib_config_from_file
+
+HOSTNAME = "localhost"
+
+
+async def subscription_test(ib_config: IBconfig) -> Dict[str, List[ContractDetails]]:
+    ib_insync.util.logToConsole(logging.INFO)
+    ib = IB()
+    failed = []
+    exceptions = []
+    ib_symbols: List[str] = ib_config.IBSymbol.tolist()
+    instruments: List[str] = ib_config.Instrument.tolist()
+    try:
+        await ib.connectAsync(host=HOSTNAME, port=4001, clientId=1)
+        coros = []
+        for i, ib_symbol in enumerate(ib_symbols):
+            try:
+                ib_exchange = ib_config[
+                    ib_config.IBSymbol == ib_symbol
+                ].IBExchange.item()
+                f = Future(symbol=ib_symbol, exchange=ib_exchange, includeExpired=True)
+                coros.append(ib.reqContractDetailsAsync(f))
+            except Exception as e:
+                failed.append(instruments[i])
+                exceptions.append(str(e))
+        results = await asyncio.gather(*coros)
+        data = {ib: sorted_ContractDetails(cd) for ib, cd in zip(ib_symbols, results)}
+    finally:
+        ib.disconnect()
+    return data, failed, exceptions
+
+
+def sorted_ContractDetails(contract_details: List[ContractDetails]):
+    return sorted(contract_details, key=lambda x: x.realExpirationDate)
+
+
+def main():
+    ib_config: IBconfig = read_ib_config_from_file()
+    return asyncio.run(subscription_test(ib_config))
+
+
+if __name__ == "__main__":
+    main()
+
+
+================================================================================
+File: logging/poc.py
+================================================================================
+
+from syslogging.logger import *
+
+# default LoggerAdapter functionality
+first = get_logger("Foo")
+second = get_logger("Foo")
+assert first is not second
+assert first.logger is second.logger
+
+# params
+param_logger = get_logger("Params")
+param_logger.warning("Hello %s", "world")
+param_logger.info("Goodbye %s %s", "cruel", "world")
+
+# exc_info
+err_logger = get_logger("Err")
+my_dict = dict()
+try:
+    var = my_dict["foo"]
+except KeyError:
+    err_logger.error("Oops, logging exception", exc_info=True)
+
+# stack_info
+stack_logger = get_logger("Stack")
+try:
+    var = my_dict["foo"]
+except KeyError:
+    err_logger.error("Oops, logging stack", stack_info=True)
+
+# exc_info and stack_info
+both_logger = get_logger("Both")
+try:
+    var = my_dict["foo"]
+except KeyError:
+    err_logger.error("Oops, logging both", exc_info=True, stack_info=True)
+
+# now DynamicAttributeLogger stuff
+
+# simple, no attributes
+no_attrs_logger = get_logger("No_Attributes")
+no_attrs_logger.info("No attributes")
+
+# with attributes
+attrs_logger = get_logger("Attributes", {"type": "attrs"})
+attrs_logger.info("initialisation attributes")
+attrs_logger.info("logging call attributes", instrument_code="GOLD")
+
+# merging attributes: method 'clear'
+clear = get_logger("Clear", {"type": "first", "stage": "one"})
+clear.info("clear, type 'first', stage 'one'")
+clear.info("clear, type 'second', no stage", method="clear", type="second")
+clear.info("clear, no attributes", method="clear")
+
+# merging attributes: method 'preserve'
+preserve = get_logger("Preserve", {"type": "first"})
+preserve.info("preserve, type 'first'")
+preserve.info(
+    "preserve, type 'first', stage 'one'", method="preserve", type="second", stage="one"
+)
+
+# merging attributes: method 'overwrite'
+overwrite = get_logger("Overwrite", {"type": "first"})
+overwrite.info("overwrite, type 'first'")
+overwrite.info(
+    "overwrite, type 'second', stage 'one'",
+    method="overwrite",
+    type="second",
+    stage="one",
+)
+
+# merging attributes: method 'temp'
+temp = get_logger("temp", {"type": "first"})
+temp.info("type should be 'first'")
+temp.info(
+    "type should be 'second' temporarily",
+    method="temp",
+    type="second",
+)
+temp.info("type should be back to 'first'")
+
+# levels
+level = get_logger("Level")
+level.setLevel(logging.WARNING)
+level.info("does not print")
+level.warning("does print")
+
+# replacing log.label() - we want to update the log attributes permanently - same as
+# overwrite
+label = get_logger("label", {"stage": "whatever"})
+label.info("Should have 'stage' of 'whatever'")
+label.info("Updating log attributes", instrument_code="GOLD")
+label.info("Should have 'stage' of 'whatever', and 'instrument_code' 'GOLD'")
+
+
+# critical mail
+# level.critical("sends mail")
+
