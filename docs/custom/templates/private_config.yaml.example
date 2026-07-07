@@ -1,0 +1,27 @@
+# Template for the pysystemtrade private config — KEEP THE REAL FILE OUTSIDE THIS REPO.
+#
+# Setup:
+#   mkdir -p ~/.config/pysystemtrade-private
+#   cp docs/custom/templates/private_config.yaml.example ~/.config/pysystemtrade-private/private_config.yaml
+#   echo 'export PYSYS_PRIVATE_CONFIG_DIR="$HOME/.config/pysystemtrade-private"' >> ~/.zshrc
+#   # then fill in broker_account below and create the data directories
+#
+# Verify with: .venv/bin/python scripts/ib/smoke_test_ib_connection.py --pst
+
+# --- Interactive Brokers (paper) ---
+broker_account: DU_______        # paper account id from Client Portal (live ids start with U)
+ib_ipaddress: 127.0.0.1
+ib_port: 4002                    # paper gateway; live gateway is 4001
+ib_idoffset: 100
+
+# --- Data layer ---
+mongo_host: 127.0.0.1
+mongo_db: production_paper       # keep paper namespace separate from any future live db
+parquet_store: /Users/suhjungdae/data/pysystemtrade/parquet
+csv_backup_directory: /Users/suhjungdae/data/pysystemtrade/backups_csv
+
+# --- Optional, set when needed (see docs/production.md) ---
+# email_address: ...
+# email_pwd: ...
+# email_server: ...
+# offsystem_backup_directory: ...

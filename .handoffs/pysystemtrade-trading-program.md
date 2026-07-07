@@ -1,0 +1,103 @@
+# HANDOFF — Personal systematic trading program on pysystemtrade   ·   task-key: pysystemtrade-trading-program
+
+> Updated 2026-07-06 20:39 EDT · Status: repo synced to upstream + validated; all plans/policy written; next real-world step is IBKR paper-account activation and Phase 1 portfolio deployment.
+
+## Goal
+
+Build a production-grade personal systematic trading program on this pysystemtrade fork:
+(a) portfolio per the barbell policy, (b) paper-trading pipeline against IBKR, (c) engine
+live ~Sept 2026 if gates pass, (d) research factory on incoming Threadripper 9970X + RTX 5090.
+**Done when:** engine trades live on micro futures with clean daily reconciliation, scaled per policy.
+
+## Next actions  (start here)
+
+1. [ ] IBKR Client Portal: enable paper account (get `DU…` id), enable "share market data
+       with paper account", enable IB Key 2FA. (Phase 1 of the plan doc — no code needed.)
+2. [ ] Deploy Phase 1 barbell in the brokerage account per `docs/custom/plans/portfolio_policy.md`
+       (55% SGOV / 35% four-asset harvest sleeve with ±20% relative bands / 10% reserve).
+3. [ ] Install IB Gateway (stable channel), configure API (port 4002, trusted IP 127.0.0.1,
+       read-only OFF), then run `.venv/bin/python scripts/ib/smoke_test_ib_connection.py`.
+4. [ ] Copy `docs/custom/templates/private_config.yaml.example` to
+       `~/.config/pysystemtrade-private/private_config.yaml`, fill in `DU…`, export
+       `PYSYS_PRIVATE_CONFIG_DIR`, re-run smoke test with `--pst`.
+5. [ ] Continue with Phases 4–6 of `docs/custom/plans/ib_paper_trading_implementation_plan.md`
+       (MongoDB + Parquet seeding, first IB price pull, manual paper cycle).
+6. [ ] When the Threadripper arrives: `.venv/bin/python analysis/research_harness/run_battery.py
+       --variants baseline handcraft shrinkage hrp --jobs 8` → walk-forward HRP comparison
+       (TODO.md Phase 2) and parity report (Phase 1.5).
+
+## State (with evidence)
+
+- [x] Fork hard-reset onto upstream `pst-group/pysystemtrade` develop (`883c8681`) with custom
+      layer re-applied as ONE commit `f5640a93` — verified: `git log --oneline -2`.
+- [x] Pinned env `.venv` (uv, Python 3.11, pandas 2.1.3, numpy 1.26.4, ib_async 2.1.0) —
+      verified: `tests/test_hrp.py` 3/3 pass; chapter-15 system smoke-run OK.
+- [x] HRP optimiser registered — verified: `REGISTER_OF_OPTIMISERS` contains `hrp`
+      (`sysquant/optimisation/optimisers/call_optimiser.py`).
+- [x] Plan docs written: `/Users/suhjungdae/code/software/trading/pysystemtrade/docs/custom/plans/ib_paper_trading_implementation_plan.md`,
+      `/Users/suhjungdae/code/software/trading/pysystemtrade/docs/custom/plans/portfolio_policy.md`.
+- [x] Tooling written 2026-07-06: `scripts/ib/smoke_test_ib_connection.py`,
+      `docs/custom/templates/private_config.yaml.example`,
+      `analysis/research_harness/run_battery.py`.
+- [ ] `run_battery.py` full run — **UNVERIFIED** (py_compile/help only; estimated variants
+      take minutes–hours; first full run belongs on the Threadripper).
+- [ ] IBKR paper account, IB Gateway install, Mongo/Parquet seeding — not started (need user actions).
+
+## Environment & how to run
+
+- cwd/repo/branch: `/Users/suhjungdae/code/software/trading/pysystemtrade` / jungdaesuh/pysystemtrade fork / `develop`
+- Base commit: `f5640a93` (= upstream `883c8681` + custom layer)
+- Remotes: `origin` = github.com/jungdaesuh/pysystemtrade, `upstream` = github.com/pst-group/pysystemtrade
+- Env: `.venv/bin/python` for EVERYTHING (created via `uv venv --python 3.11 .venv`; recreate with
+  `uv venv --clear …` then `uv pip install -e '.[dev]'`)
+- Tests: `.venv/bin/python -m pytest tests/test_hrp.py -q`
+- Quirks: miniforge base has pandas 3.x — incompatible, never use. `python -m venv` fails with
+  the uv-managed 3.11. A pre-tool hook blocks `rm -rf`.
+
+## Decisions & rationale
+
+- **Hard reset over merge/rebase** for the upstream sync — local delta was 5 mostly-additive
+  commits; the only code overlaps were pandas-compat patches upstream had superseded. Do not relitigate.
+- **Dropped fork's pandas-2.x patches** (`vol.py`, `positionsizing.py`) — they existed only because
+  the fork ran on base-env pandas 3.x; pinned env makes them unnecessary.
+- **Custom work = one rebasable commit** on top of upstream, synced weekly. Never let develop drift again.
+- **Paper-first, gated go-live (~Sept 2026)** — commissioning, not caution; EV math in conversation:
+  6-week paper phase costs ~$1.2k expected forgone vs near-certain multi-$k first production bug.
+- **Barbell policy** (see portfolio_policy.md): five rules, pre-registered kill criteria,
+  engine scales +5pp/clean quarter, cap 35%.
+- **Research machine ≠ production machine.** Threadripper is the factory; production stays on
+  boring separate hardware/VM.
+- **Broker-portable code only** — user is J-1; IBKR doesn't serve Korea residents, so access is
+  tied to US presence. Nothing IB-specific outside `sysbrokers/`.
+
+## Dead ends / do NOT retry
+
+- Installing deps into miniforge base (downgrades global pandas; broke things originally).
+- `python3.11 -m venv` with the uv-managed interpreter (`/install` prefix error). Use `uv venv`.
+- Pushing branch `backup/pre-upstream-sync-2026-06-09` — it contains `.env` in its commit. Local only.
+- Seeding price history from IB directly (pacing violations) — seed from repo CSVs, IB for increments.
+
+## Open questions / blockers
+
+- **Tax branch unresolved**: user is J-1 with SSN; W-9 (resident alien) vs W-8BEN (NRA) was decided
+  during IBKR signup but which branch was never stated. Ask before tax-sensitive moves (XSP condors / Section 1256).
+- Pilot universe (chapter-15 six vs micros) — decide after minimum-capital report.
+- Account base currency (parity work uses GBP to match Rob; account likely USD).
+- Funding amount — user decision; drives market-data eligibility and engine sizing.
+
+## Mental model
+
+- pysystemtrade moved orgs (robcarver17 → pst-group, Jan 2026) and to `ib_async` (April 2026);
+  Andy Geach is primary maintainer. Upstream is actively maintained; sync before trusting numbers.
+- The system: ~40 rule variations (trend/carry/MR/skew families) → capped forecasts → vol-targeted
+  positions → buffered orders. Config keys are string-resolved from YAML — don't rename referenced functions.
+- User's stated 2026 view: high-vol, range-bound → agreed tilt toward carry/MR over trend in the
+  engine, pending walk-forward evidence from `run_battery.py`.
+- Market context is PERISHABLE: all July-2026 analyses in conversation (KOSPI margin unwind, Warsh
+  hawkish dots, Iran ceasefire, VIX ~16.6, BTC ~$60k) must be re-verified before use.
+
+## Pointers
+
+- Plans: `docs/custom/plans/ib_paper_trading_implementation_plan.md` · `docs/custom/plans/portfolio_policy.md` · `TODO.md`
+- Session memory (assistant-side): `~/.claude/projects/-Users-suhjungdae-code-software-trading-pysystemtrade/memory/`
+- Continuity: Claude Code works pay-as-you-go with an API key from console.anthropic.com — no subscription needed.
