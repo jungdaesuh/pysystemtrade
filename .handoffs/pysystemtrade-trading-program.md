@@ -106,6 +106,8 @@ live ~Sept 2026 if gates pass, (d) research factory on incoming Threadripper 997
 
 ## Pointers
 
-- Plans: `docs/custom/plans/ib_paper_trading_implementation_plan.md` · `docs/custom/plans/portfolio_policy.md` · `TODO.md`
+- Plans: `docs/custom/plans/ib_paper_trading_implementation_plan.md` · `docs/custom/plans/portfolio_policy.md` · `docs/custom/plans/upgrade_surgical_map.md` · `TODO.md`
+- Research notes: `docs/custom/research/order_flow_and_llm_investing.md` (backlog: crypto order-flow niche, LLM value-investing analyst layer)
+- Knowledge loop: `docs/custom/DECISIONS.md` · `docs/custom/learnings/`
 - Session memory (assistant-side): `~/.claude/projects/-Users-suhjungdae-code-software-trading-pysystemtrade/memory/`
 - Continuity: Claude Code works pay-as-you-go with an API key from console.anthropic.com — no subscription needed.
