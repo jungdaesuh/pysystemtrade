@@ -68,7 +68,7 @@ Seed the data layer from repo CSVs first and use IB only for incremental updates
    - [ ] Verify pysystemtrade-level connection per `docs/IB.md`: `connectionIB(999)` picks up the private config values.
 
 4. **Production data layer (Mongo + Parquet), seeded from repo CSVs**
-   - [ ] `brew install mongodb-community` and run it as a service (`brew services start mongodb-community`); create the data directories from step 3.
+   - [ ] Install MongoDB **respecting the driver pin**: the repo pins `pymongo==3.11.3` (`pyproject.toml:28`), officially tested only up to MongoDB server 4.4 — plain `brew install mongodb-community` installs 8.x, which may reject the old driver. Install `mongodb/brew/mongodb-community@6.0` (or older), start as a service, and treat the seeding sanity-check below as the compatibility gate: if reads/writes fail with wire-version or handshake errors, downgrade the server, do not patch the driver pin. Create the data directories from step 3.
    - [ ] Choose the pilot instrument universe (see Open Questions; default candidate: the chapter-15 six — CORN, EUROSTX, MXP, SOFR, US10, V2X — all liquid, cheap to trade).
    - [ ] Seed per `docs/production.md` "Get all the data in": `roll_parameters_csv_mongo.py`, then `repocsv_multiple_prices.py`, `repocsv_adjusted_prices.py`, `repocsv_spotfx_prices.py`, `repocsv_spread_costs.py` (all run with `.venv/bin/python`).
    - [ ] Sanity-check: read one instrument's adjusted prices back from Parquet via a `dataBlob` and compare row count vs the repo CSV.

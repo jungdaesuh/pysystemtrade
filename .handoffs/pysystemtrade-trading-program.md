@@ -1,6 +1,6 @@
 # HANDOFF — Personal systematic trading program on pysystemtrade   ·   task-key: pysystemtrade-trading-program
 
-> Updated 2026-07-06 20:39 EDT · Status: repo synced to upstream + validated; all plans/policy written; next real-world step is IBKR paper-account activation and Phase 1 portfolio deployment.
+> Updated 2026-07-06 23:20 EDT · Status: repo synced to upstream + validated; all plans/policy/tooling written, committed and pushed (HEAD `e2f7ef32` + doc-review fixes); next real-world step is IBKR paper-account activation and Phase 1 portfolio deployment.
 
 ## Goal
 
@@ -39,8 +39,14 @@ live ~Sept 2026 if gates pass, (d) research factory on incoming Threadripper 997
 - [x] Tooling written 2026-07-06: `scripts/ib/smoke_test_ib_connection.py`,
       `docs/custom/templates/private_config.yaml.example`,
       `analysis/research_harness/run_battery.py`.
-- [ ] `run_battery.py` full run — **UNVERIFIED** (py_compile/help only; estimated variants
-      take minutes–hours; first full run belongs on the Threadripper).
+- [x] `run_battery.py` baseline variant — verified end-to-end 2026-07-06: 13,422 days,
+      full-period sharpe 0.478 / ann_std 32.9 pctpts (reference values, recorded in the
+      script docstring; output at `results/research_battery/20260706_231411/metrics.csv`).
+      Note: percent curves are additive pct-POINTS of capital (drawdowns can exceed 100).
+- [ ] `run_battery.py` estimated variants (handcraft/shrinkage/hrp/equal) — **UNVERIFIED**:
+      take minutes–hours each; first full run belongs on the Threadripper.
+- [x] Artifacts committed & pushed: `1ca1062f` (policy, smoke test, battery, handoff)
+      and `e2f7ef32` (paper plan) — verified: `git log --oneline -4`.
 - [ ] IBKR paper account, IB Gateway install, Mongo/Parquet seeding — not started (need user actions).
 
 ## Environment & how to run
@@ -76,6 +82,8 @@ live ~Sept 2026 if gates pass, (d) research factory on incoming Threadripper 997
 - `python3.11 -m venv` with the uv-managed interpreter (`/install` prefix error). Use `uv venv`.
 - Pushing branch `backup/pre-upstream-sync-2026-06-09` — it contains `.env` in its commit. Local only.
 - Seeding price history from IB directly (pacing violations) — seed from repo CSVs, IB for increments.
+- Plain `brew install mongodb-community` (installs 8.x) — repo pins `pymongo==3.11.3`
+  (tested only to server 4.4). Use `mongodb-community@6.0` or older; see plan doc Phase 4.
 
 ## Open questions / blockers
 

@@ -13,6 +13,13 @@ Variants toggle instrument-weight estimation method (exercises the custom HRP
 optimiser end-to-end via the config `method:` key -> REGISTER_OF_OPTIMISERS).
 Estimated variants are much slower than baseline: expect minutes-to-hours each.
 
+Metrics convention: pysystemtrade `.percent` curves are ADDITIVE percent-of-
+capital points (fixed notional capital), so cumulative and drawdown figures can
+exceed 100 and are NOT compounded percentages — hence `_pctpts` column names.
+Reference values (baseline, run 2026-07-06): full-period sharpe 0.478,
+ann_std 32.9 pctpts, n_days 13422. A materially different baseline after a
+code/data change indicates a regression, not a discovery.
+
 Output: results/research_battery/<run-tag>/metrics.csv
 """
 import argparse
@@ -72,10 +79,10 @@ def window_metrics(daily_pct: pd.Series, start, end) -> dict | None:
     ann_std = s.std() * BDAYS_IN_YEAR**0.5
     cum = s.cumsum()
     return dict(
-        ann_return_pct=round(s.mean() * BDAYS_IN_YEAR, 2),
-        ann_std_pct=round(ann_std, 2),
+        ann_return_pctpts=round(s.mean() * BDAYS_IN_YEAR, 2),
+        ann_std_pctpts=round(ann_std, 2),
         sharpe=round(s.mean() * BDAYS_IN_YEAR / ann_std, 3),
-        worst_drawdown_pct=round((cum - cum.cummax()).min(), 2),
+        worst_drawdown_pctpts=round((cum - cum.cummax()).min(), 2),
         n_days=len(s),
     )
 
