@@ -20,16 +20,23 @@ live ~Sept 2026 if gates pass, (d) research factory on incoming Threadripper 997
        September go-live. Barbell ETFs work fine on Cash meanwhile.
 3. [ ] Fund the live account, then deploy Phase 1 barbell per
        `docs/custom/plans/portfolio_policy.md` (55% SGOV / 35% four-asset sleeve / 10% reserve).
-4. [ ] Install IB Gateway on the Threadripper (stable channel), API config (port 4002,
-       trusted IP 127.0.0.1, read-only OFF), login as `hftove227`/paper toggle, then run
-       `.venv/bin/python scripts/ib/smoke_test_ib_connection.py`.
-5. [ ] Copy `docs/custom/templates/private_config.yaml.example` to
-       `~/.config/pysystemtrade-private/private_config.yaml`, set `broker_account: DUR207416`,
-       export `PYSYS_PRIVATE_CONFIG_DIR`, re-run smoke test with `--pst`.
-6. [ ] Continue with Phases 4–6 of `docs/custom/plans/ib_paper_trading_implementation_plan.md`
-       (MongoDB **@6.0** + Parquet seeding, first IB price pull, manual paper cycle).
-7. [ ] Battery extension: block-bootstrap CIs on Sharpe differences (first-campaign verdict
-       2026-07-07 in DECISIONS.md is provisional pending CIs); then Gate 1 parity runs.
+4. [x] DONE 2026-07-07 night: Gateway 10.45 installed at `~/ibgateway` (launch from app
+       menu, NOT from a shell — window lands on wrong display otherwise). Both smoke tests
+       PASSED: bare ib_async saw DUR207416 with $1M sim funds; `--pst` connected clean
+       after Read-Only API unchecked (market-data + HMDS + sec-def farms all OK).
+       Paper password was RESET via portal (own password now, not shared with live) —
+       initial shared-password login failed, likely pre-sync. Note: paper web-portal
+       sessions can collide with Gateway login (one session per account).
+5. [x] DONE 2026-07-07: private config live at `~/pysystemtrade-private/` (NOT ~/.config —
+       dots in path break pysystemtrade resolution, see learnings), DUR207416 configured,
+       `PYSYS_PRIVATE_CONFIG_DIR` in ~/.bashrc.
+6. [~] Phases 3–4 DONE (Mongo 6.0.28 in Docker `pysystemtrade-mongo`; 522 parquet files
+       seeded + sanity-checked; spread costs in Mongo). REMAINING: Phase 5 (first IB price
+       pull via update_sampled_contracts/update_historical_prices) and Phase 6 (manual
+       paper cycle → reconcile report).
+7. [x] DONE 2026-07-07: bootstrap CIs shipped and run — HRP +0.076 vs baseline,
+       95% CI [-0.078, +0.237] → confirmed insignificant (DECISIONS.md outcome closed).
+       NEXT research item: Gate 1 parity runs vs Rob's published figures.
 
 ## State (with evidence)
 
