@@ -11,20 +11,25 @@ live ~Sept 2026 if gates pass, (d) research factory on incoming Threadripper 997
 
 ## Next actions  (start here)
 
-1. [ ] IBKR Client Portal: enable paper account (get `DU…` id), enable "share market data
-       with paper account", enable IB Key 2FA. (Phase 1 of the plan doc — no code needed.)
-2. [ ] Deploy Phase 1 barbell in the brokerage account per `docs/custom/plans/portfolio_policy.md`
-       (55% SGOV / 35% four-asset harvest sleeve with ±20% relative bands / 10% reserve).
-3. [ ] Install IB Gateway (stable channel), configure API (port 4002, trusted IP 127.0.0.1,
-       read-only OFF), then run `.venv/bin/python scripts/ib/smoke_test_ib_connection.py`.
-4. [ ] Copy `docs/custom/templates/private_config.yaml.example` to
-       `~/.config/pysystemtrade-private/private_config.yaml`, fill in `DU…`, export
-       `PYSYS_PRIVATE_CONFIG_DIR`, re-run smoke test with `--pst`.
-5. [ ] Continue with Phases 4–6 of `docs/custom/plans/ib_paper_trading_implementation_plan.md`
-       (MongoDB + Parquet seeding, first IB price pull, manual paper cycle).
-6. [ ] When the Threadripper arrives: `.venv/bin/python analysis/research_harness/run_battery.py
-       --variants baseline handcraft shrinkage hrp --jobs 8` → walk-forward HRP comparison
-       (TODO.md Phase 2) and parity report (Phase 1.5).
+1. [x] DONE 2026-07-07 (via browser automation): paper account created — account
+       **DUR207416**, paper username **hftove227** (same password as live, Live/Paper toggle
+       at Gateway login). Market-data sharing = Yes (shares `jungdaesuh`'s subscriptions).
+       IB Key 2FA already active. Note: live and paper cannot hold sessions simultaneously.
+2. [ ] **NEW — margin upgrade**: live account `U26413989` is a **Cash** account; futures
+       (the engine) require margin. Portal → Settings → Account Type → upgrade before
+       September go-live. Barbell ETFs work fine on Cash meanwhile.
+3. [ ] Fund the live account, then deploy Phase 1 barbell per
+       `docs/custom/plans/portfolio_policy.md` (55% SGOV / 35% four-asset sleeve / 10% reserve).
+4. [ ] Install IB Gateway on the Threadripper (stable channel), API config (port 4002,
+       trusted IP 127.0.0.1, read-only OFF), login as `hftove227`/paper toggle, then run
+       `.venv/bin/python scripts/ib/smoke_test_ib_connection.py`.
+5. [ ] Copy `docs/custom/templates/private_config.yaml.example` to
+       `~/.config/pysystemtrade-private/private_config.yaml`, set `broker_account: DUR207416`,
+       export `PYSYS_PRIVATE_CONFIG_DIR`, re-run smoke test with `--pst`.
+6. [ ] Continue with Phases 4–6 of `docs/custom/plans/ib_paper_trading_implementation_plan.md`
+       (MongoDB **@6.0** + Parquet seeding, first IB price pull, manual paper cycle).
+7. [ ] Battery extension: block-bootstrap CIs on Sharpe differences (first-campaign verdict
+       2026-07-07 in DECISIONS.md is provisional pending CIs); then Gate 1 parity runs.
 
 ## State (with evidence)
 
