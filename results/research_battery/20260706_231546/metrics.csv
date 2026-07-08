@@ -1,0 +1,7 @@
+variant,window,ann_return_pctpts,ann_std_pctpts,sharpe,worst_drawdown_pctpts,n_days
+baseline,full,15.72,32.87,0.478,-179.36,13422
+baseline,1980s,16.13,37.12,0.435,-121.39,2609
+baseline,1990s,23.91,31.82,0.752,-89.62,2610
+baseline,2000s,13.01,28.1,0.463,-67.8,2609
+baseline,2010s,10.48,21.91,0.479,-47.52,2608
+baseline,2020s,9.37,24.19,0.387,-44.52,1107
