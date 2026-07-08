@@ -41,3 +41,7 @@ Seed entries (from the 2026-07 setup sessions):
 - **Shipped price data ends 2024-03-28** — the gap to the present must come from IB
   incremental updates (fine going forward) or a paid backfill; expired-contract history
   for the gap may need Barchart/Norgate. Known task, not a bug.
+- **IB historical daily bars work WITHOUT market-data subscriptions** (probed 2026-07-08
+  on paper: EURUSD and MES/CME both served daily bars, no CME subscription, unfunded
+  account). Rule: the daily production cycle is unblocked pre-funding; the paid CME
+  subscription is only required for real-time streaming at live execution time.
