@@ -35,7 +35,7 @@ Confirmed facts as of 2026-07-03:
 - Config defaults (`sysdata/config/defaults.yaml`): `ib_ipaddress: 127.0.0.1`, `ib_port: 4001` (live; paper = 4002), `ib_idoffset: 100`, `mongo_host: 127.0.0.1`, `parquet_store` is a placeholder that must be overridden.
 - `PYSYS_PRIVATE_CONFIG_DIR` env var is supported (`sysdata/config/private_config.py:11`, `docs/production.md` "Custom private directory").
 - Connection smoke-test pattern documented in `docs/IB.md` (`connectionIB(client_id, ib_ipaddress=..., ib_port=..., account=...)`).
-- Seeding scripts available under `sysinit/futures/`: `roll_parameters_csv_mongo.py`, `repocsv_adjusted_prices.py`, `repocsv_multiple_prices.py`, `repocsv_spotfx_prices.py`, `repocsv_spread_costs.py`, `seed_price_data_from_IB.py`, `get_prices_and_contract_details_from_ib.py`.
+- Seeding scripts available under `sysinit/futures/`: `repocsv_adjusted_prices.py`, `repocsv_multiple_prices.py`, `repocsv_spotfx_prices.py`, `repocsv_spread_costs.py`, `seed_price_data_from_IB.py`, `get_prices_and_contract_details_from_ib.py`. (Note: `roll_parameters_csv_mongo.py` is an empty stub — production reads roll parameters directly from CSV via `csvRollParametersData`, no seeding needed.)
 
 ## Rationale
 
@@ -70,7 +70,7 @@ Seed the data layer from repo CSVs first and use IB only for incremental updates
 4. **Production data layer (Mongo + Parquet), seeded from repo CSVs**
    - [ ] Install MongoDB **respecting the driver pin**: the repo pins `pymongo==3.11.3` (`pyproject.toml:28`), officially tested only up to MongoDB server 4.4 — plain `brew install mongodb-community` installs 8.x, which may reject the old driver. Install `mongodb/brew/mongodb-community@6.0` (or older), start as a service, and treat the seeding sanity-check below as the compatibility gate: if reads/writes fail with wire-version or handshake errors, downgrade the server, do not patch the driver pin. Create the data directories from step 3.
    - [ ] Choose the pilot instrument universe (see Open Questions; default candidate: the chapter-15 six — CORN, EUROSTX, MXP, SOFR, US10, V2X — all liquid, cheap to trade).
-   - [ ] Seed per `docs/production.md` "Get all the data in": `roll_parameters_csv_mongo.py`, then `repocsv_multiple_prices.py`, `repocsv_adjusted_prices.py`, `repocsv_spotfx_prices.py`, `repocsv_spread_costs.py` (all run with `.venv/bin/python`).
+   - [x] DONE 2026-07-07: seeded `repocsv_multiple_prices.py`, `repocsv_adjusted_prices.py`, `repocsv_spotfx_prices.py` (522 parquet files, 184MB), `repocsv_spread_costs.py` → Mongo (pipe `yes n` — it has a hidden prompt). Roll params need no seeding (CSV-direct upstream). Mongo 6.0.28 runs in Docker (`pysystemtrade-mongo`, restart-persistent); pymongo compatibility gate PASSED. Sanity check: SOFR/SP500/GOLD/US10 parquet row counts exactly match CSVs; data ends 2024-03-28 (IB increments close the gap).
    - [ ] Sanity-check: read one instrument's adjusted prices back from Parquet via a `dataBlob` and compare row count vs the repo CSV.
 
 5. **First end-to-end IB data pull + reconciliation**

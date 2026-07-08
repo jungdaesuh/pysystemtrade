@@ -8,6 +8,14 @@ Usage (from repo root, inside the pinned venv):
     .venv/bin/python analysis/research_harness/run_battery.py                    # baseline only, quick
     .venv/bin/python analysis/research_harness/run_battery.py \
         --variants baseline handcraft shrinkage hrp --jobs 4
+    .venv/bin/python analysis/research_harness/run_battery.py \
+        --variants baseline handcraft shrinkage hrp equal --jobs 5 --bootstrap 2000
+
+--bootstrap N runs a PAIRED stationary block bootstrap (Politis-Romano) on the
+common sample of all variants: same resampled days applied to every variant, so
+the confidence interval is on the Sharpe DIFFERENCE vs the first listed variant,
+with cross-variant correlation preserved. A difference whose 95% CI straddles 0
+is noise, not a finding.
 
 Variants toggle instrument-weight estimation method (exercises the custom HRP
 optimiser end-to-end via the config `method:` key -> REGISTER_OF_OPTIMISERS).
@@ -27,6 +35,7 @@ import datetime
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 BDAYS_IN_YEAR = 256
@@ -87,10 +96,56 @@ def window_metrics(daily_pct: pd.Series, start, end) -> dict | None:
     )
 
 
+def stationary_bootstrap_indices(n: int, mean_block: float, rng: np.random.Generator) -> np.ndarray:
+    """Politis-Romano stationary bootstrap: circular blocks of geometric length."""
+    idx = np.empty(n, dtype=np.int64)
+    pos = 0
+    while pos < n:
+        start = rng.integers(0, n)
+        length = min(int(rng.geometric(1.0 / mean_block)), n - pos)
+        idx[pos : pos + length] = (start + np.arange(length)) % n
+        pos += length
+    return idx
+
+
+def bootstrap_sharpe_differences(
+    aligned: pd.DataFrame, n_boot: int, mean_block: float, seed: int
+) -> pd.DataFrame:
+    """Paired bootstrap: CI on each variant's Sharpe minus the FIRST column's Sharpe."""
+    rng = np.random.default_rng(seed)
+    arr = aligned.to_numpy()
+    n = len(aligned)
+    sharpes = np.empty((n_boot, arr.shape[1]))
+    for b in range(n_boot):
+        take = arr[stationary_bootstrap_indices(n, mean_block, rng)]
+        sharpes[b] = take.mean(axis=0) / take.std(axis=0, ddof=1) * np.sqrt(BDAYS_IN_YEAR)
+    diffs = sharpes - sharpes[:, [0]]
+    base = aligned.columns[0]
+    point = (
+        aligned.mean() / aligned.std(ddof=1) * np.sqrt(BDAYS_IN_YEAR)
+    )
+    rows = [
+        dict(
+            variant=col,
+            sharpe_common_window=round(point[col], 3),
+            sharpe_diff_vs_base=round(point[col] - point[base], 3),
+            ci95_lo=round(np.percentile(diffs[:, i], 2.5), 3),
+            ci95_hi=round(np.percentile(diffs[:, i], 97.5), 3),
+            prob_beats_base=round((diffs[:, i] > 0).mean(), 3),
+        )
+        for i, col in enumerate(aligned.columns)
+        if col != base
+    ]
+    return pd.DataFrame(rows)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--variants", nargs="+", default=["baseline"], choices=sorted(VARIANTS))
     parser.add_argument("--jobs", type=int, default=2)
+    parser.add_argument("--bootstrap", type=int, default=0, help="bootstrap replicates (0=off)")
+    parser.add_argument("--block-days", type=float, default=25.0, help="mean bootstrap block length")
+    parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
 
     with ProcessPoolExecutor(max_workers=args.jobs) as pool:
@@ -110,6 +165,23 @@ def main() -> None:
     table.to_csv(out_dir / "metrics.csv", index=False)
     print(table.to_string(index=False))
     print(f"\nwritten: {out_dir / 'metrics.csv'}")
+
+    aligned = pd.concat(curves, axis=1).dropna()
+    aligned.to_csv(out_dir / "curves.csv")
+
+    if args.bootstrap and len(args.variants) > 1:
+        ci_table = bootstrap_sharpe_differences(
+            aligned, n_boot=args.bootstrap, mean_block=args.block_days, seed=args.seed
+        )
+        ci_table.to_csv(out_dir / "bootstrap_ci.csv", index=False)
+        base = aligned.columns[0]
+        print(
+            f"\nPaired stationary block bootstrap ({args.bootstrap} reps, "
+            f"mean block {args.block_days:.0f}d, seed {args.seed}) — "
+            f"Sharpe difference vs '{base}' on common sample of {len(aligned)} days:"
+        )
+        print(ci_table.to_string(index=False))
+        print(f"written: {out_dir / 'bootstrap_ci.csv'}")
 
 
 if __name__ == "__main__":

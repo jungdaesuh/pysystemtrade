@@ -40,7 +40,12 @@ Entry template:
   (Sharpe 0.09–0.19) while fixed weights hold 0.387 — expanding-window estimation may be
   mis-weighting the recent regime.
 - Judge on: re-run after (a) bootstrap-CI battery extension, (b) expanded universe.
-- Outcome: —
+- Outcome (a, 2026-07-07): CONFIRMED not significant. Paired stationary block bootstrap
+  (2000 reps, mean block 25d, seed 42, common sample 13,422 days): hrp diff +0.076,
+  95% CI [-0.078, +0.237]; every variant's CI straddles zero. Notably `equal` has the
+  highest P(beats baseline)=0.874 with the tightest CI — the null keeps winning on
+  robustness. Evidence: `results/research_battery/20260707_212812/bootstrap_ci.csv`.
+  Verdict stands: no production change; (b) expanded-universe re-test remains open.
 
 ## 2026-07-07 — IRP reallocation out of 원리금보장 (3.9%)
 - Decision: PENDING tax-branch check (W-9 ⇒ PFIC/FBAR advice first; W-8BEN ⇒ proceed).
