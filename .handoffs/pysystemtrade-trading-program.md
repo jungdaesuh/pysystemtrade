@@ -1,143 +1,159 @@
 # HANDOFF — Personal systematic trading program on pysystemtrade   ·   task-key: pysystemtrade-trading-program
 
-> Updated 2026-07-06 23:20 EDT · Status: repo synced to upstream + validated; all plans/policy/tooling written, committed and pushed (HEAD `e2f7ef32` + doc-review fixes); next real-world step is IBKR paper-account activation and Phase 1 portfolio deployment.
+> Updated 2026-07-08 19:24 EDT · Status: infrastructure phase COMPLETE on the Threadripper (broker chain proven, data layer seeded, research factory validated, orchestrated build crucible-PASSed at HEAD `e4cc7134`); blocked on user's two IBKR applications + the data-gap decision; September go-live on schedule.
 
 ## Goal
 
 Build a production-grade personal systematic trading program on this pysystemtrade fork:
-(a) portfolio per the barbell policy, (b) paper-trading pipeline against IBKR, (c) engine
-live ~Sept 2026 if gates pass, (d) research factory on incoming Threadripper 9970X + RTX 5090.
+(a) real-money barbell portfolio per policy, (b) paper-trading pipeline against IBKR,
+(c) engine live ~Sept 2026 if three gates pass, (d) research factory on the Threadripper.
 **Done when:** engine trades live on micro futures with clean daily reconciliation, scaled per policy.
 
 ## Next actions  (start here)
 
-1. [x] DONE 2026-07-07 (via browser automation): paper account created — account
-       **DUR207416**, paper username **hftove227** (same password as live, Live/Paper toggle
-       at Gateway login). Market-data sharing = Yes (shares `jungdaesuh`'s subscriptions).
-       IB Key 2FA already active. Note: live and paper cannot hold sessions simultaneously.
-2. [ ] **NEW — margin upgrade**: live account `U26413989` is a **Cash** account; futures
-       (the engine) require margin. Portal → Settings → Account Type → upgrade before
-       September go-live. Barbell ETFs work fine on Cash meanwhile.
-3. [ ] Fund the live account, then deploy Phase 1 barbell per
-       `docs/custom/plans/portfolio_policy.md` (55% SGOV / 35% four-asset sleeve / 10% reserve).
-4. [x] DONE 2026-07-07 night: Gateway 10.45 installed at `~/ibgateway` (launch from app
-       menu, NOT from a shell — window lands on wrong display otherwise). Both smoke tests
-       PASSED: bare ib_async saw DUR207416 with $1M sim funds; `--pst` connected clean
-       after Read-Only API unchecked (market-data + HMDS + sec-def farms all OK).
-       Paper password was RESET via portal (own password now, not shared with live) —
-       initial shared-password login failed, likely pre-sync. Note: paper web-portal
-       sessions can collide with Gateway login (one session per account).
-5. [x] DONE 2026-07-07: private config live at `~/pysystemtrade-private/` (NOT ~/.config —
-       dots in path break pysystemtrade resolution, see learnings), DUR207416 configured,
-       `PYSYS_PRIVATE_CONFIG_DIR` in ~/.bashrc.
-6. [~] Phases 3–4 DONE (Mongo 6.0.28 in Docker `pysystemtrade-mongo`; 522 parquet files
-       seeded + sanity-checked; spread costs in Mongo). Phase 5 ATTEMPTED 2026-07-08:
-       sampling + price machinery run clean end-to-end, BUT price pull is a no-op —
-       the contract chain anchors on the stale multiple-prices row (2024-03), so the
-       generated chain is fully expired ("No contracts marked for sampling").
-       **DECISION NEEDED — two ways to close the 2024-03→now gap:**
-       (a) roll-forward stitch: bootstrap gap contract chain, IB fetches with
-       includeExpired (most gap contracts within IB's ~2yr post-expiry window), then
-       repeated roll-forwards of multiple prices per instrument — a careful session
-       for the pilot six, zero cost; or (b) buy fresher seed data (Norgate/CSI/Barchart —
-       importer exists at `sysinit/futures/barchart_futures_contract_prices.py`),
-       ~$30-100/mo, sidesteps the stitch and buys the 100-instrument universe too.
-       Helper written: `scripts/data_utilities/bootstrap_key_contracts_from_multiple_prices.py`.
-7. [x] DONE 2026-07-07: bootstrap CIs shipped and run — HRP +0.076 vs baseline,
-       95% CI [-0.078, +0.237] → confirmed insignificant (DECISIONS.md outcome closed).
-8. [x] DONE 2026-07-08 (orchestrated build, crucible-PASSed): (a) har_vol_calc estimator
-       (vol.py, +tests 7/7) — judge via `--vol-func har_vol_calc`; (b) battery walk-forward
-       table (`--walkforward N`) with n_eff>=4 CI gate (no CI below ~4 independent windows —
-       prevents falsely-narrow block-bootstrap CIs) + `--vol-func` axis; (c) parity runner
-       audited clean, runs in 7.6s (Gate 1 gaps: target figures + tolerance undefined, stale
-       results/2024-2025 parity JSONs need regeneration, universe question); (d)
-       scripts/ib/deploy_phase1.py — barbell ticket machine, dry-run/whatIf validated on
-       DUR207416; --live path exists but UNEXERCISED (needs one supervised paper run).
-       NEXT research items: HAR vs mixed_vol campaign (bootstrap+walkforward), Gate 1
-       target-figure definition, HRP-for-forecast-weights config experiment.
+1. [ ] USER: **margin upgrade application** — live account `U26413989` is Cash; futures need
+       margin. Client Portal → Settings → Account Type. Approval takes days; September depends on it.
+2. [ ] USER: **ACH deposit** — Portal → Transfer & Pay. Then deploy Phase 1 barbell:
+       `.venv/bin/python scripts/ib/deploy_phase1.py --capital <N>` (dry run first; table of
+       SGOV 65/VTI 10/VEA 10/GLDM 8/VGIT 7 tickets with whatIf margin preview), then `--live`
+       + typed YES during market hours. Record fills in `docs/custom/DECISIONS.md`.
+3. [ ] USER DECISION: **close the 2024-03→now price-data gap** — (a) free roll-forward stitch
+       (write `gap_stitch.py`: bootstrap gap contract chain, IB fetches with includeExpired,
+       repeated multiple-price roll-forwards; pilot six only; window decays monthly) or
+       (b) vendor subscription (Norgate/CSI/Barchart ~$30-100/mo; re-seed sidesteps the stitch
+       AND unlocks the 100-instrument universe). Pre-registered rule: buy when funded capital
+       ≥~$50k or credibly there within 12mo; else stitch free. Blocks plan Phases 5-6 either way.
+4. [ ] One **supervised `--live` run of deploy_phase1.py against the PAPER account** (DUR207416,
+       port 4002) — the live order path is implemented but UNEXERCISED; validate fills + the
+       DECISIONS.md block render before the real-money day.
+5. [ ] RESEARCH (unblocked, any session): (a) HAR-vs-default campaign:
+       `.venv/bin/python analysis/research_harness/run_battery.py --variants baseline handcraft
+       shrinkage hrp equal --jobs 5 --bootstrap 2000 --walkforward 10 --vol-func har_vol_calc`
+       vs same without --vol-func; log verdict in DECISIONS.md. (b) Gate 1: define Rob Carver's
+       target figures + tolerance (none exist in-repo; see TODO.md Phase 1.5) and settle the
+       universe question (chapter-15 six can't reproduce his full-system numbers).
+       (c) HRP-for-forecast-weights: config-only experiment (`forecast_weight_estimate:
+       method: hrp`). (d) Delete/regenerate stale pre-reset parity JSONs in results/2024-2025.
 
 ## State (with evidence)
 
-- [x] Fork hard-reset onto upstream `pst-group/pysystemtrade` develop (`883c8681`) with custom
-      layer re-applied as ONE commit `f5640a93` — verified: `git log --oneline -2`.
-- [x] Pinned env `.venv` (uv, Python 3.11, pandas 2.1.3, numpy 1.26.4, ib_async 2.1.0) —
-      verified: `tests/test_hrp.py` 3/3 pass; chapter-15 system smoke-run OK.
-- [x] HRP optimiser registered — verified: `REGISTER_OF_OPTIMISERS` contains `hrp`
-      (`sysquant/optimisation/optimisers/call_optimiser.py`).
-- [x] Plan docs written: `/Users/suhjungdae/code/software/trading/pysystemtrade/docs/custom/plans/ib_paper_trading_implementation_plan.md`,
-      `/Users/suhjungdae/code/software/trading/pysystemtrade/docs/custom/plans/portfolio_policy.md`.
-- [x] Tooling written 2026-07-06: `scripts/ib/smoke_test_ib_connection.py`,
-      `docs/custom/templates/private_config.yaml.example`,
-      `analysis/research_harness/run_battery.py`.
-- [x] `run_battery.py` baseline variant — verified end-to-end 2026-07-06: 13,422 days,
-      full-period sharpe 0.478 / ann_std 32.9 pctpts (reference values, recorded in the
-      script docstring; output at `results/research_battery/20260706_231411/metrics.csv`).
-      Note: percent curves are additive pct-POINTS of capital (drawdowns can exceed 100).
-- [ ] `run_battery.py` estimated variants (handcraft/shrinkage/hrp/equal) — **UNVERIFIED**:
-      take minutes–hours each; first full run belongs on the Threadripper.
-- [x] Artifacts committed & pushed: `1ca1062f` (policy, smoke test, battery, handoff)
-      and `e2f7ef32` (paper plan) — verified: `git log --oneline -4`.
-- [ ] IBKR paper account, IB Gateway install, Mongo/Parquet seeding — not started (need user actions).
+- [x] Fork = upstream pst-group/develop (`883c8681`) + custom commit stack, HEAD `e4cc7134`,
+      pushed. Upstream drift checked 2026-07-08: zero new commits.
+- [x] MACHINE MIGRATED: work now lives on the Threadripper (`jungdaesuh-playstation`,
+      Ubuntu 26.04, 9970X 32c/64t, 128GB, RTX 5090 + driver 595/CUDA). Acceptance test
+      passed: baseline battery reproduced reference values EXACTLY (sharpe 0.478, n=13,422).
+- [x] IBKR: live account `U26413989` (Cash, USD, IBKR Pro, IB Key active); paper account
+      **DUR207416** (username `hftove227`, own password after portal reset, $1M sim).
+      Market-data sharing ON. Broker chain PROVEN: Gateway 10.45 (`~/ibgateway`) →
+      ib_async → pysystemtrade connectionIB, read-only OFF, data farms OK.
+      IB historical daily bars work WITHOUT paid subscriptions (probed: EURUSD + MES).
+- [x] Data layer: Mongo 6.0.28 in Docker (`pysystemtrade-mongo`, restart-persistent,
+      pymongo-3.11.3 gate PASSED); 522 parquet files seeded from repo CSVs (ends 2024-03-28),
+      row-counts verified vs source; spread costs in Mongo; private config at
+      `~/pysystemtrade-private/private_config.yaml` (DUR207416, port 4002).
+- [x] Phase 5 attempted: machinery clean but price pull is a no-op — contract chain anchors
+      on the stale multiple-prices row → fully-expired chain → nothing sampled. Blocker
+      characterized to the function (`get_furthest_out_contract_date`); helper written:
+      `scripts/data_utilities/bootstrap_key_contracts_from_multiple_prices.py`.
+- [x] Research battery (`analysis/research_harness/run_battery.py`): variants
+      (baseline/handcraft/shrinkage/hrp/equal), paired stationary block bootstrap CIs,
+      `--walkforward N` regime table with n_eff≥4 CI gate, `--vol-func` estimator axis,
+      curves archived per run. First campaign verdict LOGGED (DECISIONS.md): HRP +0.076
+      vs baseline, 95% CI [-0.078,+0.237] → not significant; equal-weights most robust;
+      all estimated variants collapse in the 2020s (open question).
+- [x] `har_vol_calc` HAR estimator in `sysquant/estimators/vol.py` + `tests/test_har_vol.py`
+      (7/7 with HRP tests) — strictly causal (bitwise-proven), drop-in via
+      `volatility_calculation.func`, level 0.95× default. NOT wired into any live config.
+- [x] `scripts/ib/deploy_phase1.py` — dry-run/whatIf validated against live paper gateway;
+      **`--live` path UNEXERCISED** (next action 4).
+- [x] Orchestrated build reviewed via crucible: 5 lenses, 6 scorers, auditor; verdict FAIL →
+      2 major fixes applied (dead UNSET sentinel guard removed; walk-forward CI n_eff gate
+      added) → re-audit PASS. Mistake book gained Patterns 117-118.
+- [ ] Plan Phases 5-6 (first IB price pull, manual paper cycle, 10-day clean reconcile
+      streak = Gate 2) — blocked on next-action 3.
+- [ ] Gates: 1 (parity) needs target figures defined; 2 (paper streak) blocked on data gap;
+      3 (minimum-capital report) one command, run after funding known.
 
 ## Environment & how to run
 
-- cwd/repo/branch: `/Users/suhjungdae/code/software/trading/pysystemtrade` / jungdaesuh/pysystemtrade fork / `develop`
-- Base commit: `f5640a93` (= upstream `883c8681` + custom layer)
-- Remotes: `origin` = github.com/jungdaesuh/pysystemtrade, `upstream` = github.com/pst-group/pysystemtrade
-- Env: `.venv/bin/python` for EVERYTHING (created via `uv venv --python 3.11 .venv`; recreate with
-  `uv venv --clear …` then `uv pip install -e '.[dev]'`)
-- Tests: `.venv/bin/python -m pytest tests/test_hrp.py -q`
-- Quirks: miniforge base has pandas 3.x — incompatible, never use. `python -m venv` fails with
-  the uv-managed 3.11. A pre-tool hook blocks `rm -rf`.
+- cwd/repo/branch: `/home/jungdaesuh/code/software/trading/pysystemtrade` / jungdaesuh fork / `develop`
+- Machine: `jungdaesuh-playstation` (Threadripper, Ubuntu 26.04). Git pushes via SSH (key registered).
+- Base commit: `e4cc7134` (all work committed; only transient `results/research_battery/*`
+  validation run dirs untracked — deliberate, selective-archival workflow).
+- Env: `.venv/bin/python` for EVERYTHING (`uv venv --python 3.11 .venv && uv pip install -e '.[dev]'`;
+  pandas 2.1.3 / numpy 1.26.4 / ib_async 2.1.0). `export PYSYS_PRIVATE_CONFIG_DIR="$HOME/pysystemtrade-private"`
+  (also in ~/.bashrc).
+- Mongo: `docker start pysystemtrade-mongo` if down; ping:
+  `docker exec pysystemtrade-mongo mongosh --quiet --eval 'db.runCommand({ping:1})'`.
+- Gateway: launch from the DESKTOP app menu ("IB Gateway 10.45"), NOT from a shell
+  (window lands on the wrong display). Login `hftove227` + paper password + Paper toggle + IB Key.
+- Tests: `.venv/bin/python -m pytest tests/test_har_vol.py tests/test_hrp.py -q` (7 expected).
+- Regression anchor: `run_battery.py --variants baseline --jobs 1` must print sharpe 0.478 /
+  n_days 13422 — any deviation is a regression, not a discovery.
+- Quirks: miniforge base has pandas 3.x — never use. `python -m venv` fails on uv-managed
+  interpreters. A pre-tool hook blocks `rm -rf`. `pkill -f <pattern>` matches your own shell's
+  command line — use the bracket trick (`pgrep -f '[G]WClient'`).
 
 ## Decisions & rationale
 
-- **Hard reset over merge/rebase** for the upstream sync — local delta was 5 mostly-additive
-  commits; the only code overlaps were pandas-compat patches upstream had superseded. Do not relitigate.
-- **Dropped fork's pandas-2.x patches** (`vol.py`, `positionsizing.py`) — they existed only because
-  the fork ran on base-env pandas 3.x; pinned env makes them unnecessary.
-- **Custom work = one rebasable commit** on top of upstream, synced weekly. Never let develop drift again.
-- **Paper-first, gated go-live (~Sept 2026)** — commissioning, not caution; EV math in conversation:
-  6-week paper phase costs ~$1.2k expected forgone vs near-certain multi-$k first production bug.
-- **Barbell policy** (see portfolio_policy.md): five rules, pre-registered kill criteria,
-  engine scales +5pp/clean quarter, cap 35%.
-- **Research machine ≠ production machine.** Threadripper is the factory; production stays on
-  boring separate hardware/VM.
-- **Broker-portable code only** — user is J-1; IBKR doesn't serve Korea residents, so access is
-  tied to US presence. Nothing IB-specific outside `sysbrokers/`.
+- **Hard reset over merge/rebase** for the June upstream sync; fork's pandas patches dropped
+  (they compensated for the wrong env). Do not relitigate.
+- **Custom work stays a rebasable commit stack** on upstream; weekly `git fetch upstream && git rebase`.
+- **Paper-first, three-gated go-live (~Sept 2026)** — commissioning, not caution.
+- **Barbell policy** (portfolio_policy.md): five rules, pre-registered kill criteria; engine
+  20%→35% of capital scaling +5pp/clean quarter.
+- **Cost/breakeven rule**: full paid stack (~$1.5-2k/yr: data vendor, CME real-time, API,
+  commissions) is justified at ≥~$50k working capital; below that run free config.
+- **Research machine hosts the PAPER stack too** (pragmatic bend of research≠production;
+  rule hardens again at live go-live — separate box/VM then).
+- **Broker-portable code only** — user is J-1; IBKR access tied to US presence.
+- **No .gitignore for battery results** — they're a deliberately-committed experiment registry;
+  archive selectively.
+- **Walk-forward CI gate**: below ~4 non-overlapping windows, NO CI is emitted (block bootstrap
+  degenerates to mean-preserving rotations = falsely narrow). Auditor-ratified; don't "fix" it back.
 
 ## Dead ends / do NOT retry
 
-- Installing deps into miniforge base (downgrades global pandas; broke things originally).
-- `python3.11 -m venv` with the uv-managed interpreter (`/install` prefix error). Use `uv venv`.
-- Pushing branch `backup/pre-upstream-sync-2026-06-09` — it contains `.env` in its commit. Local only.
-- Seeding price history from IB directly (pacing violations) — seed from repo CSVs, IB for increments.
-- Plain `brew install mongodb-community` (installs 8.x) — repo pins `pymongo==3.11.3`
-  (tested only to server 4.4). Use `mongodb-community@6.0` or older; see plan doc Phase 4.
+- Installing deps into miniforge base; `python -m venv` on uv interpreters (use `uv venv`).
+- Pushing `backup/pre-upstream-sync-2026-06-09` — contains `.env`. Local only, never push.
+- Seeding deep history from IB directly (pacing) — repo CSVs for depth, IB for increments.
+- apt/brew MongoDB on Ubuntu 26.04 (no packages) — Docker `mongo:6.0` is the blessed setup
+  (pymongo 3.11.3 pin; server ≤6.0).
+- Dotted directories in `PYSYS_PRIVATE_CONFIG_DIR` (`~/.config/...` silently becomes `~/config/...`).
+- Launching IB Gateway via `DISPLAY=:0` from a shell — invisible window; use the app menu.
+- Expecting `update_sampled_contracts` to work on stale seed data — chain anchors on the last
+  multiple-prices row; requires the gap stitch or fresh data first.
 
 ## Open questions / blockers
 
-- **Tax branch unresolved**: user is J-1 with SSN; W-9 (resident alien) vs W-8BEN (NRA) was decided
-  during IBKR signup but which branch was never stated. Ask before tax-sensitive moves (XSP condors / Section 1256).
-- Pilot universe (chapter-15 six vs micros) — decide after minimum-capital report.
-- Account base currency (parity work uses GBP to match Rob; account likely USD).
-- Funding amount — user decision; drives market-data eligibility and engine sizing.
+- **Tax branch** (W-9 resident alien vs W-8BEN NRA) — never stated by user; gates XSP condors,
+  IRP reallocation (PFIC/FBAR if W-9), and bond-fund selection. Ask before tax-sensitive moves.
+- **Funding amount** — drives Gate 3, data decision, engine sizing. User decision.
+- **Gate 1 definition** — which Carver published figures, what tolerance, which universe
+  (chapter-15 six ≠ his full system). Must be settled before parity can pass/fail.
+- **IRP reallocation** (Korean 퇴직연금 at 3.9% guaranteed) — pending tax branch; plan is
+  qualified TDF up to 100% or 70/30 index ETFs. Logged in DECISIONS.md.
 
 ## Mental model
 
-- pysystemtrade moved orgs (robcarver17 → pst-group, Jan 2026) and to `ib_async` (April 2026);
-  Andy Geach is primary maintainer. Upstream is actively maintained; sync before trusting numbers.
-- The system: ~40 rule variations (trend/carry/MR/skew families) → capped forecasts → vol-targeted
-  positions → buffered orders. Config keys are string-resolved from YAML — don't rename referenced functions.
-- User's stated 2026 view: high-vol, range-bound → agreed tilt toward carry/MR over trend in the
-  engine, pending walk-forward evidence from `run_battery.py`.
-- Market context is PERISHABLE: all July-2026 analyses in conversation (KOSPI margin unwind, Warsh
-  hawkish dots, Iran ceasefire, VIX ~16.6, BTC ~$60k) must be re-verified before use.
+- pysystemtrade: pst-group org, ib_async, actively maintained. Config keys string-resolved
+  from YAML — never rename referenced functions. Percent curves are ADDITIVE pct-POINTS.
+- Cold-start gap mechanics: production assumes continuous operation; multiple prices' last row
+  is the anchor for contract chains, sampling, and rolls. Stale seed = dead pipeline until stitched.
+- IBKR: one active session per account (web portal can bump Gateway); paper shares live
+  password only after overnight sync (we reset to a separate one); historical daily bars are
+  free, real-time needs the CME sub only at live execution.
+- The knowledge loop is the product: DECISIONS.md (pre-registered, judged), learnings/
+  (one rule per hard problem), battery results (experiment registry), this handoff. Reinvest
+  conclusions; never re-litigate settled verdicts without new evidence.
+- Market context in past conversation (KOSPI unwind, Warsh, ceasefire, BTC ~$60k) is PERISHABLE — re-verify before use.
 
 ## Pointers
 
-- Plans: `docs/custom/plans/ib_paper_trading_implementation_plan.md` · `docs/custom/plans/portfolio_policy.md` · `docs/custom/plans/upgrade_surgical_map.md` · `TODO.md`
-- Research notes: `docs/custom/research/order_flow_and_llm_investing.md` (backlog: crypto order-flow niche, LLM value-investing analyst layer)
-- Knowledge loop: `docs/custom/DECISIONS.md` · `docs/custom/learnings/`
-- Session memory (assistant-side): `~/.claude/projects/-Users-suhjungdae-code-software-trading-pysystemtrade/memory/`
-- Continuity: Claude Code works pay-as-you-go with an API key from console.anthropic.com — no subscription needed.
+- Plans: `docs/custom/plans/portfolio_policy.md` · `docs/custom/plans/ib_paper_trading_implementation_plan.md` · `docs/custom/plans/upgrade_surgical_map.md` · `TODO.md`
+- Knowledge loop: `docs/custom/DECISIONS.md` · `docs/custom/learnings/README.md`
+- Research notes: `docs/custom/research/order_flow_and_llm_investing.md`
+- Crucible mistake book: `~/.claude/skills/crucible/shared/mistake-book.md` (Patterns 117-118 from this program)
+- Assistant memory (per machine): `~/.claude/projects/-home-jungdaesuh-code-software-trading-pysystemtrade/memory/`
+  (Mac twin exists under `-Users-suhjungdae-...`)
+- Continuity: Claude Code runs pay-as-you-go with an API key (console.anthropic.com).
