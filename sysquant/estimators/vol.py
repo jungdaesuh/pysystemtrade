@@ -197,3 +197,92 @@ def simple_vol_calc(
     vol = daily_returns.rolling(days, min_periods=min_periods).std()
 
     return vol
+
+
+def har_vol_calc(
+    daily_returns: pd.Series,
+    vol_days_short: int = 5,
+    vol_days_medium: int = 22,
+    vol_days_long: int = 66,
+    har_weights: tuple = (0.4, 0.3, 0.3),
+    min_periods: int = 10,
+    vol_abs_min: float = 0.0000000001,
+    backfill: bool = False,
+    **ignored_kwargs,
+) -> pd.Series:
+    """
+    HAR-style (Corsi 2009) daily volatility, assuming a daily series of returns.
+
+    The Heterogeneous AutoRegressive model blends volatility measured over
+    short/medium/long horizons, reflecting traders acting on daily, weekly and
+    monthly views. Corsi builds it on intraday realized volatility with a fitted
+    regression. We have only daily returns and want a parameter-light estimator,
+    so we make two documented adaptations:
+
+    1. Each horizon component is an EWM standard deviation of daily returns (the
+       same construction as ``simple_ewvol_calc``) rather than an aggregate of
+       intraday realized variance. A single daily return is too noisy to serve
+       as a true 1-day realized-vol component, so the shortest horizon uses a
+       ~1-week EWM (``vol_days_short=5``) as the daily-vol proxy; the medium and
+       long horizons (~1 month / ~1 quarter, 22 / 66 business days) approximate
+       the weekly- and monthly-aggregated realized-vol horizons of the original.
+    2. No regression is fitted. Components are combined with fixed weights
+       (``har_weights``, default ``0.4 / 0.3 / 0.3`` in the spirit of typical
+       HAR-RV coefficient ratios). The weights are normalised to sum to one so
+       the output stays at the daily-vol level of its components: it is a
+       weighted average of estimates of the same quantity, not a sum of
+       variances, so it is directly commensurate with ``simple_ewvol_calc`` and
+       can be dropped in for position sizing without a level bias.
+
+    Strictly causal: pandas ``ewm(...).std()`` at time t uses only observations
+    up to and including t, so each component - and therefore the blend - depends
+    only on data at or before the estimation point. Future returns never affect
+    a past estimate.
+
+    ``days`` from the standard volatility config is intentionally not used (HAR
+    is inherently multi-horizon); it is absorbed by ``ignored_kwargs``.
+
+    Unlike ``robust_vol_calc`` this applies only the absolute minimum vol, NOT
+    the rolling quantile vol floor - so in ultra-low-vol regimes it can size
+    positions larger than the floored estimators would. Intentional (parameter-
+    light), but not position-sizing-identical to the floored siblings there.
+
+    :param daily_returns: Tx1 series of daily returns (not % returns)
+    :param vol_days_short: EWM span for the short (daily-proxy) horizon
+      (*default* 5)
+    :param vol_days_medium: EWM span for the medium (weekly-proxy) horizon
+      (*default* 22)
+    :param vol_days_long: EWM span for the long (monthly-proxy) horizon
+      (*default* 66)
+    :param har_weights: Weights for (short, medium, long); normalised to sum to
+      one (*default* (0.4, 0.3, 0.3))
+    :param min_periods: The minimum number of observations (*default* 10)
+    :param vol_abs_min: The size of absolute minimum (*default* 1e-10)
+    :param backfill: Backfill the leading NaN estimates (*default* False)
+    :returns: Tx1 pd.Series -- daily volatility measure aligned to the input
+    """
+
+    # Each component is standard deviation, nan for the first min_periods
+    # values; all three share min_periods so they turn non-nan on the same date
+    vol_short = simple_ewvol_calc(
+        daily_returns, days=vol_days_short, min_periods=min_periods
+    )
+    vol_medium = simple_ewvol_calc(
+        daily_returns, days=vol_days_medium, min_periods=min_periods
+    )
+    vol_long = simple_ewvol_calc(
+        daily_returns, days=vol_days_long, min_periods=min_periods
+    )
+
+    weights = np.array(har_weights, dtype=float)
+    weights = weights / weights.sum()
+
+    vol = weights[0] * vol_short + weights[1] * vol_medium + weights[2] * vol_long
+
+    vol = apply_min_vol(vol, vol_abs_min=vol_abs_min)
+
+    if backfill:
+        # use the first vol in the past, sort of cheating
+        vol = backfill_vol(vol)
+
+    return vol
