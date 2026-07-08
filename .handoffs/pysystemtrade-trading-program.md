@@ -1,6 +1,6 @@
 # HANDOFF — Personal systematic trading program on pysystemtrade   ·   task-key: pysystemtrade-trading-program
 
-> Updated 2026-07-08 19:24 EDT · Status: infrastructure phase COMPLETE on the Threadripper (broker chain proven, data layer seeded, research factory validated, orchestrated build crucible-PASSed at HEAD `e4cc7134`); blocked on user's two IBKR applications + the data-gap decision; September go-live on schedule.
+> Updated 2026-07-08 20:05 EDT · Status: infrastructure phase COMPLETE; HAR-vs-default campaign JUDGED (no change — third straight null win); remaining work blocked on user's two IBKR applications + the data-gap decision; September go-live on schedule.
 
 ## Goal
 
@@ -26,10 +26,12 @@ Build a production-grade personal systematic trading program on this pysystemtra
 4. [ ] One **supervised `--live` run of deploy_phase1.py against the PAPER account** (DUR207416,
        port 4002) — the live order path is implemented but UNEXERCISED; validate fills + the
        DECISIONS.md block render before the real-money day.
-5. [ ] RESEARCH (unblocked, any session): (a) HAR-vs-default campaign:
-       `.venv/bin/python analysis/research_harness/run_battery.py --variants baseline handcraft
-       shrinkage hrp equal --jobs 5 --bootstrap 2000 --walkforward 10 --vol-func har_vol_calc`
-       vs same without --vol-func; log verdict in DECISIONS.md. (b) Gate 1: define Rob Carver's
+5. [ ] RESEARCH (unblocked, any session): (a) ~~HAR-vs-default campaign~~ DONE 2026-07-08:
+       verdict NO CHANGE — HAR pointwise worse for all 5 variants (baseline −0.042, all CIs
+       straddle zero, P(beats default) 0.13–0.40), vol-target overshoot 37.0 vs 32.9 pctpts;
+       logged in DECISIONS.md; evidence `results/research_battery/20260708_194002_vol-har_vol_calc/`
+       incl. `compare_vs_20260707_212812.csv`. New tool: `analysis/research_harness/compare_runs.py`
+       (paired cross-run bootstrap+walkforward for ANY two archived runs). (b) Gate 1: define Rob Carver's
        target figures + tolerance (none exist in-repo; see TODO.md Phase 1.5) and settle the
        universe question (chapter-15 six can't reproduce his full-system numbers).
        (c) HRP-for-forecast-weights: config-only experiment (`forecast_weight_estimate:
@@ -64,6 +66,10 @@ Build a production-grade personal systematic trading program on this pysystemtra
 - [x] `har_vol_calc` HAR estimator in `sysquant/estimators/vol.py` + `tests/test_har_vol.py`
       (7/7 with HRP tests) — strictly causal (bitwise-proven), drop-in via
       `volatility_calculation.func`, level 0.95× default. NOT wired into any live config.
+- [x] HAR-vs-default campaign JUDGED 2026-07-08 (DECISIONS.md): HAR worse everywhere
+      (mixed_vol_calc's 20-year slow anchor is the load-bearing part); verdict NO CHANGE.
+      Cross-run comparator added: `analysis/research_harness/compare_runs.py` — paired
+      bootstrap + walkforward between any two archived runs' curves.csv.
 - [x] `scripts/ib/deploy_phase1.py` — dry-run/whatIf validated against live paper gateway;
       **`--live` path UNEXERCISED** (next action 4).
 - [x] Orchestrated build reviewed via crucible: 5 lenses, 6 scorers, auditor; verdict FAIL →
