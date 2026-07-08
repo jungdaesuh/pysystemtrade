@@ -45,7 +45,16 @@ live ~Sept 2026 if gates pass, (d) research factory on incoming Threadripper 997
        Helper written: `scripts/data_utilities/bootstrap_key_contracts_from_multiple_prices.py`.
 7. [x] DONE 2026-07-07: bootstrap CIs shipped and run — HRP +0.076 vs baseline,
        95% CI [-0.078, +0.237] → confirmed insignificant (DECISIONS.md outcome closed).
-       NEXT research item: Gate 1 parity runs vs Rob's published figures.
+8. [x] DONE 2026-07-08 (orchestrated build, crucible-PASSed): (a) har_vol_calc estimator
+       (vol.py, +tests 7/7) — judge via `--vol-func har_vol_calc`; (b) battery walk-forward
+       table (`--walkforward N`) with n_eff>=4 CI gate (no CI below ~4 independent windows —
+       prevents falsely-narrow block-bootstrap CIs) + `--vol-func` axis; (c) parity runner
+       audited clean, runs in 7.6s (Gate 1 gaps: target figures + tolerance undefined, stale
+       results/2024-2025 parity JSONs need regeneration, universe question); (d)
+       scripts/ib/deploy_phase1.py — barbell ticket machine, dry-run/whatIf validated on
+       DUR207416; --live path exists but UNEXERCISED (needs one supervised paper run).
+       NEXT research items: HAR vs mixed_vol campaign (bootstrap+walkforward), Gate 1
+       target-figure definition, HRP-for-forecast-weights config experiment.
 
 ## State (with evidence)
 
