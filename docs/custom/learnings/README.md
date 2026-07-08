@@ -45,3 +45,13 @@ Seed entries (from the 2026-07 setup sessions):
   on paper: EURUSD and MES/CME both served daily bars, no CME subscription, unfunded
   account). Rule: the daily production cycle is unblocked pre-funding; the paid CME
   subscription is only required for real-time streaming at live execution time.
+- **Contract sampling anchors on the multiple-prices current row** (2026-07-08):
+  `get_furthest_out_contract_date` reads the LAST multiple-prices row, so a cold start
+  from stale CSVs (ours end 2024-03) generates an already-expired chain → "No contracts
+  marked for sampling" → price pull is a silent no-op. Also: sampling's final check
+  crashes if the row's key contracts aren't in the contract DB — fixed by
+  `scripts/data_utilities/bootstrap_key_contracts_from_multiple_prices.py`. Rule: after
+  seeding stale data, Phase 5/6 REQUIRE the roll-forward stitch (multiple rolls across
+  the gap, IB `includeExpired` fetches for gap contracts — most are within IB's ~2yr
+  post-expiry window) OR a fresher commercial seed (Norgate/CSI/Barchart), which
+  sidesteps the stitch entirely.

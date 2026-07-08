@@ -31,9 +31,18 @@ live ~Sept 2026 if gates pass, (d) research factory on incoming Threadripper 997
        dots in path break pysystemtrade resolution, see learnings), DUR207416 configured,
        `PYSYS_PRIVATE_CONFIG_DIR` in ~/.bashrc.
 6. [~] Phases 3–4 DONE (Mongo 6.0.28 in Docker `pysystemtrade-mongo`; 522 parquet files
-       seeded + sanity-checked; spread costs in Mongo). REMAINING: Phase 5 (first IB price
-       pull via update_sampled_contracts/update_historical_prices) and Phase 6 (manual
-       paper cycle → reconcile report).
+       seeded + sanity-checked; spread costs in Mongo). Phase 5 ATTEMPTED 2026-07-08:
+       sampling + price machinery run clean end-to-end, BUT price pull is a no-op —
+       the contract chain anchors on the stale multiple-prices row (2024-03), so the
+       generated chain is fully expired ("No contracts marked for sampling").
+       **DECISION NEEDED — two ways to close the 2024-03→now gap:**
+       (a) roll-forward stitch: bootstrap gap contract chain, IB fetches with
+       includeExpired (most gap contracts within IB's ~2yr post-expiry window), then
+       repeated roll-forwards of multiple prices per instrument — a careful session
+       for the pilot six, zero cost; or (b) buy fresher seed data (Norgate/CSI/Barchart —
+       importer exists at `sysinit/futures/barchart_futures_contract_prices.py`),
+       ~$30-100/mo, sidesteps the stitch and buys the 100-instrument universe too.
+       Helper written: `scripts/data_utilities/bootstrap_key_contracts_from_multiple_prices.py`.
 7. [x] DONE 2026-07-07: bootstrap CIs shipped and run — HRP +0.076 vs baseline,
        95% CI [-0.078, +0.237] → confirmed insignificant (DECISIONS.md outcome closed).
        NEXT research item: Gate 1 parity runs vs Rob's published figures.
