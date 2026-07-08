@@ -1,0 +1,5 @@
+vol_func,variant,n_windows,mean_window_diff,worst_window_diff,frac_windows_positive,ci95_lo,ci95_hi
+har_vol_calc,handcraft,44,0.018,-0.126,0.614,-0.013,0.053
+har_vol_calc,shrinkage,44,0.043,-0.082,0.773,0.014,0.072
+har_vol_calc,hrp,44,0.118,-0.243,0.818,0.051,0.185
+har_vol_calc,equal,44,0.077,-0.113,0.795,0.035,0.118

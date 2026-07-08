@@ -54,3 +54,28 @@ Entry template:
 - Expectation: IRP CAGR > 3.9% + 1.5pp over any rolling 5-year window.
 - Judge on: first 5-year checkpoint 2031-07-01.
 - Outcome: —
+
+## 2026-07-08 — Experiment verdict: HAR volatility estimator vs default (mixed_vol_calc)
+- Decision: NO production change. `har_vol_calc` stays on the shelf; no config wires it in.
+- Evidence: HAR campaign `results/research_battery/20260708_194002_vol-har_vol_calc/`
+  (5 variants, bootstrap 2000, walkforward 10y) paired cross-run against default-vol run
+  `20260707_212812` via `analysis/research_harness/compare_runs.py` (same stationary-block
+  machinery, common sample 13,422 days); table archived as
+  `compare_vs_20260707_212812.csv` in the HAR run dir.
+- Result: HAR is pointwise WORSE for every variant — Sharpe diff −0.042 (baseline),
+  −0.032 (handcraft), −0.022 (shrinkage), −0.006 (hrp), −0.035 (equal); every 95% CI
+  straddles zero; P(HAR beats default) only 0.13–0.40. Walk-forward (44 rolling 10y
+  windows): mean window diff ≤ 0 for 4/5 variants, frac positive ≤ 0.57 — no regime
+  where HAR reliably helps. Risk side decisively worse: baseline realized vol 37.0 vs
+  32.9 pctpts (12% vol-target overshoot) and worst drawdown −248 vs −179 pctpts.
+- Interpretation: the estimator is correctly built (causality bitwise-proven, 7/7 tests)
+  but the hypothesis "multi-horizon blend improves daily-frequency sizing" is NOT
+  supported here. The default `mixed_vol_calc` blends 30% of a 20-YEAR slow vol — that
+  long anchor damps sizing swings; HAR's longest horizon (66d) is ~80× shorter, so all
+  its components are fast, positions whip more, and realized vol overshoots target.
+  HAR-RV's edge in the literature comes from intraday realized-vol inputs we don't have.
+- Judge on: closed 2026-07-08 (pre-registered same-day judgment: point estimate + CI).
+  Reopen only with (a) true intraday realized-vol inputs, or (b) a HAR variant that
+  keeps a multi-year slow anchor as a fourth component.
+- Outcome: the null (default estimator) wins again — third straight verdict where the
+  boring incumbent survives a challenger. The battery is doing its job.

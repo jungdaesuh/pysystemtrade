@@ -1,0 +1,5 @@
+variant,sharpe_common_window,sharpe_diff_vs_base,ci95_lo,ci95_hi,prob_beats_base
+handcraft,0.458,0.022,-0.063,0.105,0.738
+shrinkage,0.481,0.045,-0.037,0.127,0.868
+hrp,0.548,0.112,-0.041,0.265,0.926
+equal,0.504,0.068,-0.036,0.169,0.912
