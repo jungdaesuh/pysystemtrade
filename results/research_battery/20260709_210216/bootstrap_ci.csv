@@ -1,0 +1,5 @@
+variant,sharpe_common_window,sharpe_diff_vs_base,ci95_lo,ci95_hi,prob_beats_base
+fw_handcraft,0.509,0.031,-0.173,0.241,0.615
+fw_shrinkage,0.437,-0.041,-0.201,0.119,0.316
+fw_hrp,0.439,-0.039,-0.23,0.161,0.344
+fw_equal,0.506,0.027,-0.17,0.233,0.601

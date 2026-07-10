@@ -79,3 +79,29 @@ Entry template:
   keeps a multi-year slow anchor as a fourth component.
 - Outcome: the null (default estimator) wins again — third straight verdict where the
   boring incumbent survives a challenger. The battery is doing its job.
+
+## 2026-07-09 — Experiment verdict: forecast-weight estimation (incl. HRP) vs fixed weights
+- Decision: NO production change. Fixed forecast weights stay; `fw_*` variants remain
+  research flags in the battery.
+- Evidence: `results/research_battery/20260709_210216/` — baseline + fw_handcraft /
+  fw_shrinkage / fw_hrp / fw_equal (new single-axis variants: forecast weights + FDM
+  estimated, instrument weights fixed), bootstrap 2000, walkforward 10y, common
+  13,422-day sample. Baseline anchor reproduced exactly (0.478 / 32.87 / 13,422),
+  validating the battery extension itself.
+- Result: full-period Sharpe diff vs fixed — fw_handcraft +0.031, fw_equal +0.027,
+  fw_shrinkage −0.041, fw_hrp −0.039; every 95% CI straddles zero (and CIs are ~2×
+  wider than on the instrument-weight axis); P(beats base) 0.32–0.62. Walk-forward
+  (44 windows): NO variant wins even half (frac positive ≤ 0.43) and worst windows
+  run −0.31 to −0.48 — full-sample edges are regime-concentrated, not robust. HRP
+  specifically has nothing to cluster at 6 instruments × 4 rules.
+- Side-findings (kept, not acted on): (1) estimated forecast weights + estimated FDM
+  cut realized vol 32.9 → ~27.7 pctpts and worst drawdown −179 → −91..−109 pctpts at
+  similar Sharpe — the estimated FDM is materially more conservative than the fixed
+  one; if drawdown depth ever becomes the binding constraint, this axis is where the
+  lever is. (2) The 2020s collapse that hit ALL estimated instrument-weight variants
+  does NOT recur here (fw_equal 0.484 vs baseline 0.387 in the 2020s) — the collapse
+  mechanism lives in instrument weighting specifically, not in estimation per se.
+- Judge on: closed 2026-07-09. Reopen on the expanded universe (more instruments AND
+  more rules give estimation something to work with).
+- Outcome: the null wins a fourth straight time. Fixed weights remain undefeated at
+  this breadth.

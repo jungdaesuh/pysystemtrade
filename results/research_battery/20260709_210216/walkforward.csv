@@ -1,0 +1,5 @@
+variant,n_windows,mean_window_diff,worst_window_diff,frac_windows_positive,ci95_lo,ci95_hi
+fw_handcraft,44,0.007,-0.314,0.409,-0.103,0.123
+fw_shrinkage,44,-0.067,-0.37,0.295,-0.146,0.023
+fw_hrp,44,-0.063,-0.476,0.364,-0.218,0.106
+fw_equal,44,0.005,-0.418,0.432,-0.152,0.174

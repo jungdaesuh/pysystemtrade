@@ -1,6 +1,6 @@
 # HANDOFF — Personal systematic trading program on pysystemtrade   ·   task-key: pysystemtrade-trading-program
 
-> Updated 2026-07-08 20:05 EDT · Status: infrastructure phase COMPLETE; HAR-vs-default campaign JUDGED (no change — third straight null win); remaining work blocked on user's two IBKR applications + the data-gap decision; September go-live on schedule.
+> Updated 2026-07-09 21:15 EDT · Status: infrastructure COMPLETE; research queue CLEARED (HAR and forecast-weight campaigns both judged: no change — four straight null wins; Gate 1 definition DRAFTED awaiting user adoption); remaining work blocked on user's two IBKR applications + the data-gap decision; September go-live on schedule.
 
 ## Goal
 
@@ -31,11 +31,17 @@ Build a production-grade personal systematic trading program on this pysystemtra
        straddle zero, P(beats default) 0.13–0.40), vol-target overshoot 37.0 vs 32.9 pctpts;
        logged in DECISIONS.md; evidence `results/research_battery/20260708_194002_vol-har_vol_calc/`
        incl. `compare_vs_20260707_212812.csv`. New tool: `analysis/research_harness/compare_runs.py`
-       (paired cross-run bootstrap+walkforward for ANY two archived runs). (b) Gate 1: define Rob Carver's
-       target figures + tolerance (none exist in-repo; see TODO.md Phase 1.5) and settle the
-       universe question (chapter-15 six can't reproduce his full-system numbers).
-       (c) HRP-for-forecast-weights: config-only experiment (`forecast_weight_estimate:
-       method: hrp`). (d) Delete/regenerate stale pre-reset parity JSONs in results/2024-2025.
+       (paired cross-run bootstrap+walkforward for ANY two archived runs).
+       (b) Gate 1: DRAFT definition written 2026-07-09 —
+       `docs/custom/plans/gate1_parity_definition.md` (G1a regression anchor / G1b
+       data-transition bands / G1c sim↔production parity; universe = chapter-15 six by
+       declaration). PENDING USER ADOPTION; G1c comparison script still to write.
+       (c) ~~HRP-for-forecast-weights~~ DONE 2026-07-09: verdict NO CHANGE — fw_hrp −0.039,
+       all fw CIs straddle zero, no fw variant wins ≥50% of walk-forward windows; two
+       side-findings logged (estimated FDM cuts vol/drawdowns materially; 2020s collapse is
+       instrument-axis-specific). Evidence `results/research_battery/20260709_210216/`;
+       battery gained `fw_*` variants. (d) ~~stale parity JSONs~~ DONE 2026-07-09:
+       `results/2024/` + `results/2025/` removed (pre-reset fork artifacts; git history keeps them).
 
 ## State (with evidence)
 
@@ -70,6 +76,12 @@ Build a production-grade personal systematic trading program on this pysystemtra
       (mixed_vol_calc's 20-year slow anchor is the load-bearing part); verdict NO CHANGE.
       Cross-run comparator added: `analysis/research_harness/compare_runs.py` — paired
       bootstrap + walkforward between any two archived runs' curves.csv.
+- [x] Forecast-weight campaign JUDGED 2026-07-09 (DECISIONS.md): battery gained `fw_*`
+      variants (forecast-weight axis, instrument weights fixed); no fw variant beats
+      fixed weights; anchor reproduced exactly through the code change. Fourth null win.
+- [x] Gate 1 parity definition DRAFTED 2026-07-09 (`docs/custom/plans/
+      gate1_parity_definition.md`) — awaiting user adoption; pre-reset `results/2024-2025`
+      parity artifacts deleted (git history retains them).
 - [x] `scripts/ib/deploy_phase1.py` — dry-run/whatIf validated against live paper gateway;
       **`--live` path UNEXERCISED** (next action 4).
 - [x] Orchestrated build reviewed via crucible: 5 lenses, 6 scorers, auditor; verdict FAIL →
@@ -135,8 +147,10 @@ Build a production-grade personal systematic trading program on this pysystemtra
 - **Tax branch** (W-9 resident alien vs W-8BEN NRA) — never stated by user; gates XSP condors,
   IRP reallocation (PFIC/FBAR if W-9), and bond-fund selection. Ask before tax-sensitive moves.
 - **Funding amount** — drives Gate 3, data decision, engine sizing. User decision.
-- **Gate 1 definition** — which Carver published figures, what tolerance, which universe
-  (chapter-15 six ≠ his full system). Must be settled before parity can pass/fail.
+- **Gate 1 definition** — DRAFT at `docs/custom/plans/gate1_parity_definition.md`
+  (replaces figure-parity with G1a anchor / G1b bands / G1c sim↔production; declares
+  the chapter-15 six as parity universe). Needs user adoption + a DECISIONS.md entry;
+  then write the G1c comparison script.
 - **IRP reallocation** (Korean 퇴직연금 at 3.9% guaranteed) — pending tax branch; plan is
   qualified TDF up to 100% or 70/30 index ETFs. Logged in DECISIONS.md.
 
