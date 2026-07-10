@@ -1,8 +1,8 @@
-# Gate 1 — Parity Definition (DRAFT, pending adoption)
+# Gate 1 — Parity Definition (ADOPTED)
 
-> Status: DRAFT 2026-07-08 — proposed by the research session, **not yet adopted**.
-> Adopting this definition is a policy decision (it changes go-live criteria);
-> record adoption in `docs/custom/DECISIONS.md`. Until then Gate 1 remains open.
+> Status: ADOPTED as written 2026-07-10 (user decision, logged in
+> `docs/custom/DECISIONS.md`). G1a passing; G1c script to be written;
+> G1b arms when the gap-stitch lands.
 
 ## Why the original formulation is unfalsifiable
 

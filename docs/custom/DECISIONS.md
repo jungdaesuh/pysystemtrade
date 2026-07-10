@@ -123,3 +123,36 @@ Entry template:
   `~/ibc/config.ini` (mode 600, outside repo). No desktop, monitor, or manual login
   needed — this is also the September production mechanism.
 - Outcome: PASS. Handoff next-action "supervised --live paper run" closed.
+
+## 2026-07-10 — Data gap: FREE GAP-STITCH chosen (user decision)
+- Decision: close the 2024-03→present price gap with `gap_stitch.py` — bootstrap the gap
+  contract chains, IB historical fetches with includeExpired, repeated multiple-price
+  roll-forwards. Pilot = the chapter-15 six. NO vendor subscription.
+- Reasoning: funding plan is <$10k — far below the pre-registered ≥$50k vendor
+  threshold. The cost rule decided this, exactly as designed.
+- Expectation: continuous multiple/adjusted prices through the present for 6
+  instruments; G1b bands hold (full-period Sharpe within ±0.10 of 0.478).
+- Judge on: stitch completion (target before 2026-08-01; IB's ~2yr expiry window
+  decays monthly — oldest gap contracts age out soonest, so sooner is materially better).
+
+## 2026-07-10 — Gate 1 definition ADOPTED as written (user decision)
+- Decision: `docs/custom/plans/gate1_parity_definition.md` adopted unchanged —
+  G1a exact regression anchor (already passing), G1b data-transition bands,
+  G1c sim↔production position parity; parity universe = chapter-15 six by declaration.
+- Next: write the G1c comparison script and archive its first run.
+
+## 2026-07-10 — Tax branch RESOLVED: W-9, resident alien (user answer)
+- Consequence for the 2026-07-07 IRP entry: the W-9 branch fires → PFIC/FBAR exposure
+  applies to Korean pooled funds. IRP reallocation into Korean TDFs/funds is ON HOLD
+  pending professional tax advice (not a DIY determination). FBAR filing itself is
+  likely already required if aggregate foreign accounts exceed $10k.
+- XSP options: no longer blocked on branch-unknown (W-9 = standard US treatment incl.
+  Section 1256 for index options), but remains out of policy scope until revisited.
+
+## 2026-07-10 — Funding range: under $10k initially (user answer)
+- Consequence: barbell fully viable at any size. Futures engine math is now binding:
+  20% of <$10k is <$2k engine capital, BELOW one micro contract's ~$2-3k margin.
+  Gate 3 (minimum-capital report) must formalize this — likely outcomes: raise engine
+  allocation, add capital before go-live, or delay engine start while the barbell runs.
+  Honest math, pre-registered here, to be run as Gate 3 when funding lands.
+- Confirms the free-data path chosen above.
