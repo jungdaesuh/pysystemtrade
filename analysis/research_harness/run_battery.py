@@ -48,6 +48,9 @@ Changing the estimator changes position sizing and hence every metric, so a
 
 Variants toggle instrument-weight estimation method (exercises the custom HRP
 optimiser end-to-end via the config `method:` key -> REGISTER_OF_OPTIMISERS).
+`fw_*` variants instead toggle FORECAST-weight estimation (same optimiser
+registry, applied across trading rules per instrument; instrument weights stay
+fixed) — a single-axis experiment orthogonal to the instrument-weight variants.
 Estimated variants are much slower than baseline: expect minutes-to-hours each.
 
 Metrics convention: pysystemtrade `.percent` curves are ADDITIVE percent-of-
@@ -89,12 +92,24 @@ def _estimated(method: str) -> dict:
     )
 
 
+def _fw_estimated(method: str) -> dict:
+    return dict(
+        use_forecast_weight_estimates=True,
+        use_forecast_div_mult_estimates=True,
+        forecast_weight_estimate=dict(method=method, date_method="expanding"),
+    )
+
+
 VARIANTS = dict(
     baseline=dict(),
     handcraft=_estimated("handcraft"),
     shrinkage=_estimated("shrinkage"),
     hrp=_estimated("hrp"),
     equal=_estimated("equal_weights"),
+    fw_handcraft=_fw_estimated("handcraft"),
+    fw_shrinkage=_fw_estimated("shrinkage"),
+    fw_hrp=_fw_estimated("hrp"),
+    fw_equal=_fw_estimated("equal_weights"),
 )
 
 
