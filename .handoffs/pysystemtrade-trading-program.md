@@ -1,6 +1,6 @@
 # HANDOFF — Personal systematic trading program on pysystemtrade   ·   task-key: pysystemtrade-trading-program
 
-> Updated 2026-07-09 21:15 EDT · Status: infrastructure COMPLETE; research queue CLEARED (HAR and forecast-weight campaigns both judged: no change — four straight null wins; Gate 1 definition DRAFTED awaiting user adoption); remaining work blocked on user's two IBKR applications + the data-gap decision; September go-live on schedule.
+> Updated 2026-07-10 14:10 EDT · Status: PAPER REHEARSAL PASSED (5/5 fills via fully-headless Gateway — IBC+Xvfb, no desktop needed); research queue cleared (four null-win verdicts); Gate 1 draft awaiting adoption; remaining work: user's two IBKR applications + funding + the data-gap decision; September go-live on schedule.
 
 ## Goal
 
@@ -23,9 +23,10 @@ Build a production-grade personal systematic trading program on this pysystemtra
        (b) vendor subscription (Norgate/CSI/Barchart ~$30-100/mo; re-seed sidesteps the stitch
        AND unlocks the 100-instrument universe). Pre-registered rule: buy when funded capital
        ≥~$50k or credibly there within 12mo; else stitch free. Blocks plan Phases 5-6 either way.
-4. [ ] One **supervised `--live` run of deploy_phase1.py against the PAPER account** (DUR207416,
-       port 4002) — the live order path is implemented but UNEXERCISED; validate fills + the
-       DECISIONS.md block render before the real-money day.
+4. [x] ~~Supervised `--live` paper run~~ DONE 2026-07-10: 5/5 fills, $9,948.76 of $10k
+       deployed, commissions $1/leg as estimated, DECISIONS block rendered (see
+       DECISIONS.md 2026-07-10). The live order path is now EXERCISED. Bonus: Gateway
+       is now fully headless (IBC + Xvfb, see Environment) — no desktop needed ever.
 5. [ ] RESEARCH (unblocked, any session): (a) ~~HAR-vs-default campaign~~ DONE 2026-07-08:
        verdict NO CHANGE — HAR pointwise worse for all 5 variants (baseline −0.042, all CIs
        straddle zero, P(beats default) 0.13–0.40), vol-target overshoot 37.0 vs 32.9 pctpts;
@@ -103,8 +104,12 @@ Build a production-grade personal systematic trading program on this pysystemtra
   (also in ~/.bashrc).
 - Mongo: `docker start pysystemtrade-mongo` if down; ping:
   `docker exec pysystemtrade-mongo mongosh --quiet --eval 'db.runCommand({ping:1})'`.
-- Gateway: launch from the DESKTOP app menu ("IB Gateway 10.45"), NOT from a shell
-  (window lands on the wrong display). Login `hftove227` + paper password + Paper toggle + IB Key.
+- Gateway (HEADLESS, since 2026-07-10): `~/ibc/gatewaystart-headless.sh` — Xvfb :99 +
+  IBC 3.24.1 (`~/opt/ibc`) auto-login from `~/ibc/config.ini` (mode 600, has the paper
+  password — never commit). Port 4002 up in ~40s; verify `ss -tln | grep 4002`; logs
+  `~/ibc/logs/ibc-gateway.log`. Version shim: `~/Jts/ibgateway/1045 → ~/ibgateway`.
+  Launcher copy versioned at `scripts/ib/gatewaystart-headless.sh`. Desktop launch is
+  obsolete (and broken while no monitor is attached — see learnings).
 - Tests: `.venv/bin/python -m pytest tests/test_har_vol.py tests/test_hrp.py -q` (7 expected).
 - Regression anchor: `run_battery.py --variants baseline --jobs 1` must print sharpe 0.478 /
   n_days 13422 — any deviation is a regression, not a discovery.

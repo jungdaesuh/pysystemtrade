@@ -55,3 +55,12 @@ Seed entries (from the 2026-07 setup sessions):
   the gap, IB `includeExpired` fetches for gap contracts — most are within IB's ~2yr
   post-expiry window) OR a fresher commercial seed (Norgate/CSI/Barchart), which
   sidesteps the stitch entirely.
+- **Headless IB Gateway = IBC + Xvfb, never the desktop** (2026-07-10) — GNOME's RDP
+  desktop-sharing dies with "Failed to record monitor: Unknown monitor" whenever no
+  physical display is active (sharing mode can only mirror real hardware), which makes
+  any desktop-dependent Gateway launch fragile on a remote/monitor-less box. IBC
+  (~/opt/ibc) + Xvfb + `~/ibc/gatewaystart-headless.sh` auto-logs-in with zero GUI.
+  Bonus root-cause from the same session: a dual-boot machine is TWO tailscale nodes —
+  clients paired to the Windows boot's identity can never reach the Linux boot. Rule:
+  services must never depend on a physical display or a saved desktop session; give
+  every GUI-dependent daemon its own virtual display and scripted login.

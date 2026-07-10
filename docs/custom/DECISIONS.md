@@ -105,3 +105,21 @@ Entry template:
   more rules give estimation something to work with).
 - Outcome: the null wins a fourth straight time. Fixed weights remain undefeated at
   this breadth.
+
+## 2026-07-10 — Paper rehearsal of Phase 1 deployment: PASS (`--live` path exercised)
+- Decision: ran the supervised `--live` deploy_phase1.py rehearsal on PAPER account
+  DUR207416 with $10,000 rehearsal capital, user-confirmed YES, during market hours,
+  via the new fully-headless Gateway (IBC 3.24.1 + Xvfb, auto-login, port 4002).
+- Result: 5/5 orders Filled in under a second — SGOV 68 @ $100.51, VTI 2 @ $372.41,
+  VEA 14 @ $71.06, GLDM 9 @ $81.14, VGIT 11 @ $58.56; $9,948.76 deployed (98.5% of
+  capital; remainder is whole-share rounding), commissions $1.00/leg exactly as the
+  whatIf estimated, three fills price-improved vs their limits. The script's
+  DECISIONS-block output rendered correctly.
+- What this proves: the entire live order path (placeOrder → fill stream → commission
+  reports → record block) works end-to-end. The real-money Phase 1 deploy now needs
+  only: funded U-account + same command with real capital, supervised.
+- Infrastructure note: Gateway now starts headless via `~/ibc/gatewaystart-headless.sh`
+  (copy versioned at `scripts/ib/gatewaystart-headless.sh`); credentials in
+  `~/ibc/config.ini` (mode 600, outside repo). No desktop, monitor, or manual login
+  needed — this is also the September production mechanism.
+- Outcome: PASS. Handoff next-action "supervised --live paper run" closed.
