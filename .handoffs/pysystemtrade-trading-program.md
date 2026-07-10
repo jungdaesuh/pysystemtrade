@@ -1,6 +1,6 @@
 # HANDOFF — Personal systematic trading program on pysystemtrade   ·   task-key: pysystemtrade-trading-program
 
-> Updated 2026-07-10 14:10 EDT · Status: PAPER REHEARSAL PASSED (5/5 fills via fully-headless Gateway — IBC+Xvfb, no desktop needed); research queue cleared (four null-win verdicts); Gate 1 draft awaiting adoption; remaining work: user's two IBKR applications + funding + the data-gap decision; September go-live on schedule.
+> Updated 2026-07-10 14:20 EDT · Status: ALL FOUR open decisions RESOLVED by user (gap-stitch chosen, Gate 1 adopted, W-9 branch, <$10k funding); paper rehearsal PASSED via headless Gateway. Critical path is now BUILD WORK again: gap_stitch.py (before Aug 1) + G1c script. User side: margin application + deposit.
 
 ## Goal
 
@@ -17,12 +17,12 @@ Build a production-grade personal systematic trading program on this pysystemtra
        `.venv/bin/python scripts/ib/deploy_phase1.py --capital <N>` (dry run first; table of
        SGOV 65/VTI 10/VEA 10/GLDM 8/VGIT 7 tickets with whatIf margin preview), then `--live`
        + typed YES during market hours. Record fills in `docs/custom/DECISIONS.md`.
-3. [ ] USER DECISION: **close the 2024-03→now price-data gap** — (a) free roll-forward stitch
-       (write `gap_stitch.py`: bootstrap gap contract chain, IB fetches with includeExpired,
-       repeated multiple-price roll-forwards; pilot six only; window decays monthly) or
-       (b) vendor subscription (Norgate/CSI/Barchart ~$30-100/mo; re-seed sidesteps the stitch
-       AND unlocks the 100-instrument universe). Pre-registered rule: buy when funded capital
-       ≥~$50k or credibly there within 12mo; else stitch free. Blocks plan Phases 5-6 either way.
+3. [ ] **BUILD `gap_stitch.py`** — DECIDED 2026-07-10: free stitch (funding <$10k, under the
+       $50k vendor rule). Bootstrap gap contract chains, IB fetches with includeExpired,
+       repeated multiple-price roll-forwards; pilot = chapter-15 six. Headless Gateway makes
+       IB access one command now. URGENT-ish: IB's ~2yr expiry window decays monthly — the
+       oldest gap contracts (mid-2024 expiries) age out first. Target: before 2026-08-01.
+       Then G1b bands must hold (Sharpe ±0.10 of 0.478) and Phases 5-6 unblock.
 4. [x] ~~Supervised `--live` paper run~~ DONE 2026-07-10: 5/5 fills, $9,948.76 of $10k
        deployed, commissions $1/leg as estimated, DECISIONS block rendered (see
        DECISIONS.md 2026-07-10). The live order path is now EXERCISED. Bonus: Gateway
@@ -149,13 +149,13 @@ Build a production-grade personal systematic trading program on this pysystemtra
 
 ## Open questions / blockers
 
-- **Tax branch** (W-9 resident alien vs W-8BEN NRA) — never stated by user; gates XSP condors,
-  IRP reallocation (PFIC/FBAR if W-9), and bond-fund selection. Ask before tax-sensitive moves.
-- **Funding amount** — drives Gate 3, data decision, engine sizing. User decision.
-- **Gate 1 definition** — DRAFT at `docs/custom/plans/gate1_parity_definition.md`
-  (replaces figure-parity with G1a anchor / G1b bands / G1c sim↔production; declares
-  the chapter-15 six as parity universe). Needs user adoption + a DECISIONS.md entry;
-  then write the G1c comparison script.
+- ~~Tax branch~~ RESOLVED 2026-07-10: **W-9 resident alien** → PFIC/FBAR fires; IRP
+  reallocation ON HOLD pending professional tax advice; FBAR likely already required.
+- ~~Funding amount~~ ANSWERED 2026-07-10: **under $10k initially** → engine capital at
+  20% is below one micro contract's margin; Gate 3 must formalize (raise allocation,
+  add capital, or delay engine while barbell runs).
+- ~~Gate 1 definition~~ ADOPTED 2026-07-10 as written; remaining task: G1c comparison
+  script (sim `futures_system` vs production `run_system_classic` positions, same data).
 - **IRP reallocation** (Korean 퇴직연금 at 3.9% guaranteed) — pending tax branch; plan is
   qualified TDF up to 100% or 70/30 index ETFs. Logged in DECISIONS.md.
 
