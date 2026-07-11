@@ -78,3 +78,9 @@ Seed entries (from the 2026-07 setup sessions):
   fetch under every candidate symbol and keep the longest series; never trust the
   first successful resolution. Bonus: IB peso data has a genuine product-wide hole
   2025-03-17..2025-05-19 (symbology migration) — no listing covers it.
+- **IB Gateway exits itself daily at 23:45 ET** (2026-07-10) — the "Exit Session
+  Setting" shuts the session down every night even in headless mode; IBC logs a clean
+  exit and the API port drops. Rule: anything scheduled against the Gateway must
+  ensure-and-relaunch first, never assume it is still up — `daily_cycle_pilot.py`
+  self-heals (port probe → relaunch via `~/ibc/gatewaystart-headless.sh` → wait for
+  4002), validated end-to-end with the Gateway genuinely down.
