@@ -156,3 +156,26 @@ Entry template:
   allocation, add capital before go-live, or delay engine start while the barbell runs.
   Honest math, pre-registered here, to be run as Gate 3 when funding lands.
 - Confirms the free-data path chosen above.
+
+## 2026-07-10 — Gap stitch EXECUTED and G1b-certified: data current through today
+- Decision: ran `scripts/data_utilities/gap_stitch.py --write` for the chapter-15 six.
+  All six stitched 2024-03-28 → 2026-07-10 with zero skipped contracts; parquet backup
+  at `~/pysystemtrade-backups/gap_stitch_20260710_215710/`.
+- Method (validated in dry runs first): held chains from roll parameters; IB daily
+  bars with includeExpired and endDateTime ANCHORED AT EXPIRY (the production fetcher
+  anchors at now with 1y duration and can never reach the gap); price-scale validation
+  against the seed's own last row (all six: factor 1, matches to the tick); rolls at
+  desired_roll_date clipped to shared data; panama re-stitch; pre-gap daily returns
+  verified bitwise-preserved per instrument.
+- Known approximation (documented): MXP has a genuine 63-day IB data hole
+  2025-03-17..2025-05-19 (CME FX symbology migration; the expired history lives only
+  under the legacy MXP listing, discovered via dual-symbol probing). Bridged with flat
+  returns + differential absorbed into the roll. Portfolio-level impact: none visible
+  (max portfolio-curve gap after boundary: 3 days).
+- G1b verdict (bands ADOPTED this morning): PASS — Sharpe 0.406 (anchor 0.478 ± 0.10),
+  ann_std 34.59 (32.87 ± 15%), n_days 14,018 (> 13,422), backtest last date 2026-07-10.
+  Checker: `analysis/research_harness/g1b_stitch_check.py` (rerunnable any time).
+- Consequence: plan Phases 5-6 UNBLOCKED — contract chains now anchor on live
+  contracts (CORN Z6, EUROSTX/US10/MXP U6, V2X V6, SOFR M9), so production sampling,
+  daily price updates, and the Gate 2 paper reconcile streak can start.
+- Judge on: G1b re-check after the first month of live daily updates (2026-08-10).
