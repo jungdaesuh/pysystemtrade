@@ -11,19 +11,61 @@ contract chains, so this runs the same production functions scoped to them:
                                         for sampled contracts (spike-checked)
   4. update_multiple_adjusted_prices_with_data -- append to multiple/adjusted
 
-Needs the headless Gateway on 4002 (`~/ibc/gatewaystart-headless.sh`) and
+Self-healing: IB Gateway exits itself daily at 23:45 ET, so if port 4002 is
+down this script relaunches it via `~/ibc/gatewaystart-headless.sh` (IBC does
+the full re-login) and waits for the API port before proceeding. Needs
 PYSYS_PRIVATE_CONFIG_DIR. Safe to run repeatedly; a same-day rerun is a no-op.
 
 Usage:
     .venv/bin/python scripts/data_utilities/daily_cycle_pilot.py
 """
+import socket
+import subprocess
+import time
+from pathlib import Path
+
 import pandas as pd
 
 PILOT_INSTRUMENTS = ["CORN", "EUROSTX", "MXP", "SOFR", "US10", "V2X"]
 FX_CODES = ["EURUSD"]
+GATEWAY_PORT = 4002
+GATEWAY_LAUNCHER = Path.home() / "ibc" / "gatewaystart-headless.sh"
+GATEWAY_STARTUP_TIMEOUT_S = 180
+
+
+def port_is_up(port: int) -> bool:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as probe:
+        probe.settimeout(1)
+        return probe.connect_ex(("127.0.0.1", port)) == 0
+
+
+def ensure_gateway() -> None:
+    if port_is_up(GATEWAY_PORT):
+        print(f"gateway already up on {GATEWAY_PORT}")
+        return
+    print(f"gateway down; launching {GATEWAY_LAUNCHER}")
+    subprocess.Popen(
+        [str(GATEWAY_LAUNCHER)],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        start_new_session=True,
+    )
+    deadline = time.time() + GATEWAY_STARTUP_TIMEOUT_S
+    while time.time() < deadline:
+        if port_is_up(GATEWAY_PORT):
+            time.sleep(5)  # let the API layer finish waking after the socket opens
+            print(f"gateway up on {GATEWAY_PORT}")
+            return
+        time.sleep(3)
+    raise SystemExit(
+        f"gateway did not open port {GATEWAY_PORT} within "
+        f"{GATEWAY_STARTUP_TIMEOUT_S}s -- check ~/ibc/logs/ibc-gateway.log"
+    )
 
 
 def main() -> None:
+    ensure_gateway()
+
     from sysdata.data_blob import dataBlob
     from sysproduction.data.contracts import dataContracts
     from sysproduction.data.prices import diagPrices
