@@ -179,3 +179,21 @@ Entry template:
   contracts (CORN Z6, EUROSTX/US10/MXP U6, V2X V6, SOFR M9), so production sampling,
   daily price updates, and the Gate 2 paper reconcile streak can start.
 - Judge on: G1b re-check after the first month of live daily updates (2026-08-10).
+
+## 2026-07-10 — First daily production cycle PASS (pilot six) — Phase 5 complete
+- Decision: brought up the daily price cycle on the stitched data via
+  `scripts/data_utilities/daily_cycle_pilot.py` (production functions scoped to the
+  six; the full-universe runner would spam errors on the ~94 unstitched instruments).
+- Result: FX updated (EURUSD backfilled 3y first — 186-day overlap vs old data at
+  ratio 1.00000); live contract chains SAMPLING (CORN 9, EUROSTX/MXP/US10 3 each,
+  SOFR 15, V2X 6 contracts); per-contract price stores seeded (~250-500 daily rows
+  each) through 2026-07-10; multiple+adjusted current at 2026-07-10 for all six.
+- Known noise, triaged: (1) first-seed spike warnings are false positives (no prior
+  history to compare against) — data wrote anyway except V2X/20260700, a dying
+  contract (expires 2026-07-22) that is no longer price/forward/carry — no impact;
+  (2) "can't get expiry" warnings for already-expired stitch-era contracts — inert;
+  (3) EMAIL_CONTROL/email_store_filename unconfigured — cosmetic, no email alerting.
+- Consequence: the sampling → prices → multiple/adjusted loop is OPERATIONAL. Gate 2
+  (10 clean reconcile days) can start counting from the first automated run.
+- Judge on: first automated Monday run (2026-07-13) — multiple/adjusted must advance
+  to 2026-07-13 without manual help.
