@@ -1,9 +1,9 @@
 # HANDOFF — Personal systematic trading program on pysystemtrade   ·   task-key: pysystemtrade-trading-program
 
-> Updated 2026-07-10 23:40 EDT · Status: DAILY PRODUCTION CYCLE OPERATIONAL — gap stitched + G1b-certified + first live-chain cycle PASSED, all in one day. Data current through 2026-07-10; six instruments sampling live contracts; per-contract stores seeded. Remaining: nightly automation (needs user OK for cron), Gate 2 streak (starts Monday 2026-07-13), G1c script, margin application + deposit (user).
+> Updated 2026-07-11 03:00 EDT · Status: GATE 1 CLOSED (G1a+G1b+G1c all PASS, G1c bitwise) · CRON INSTALLED (weekdays 18:30 ET, self-healing cycle, first firing Mon 2026-07-13) · PHASE 6 PRIMED — capital seeded ($1,000,171), production backtest writing optimal positions, 5 instrument orders ON THE STACK (US10 −1, MXP −1, CORN −29, EUROSTX +4, V2X −58). NEXT SESSION (Monday, market hours): run_stack_handler executes the stack on paper → reconcile → Gate 2 day 1 of 10. User side: margin application + deposit.
 >
-> Daily cycle command (run each evening after ~18:00 ET, Gateway up):
-> `PYSYS_PRIVATE_CONFIG_DIR=$HOME/pysystemtrade-private .venv/bin/python scripts/data_utilities/daily_cycle_pilot.py`
+> Monday session: `phase6_bringup.py` reruns safely (dedup proven); then run_stack_handler
+> (never yet run — the one untested link), then reconcile report.
 
 ## Goal
 
