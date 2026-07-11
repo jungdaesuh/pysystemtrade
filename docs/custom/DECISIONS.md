@@ -197,3 +197,23 @@ Entry template:
   (10 clean reconcile days) can start counting from the first automated run.
 - Judge on: first automated Monday run (2026-07-13) — multiple/adjusted must advance
   to 2026-07-13 without manual help.
+
+## 2026-07-11 — Items 1-3 executed: cron live, GATE 1 CLOSED, Phase 6 loop primed
+- (1) CRON (user-approved): weekday 18:30 ET entry installed running
+  `daily_cycle_pilot.py` (self-healing) with logging to `~/ibc/logs/daily_cycle.log`.
+  First automated run: Monday 2026-07-13.
+- (3) G1c PASS — `analysis/research_harness/g1c_parity_check.py`: sim and production
+  paths produce BITWISE-identical final positions for all six (diff exactly 0.0).
+  With G1a (anchor) and G1b (bands, 2026-07-10): **GATE 1 (parity) is CLOSED — PASS.**
+- (2) Phase 6 bring-up (`scripts/data_utilities/phase6_bringup.py`, idempotent):
+  total capital seeded from paper broker value ($1,000,171); strategy capital 100% to
+  `paper_classic` (wiring added to private_config.yaml); production backtest ran
+  (buffered optimal positions in Mongo, state pickled to
+  ~/pysystemtrade-private/backtests); order generator produced 5 instrument orders,
+  now on the stack: US10 −1, MXP −1, CORN −29, EUROSTX +4, V2X −58 (SOFR inside band,
+  no order — correct). Rerun-dedup verified. Cosmetic: margin-allocation criticals
+  (no margin tracking configured) — inert.
+- Remaining untested link: `run_stack_handler` (contract orders → IB paper execution →
+  fills). First live test Monday during market hours; a clean day = Gate 2 day 1 of 10.
+- Judge on: Monday 2026-07-13 — automated cycle at 18:30 + supervised stack-handler
+  session; positions must reconcile.
