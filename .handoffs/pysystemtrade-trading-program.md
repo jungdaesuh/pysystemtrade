@@ -1,6 +1,9 @@
 # HANDOFF — Personal systematic trading program on pysystemtrade   ·   task-key: pysystemtrade-trading-program
 
-> Updated 2026-07-10 22:15 EDT · Status: GAP STITCHED AND G1b-CERTIFIED same day it was decided — data current through 2026-07-10, backtest Sharpe 0.406 in band, Phases 5-6 UNBLOCKED. Paper rehearsal PASSED, headless Gateway operational, all decisions resolved. Remaining: daily production cycle bring-up + Gate 2 streak (build), G1c script (build), margin application + deposit (user).
+> Updated 2026-07-10 23:40 EDT · Status: DAILY PRODUCTION CYCLE OPERATIONAL — gap stitched + G1b-certified + first live-chain cycle PASSED, all in one day. Data current through 2026-07-10; six instruments sampling live contracts; per-contract stores seeded. Remaining: nightly automation (needs user OK for cron), Gate 2 streak (starts Monday 2026-07-13), G1c script, margin application + deposit (user).
+>
+> Daily cycle command (run each evening after ~18:00 ET, Gateway up):
+> `PYSYS_PRIVATE_CONFIG_DIR=$HOME/pysystemtrade-private .venv/bin/python scripts/data_utilities/daily_cycle_pilot.py`
 
 ## Goal
 
