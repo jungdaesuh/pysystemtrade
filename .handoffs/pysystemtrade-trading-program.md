@@ -1,6 +1,6 @@
 # HANDOFF — Personal systematic trading program on pysystemtrade   ·   task-key: pysystemtrade-trading-program
 
-> Updated 2026-07-10 14:20 EDT · Status: ALL FOUR open decisions RESOLVED by user (gap-stitch chosen, Gate 1 adopted, W-9 branch, <$10k funding); paper rehearsal PASSED via headless Gateway. Critical path is now BUILD WORK again: gap_stitch.py (before Aug 1) + G1c script. User side: margin application + deposit.
+> Updated 2026-07-10 22:15 EDT · Status: GAP STITCHED AND G1b-CERTIFIED same day it was decided — data current through 2026-07-10, backtest Sharpe 0.406 in band, Phases 5-6 UNBLOCKED. Paper rehearsal PASSED, headless Gateway operational, all decisions resolved. Remaining: daily production cycle bring-up + Gate 2 streak (build), G1c script (build), margin application + deposit (user).
 
 ## Goal
 
@@ -17,12 +17,14 @@ Build a production-grade personal systematic trading program on this pysystemtra
        `.venv/bin/python scripts/ib/deploy_phase1.py --capital <N>` (dry run first; table of
        SGOV 65/VTI 10/VEA 10/GLDM 8/VGIT 7 tickets with whatIf margin preview), then `--live`
        + typed YES during market hours. Record fills in `docs/custom/DECISIONS.md`.
-3. [ ] **BUILD `gap_stitch.py`** — DECIDED 2026-07-10: free stitch (funding <$10k, under the
-       $50k vendor rule). Bootstrap gap contract chains, IB fetches with includeExpired,
-       repeated multiple-price roll-forwards; pilot = chapter-15 six. Headless Gateway makes
-       IB access one command now. URGENT-ish: IB's ~2yr expiry window decays monthly — the
-       oldest gap contracts (mid-2024 expiries) age out first. Target: before 2026-08-01.
-       Then G1b bands must hold (Sharpe ±0.10 of 0.478) and Phases 5-6 unblock.
+3. [x] ~~BUILD gap_stitch.py~~ DONE 2026-07-10 same day as decided: all six stitched
+       2024-03→2026-07-10, zero skips, G1b PASS (Sharpe 0.406 in band, n=14,018).
+       `scripts/data_utilities/gap_stitch.py` (rerunnable) + `analysis/research_harness/
+       g1b_stitch_check.py`. MXP carries a documented 63d hole-bridge (IB has no peso
+       data 2025-03-17..2025-05-19, any listing). Backup: `~/pysystemtrade-backups/
+       gap_stitch_20260710_215710/`. **Phases 5-6 now UNBLOCKED** → next build session:
+       `update_sampled_contracts` → `update_historical_prices` → `update_multiple_adjusted_prices`
+       daily cycle on live chains, then the Gate 2 ten-day reconcile streak.
 4. [x] ~~Supervised `--live` paper run~~ DONE 2026-07-10: 5/5 fills, $9,948.76 of $10k
        deployed, commissions $1/leg as estimated, DECISIONS block rendered (see
        DECISIONS.md 2026-07-10). The live order path is now EXERCISED. Bonus: Gateway

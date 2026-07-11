@@ -64,3 +64,17 @@ Seed entries (from the 2026-07 setup sessions):
   clients paired to the Windows boot's identity can never reach the Linux boot. Rule:
   services must never depend on a physical display or a saved desktop session; give
   every GUI-dependent daemon its own virtual display and scripted login.
+- **IB expired-futures history: anchor endDateTime at EXPIRY, not now** (2026-07-10) —
+  IB serves expired contracts ~2y post-expiry, but a request anchored at `now` with
+  duration 1y (what `sysbrokers` production code does) returns only bars inside
+  [now-1y, now] — EMPTY for anything older. `endDateTime=expiry+1d, duration 2Y`
+  returns the contract's real final two years. Alive contracts needing deep history
+  want `3 Y` from now. Rule: when fetching historical bars for a dead contract,
+  anchor the request at the END of its life.
+- **Dual-listed products hide their history under the legacy symbol** (2026-07-10) —
+  CME peso resolves under both `6M` (new, recent contracts only) and `MXP` (legacy,
+  holds the expired history); pysystemtrade's config symbol may be the wrong one for
+  old data, and a resolution that "works" can still be the data-poor listing. Rule:
+  fetch under every candidate symbol and keep the longest series; never trust the
+  first successful resolution. Bonus: IB peso data has a genuine product-wide hole
+  2025-03-17..2025-05-19 (symbology migration) — no listing covers it.
