@@ -251,3 +251,22 @@ Entry template:
 - Lesson (for learnings/): closing a gate requires implementing the ADOPTED criterion,
   not a criterion that happens to pass — and config placement must be verified by the
   CONSUMING code path, not by where writing it felt natural.
+
+## 2026-07-12 — Audit remediation complete: GATE 1 RE-CLOSED under amended, faithful criteria
+- Decision: G1b AMENDED (per-instrument continuity ≤5bd with pre-registered hole-bridge
+  exemptions — exactly one: MXP 2025-03-17..2025-05-19, 44bd; portfolio-calendar
+  checking abolished) and G1c STRENGTHENED (stored Mongo optimal-position bands vs
+  independent recomputation at recorded capital). Both criteria written into
+  gate1_parity_definition.md; both checkers exit nonzero on failure.
+- Results: G1b PASS (all six instruments continuity-clean, MXP via exemption; bands
+  sharpe 0.407 / ann_std 34.58 / n_days 14,018 all in band; exit 0). G1c PASS (stored
+  bands == recomputed bands at recorded capital $1,000,170.58, ≤1e-3 and same rounding,
+  all six; exit 0). With G1a (bitwise anchor, re-verified post-scipy-pin today):
+  **GATE 1 RE-CLOSED — under criteria that can actually fail.**
+- Risk controls configured (audit item 5, paper tier): per-instrument position caps and
+  1-day trade caps at ~2x the current $1M optimal positions (CORN 65, EUROSTX 12,
+  MXP 6, SOFR 12, US10 6, V2X 140), written to Mongo via
+  `scripts/data_utilities/set_paper_limits.py` (idempotent, versioned). Email store
+  configured. Automated kill controls + alerts remain on the before-LIVE list.
+- Monday is now eligible to count as Gate 2 Day 1 IF the supervised stack-handler run
+  and reconcile are clean.
