@@ -270,3 +270,28 @@ Entry template:
   configured. Automated kill controls + alerts remain on the before-LIVE list.
 - Monday is now eligible to count as Gate 2 Day 1 IF the supervised stack-handler run
   and reconcile are clean.
+
+## 2026-07-12 — Audit round 2 adopted: Monday = COMMISSIONING; Gate 2 split PROPOSED (PENDING USER)
+- Decision: second external audit verdict adopted — "GO for tightly supervised Monday
+  pipeline commissioning; NO-GO for calling it final Gate 2 Day 1." Fixes executed this
+  session: (F4) the five pre-cap orders were CANCELLED and REGENERATED through the
+  active position limits (identical quantities, now limit-gated at creation);
+  (F7) lockfile regenerated reproducibly (editable path removed, restore command in
+  header); (F8-partial) private_config.yaml + private_control_config.yaml chmod 600;
+  (F2) G1b checker gaining boundary/coverage/freshness assertions + regression tests;
+  (F3) G1c gaining independent recompute path + reference/order/config-identity
+  comparisons; (F6-partial) daily cycle gaining overlap lock + authenticated broker
+  check + freshness assertion (agents in flight; validated before commit).
+- PROPOSED Gate 2 redefinition (PENDING USER — adopting changes go-live criteria):
+  split into **Gate 2p (process)**: 10 clean days of the paper pipeline on the
+  chapter-15 config — proves execution, reconciliation, ops; and **Gate 2s (strategy)**:
+  ≥10 clean paper days on the ACTUAL go-live configuration (micro contracts, 25% vol,
+  universe set by Gate 3 capital math) before any live order. Monday counts toward
+  Gate 2p only if adopted AND clean. Without adoption, Monday is commissioning only.
+- Honest disposition of the rest: (F5) real alerting needs an SMTP credential only the
+  user can provide (e.g. Gmail app password) — USER ITEM; interim state: criticals go
+  to logs + email.log, reviewed at each supervised session. (F6-remainder) backtest/
+  order/stack/report scheduling stays deliberately MANUAL until 3 clean supervised
+  days, then gets scheduled — pre-registered here. (F8) wildcard :4002 listener needs
+  a sudo firewall rule — USER ITEM (commands in handoff); separate live host + Gate 3
+  + Phase-1 live hardening remain before-live queue, unchanged.

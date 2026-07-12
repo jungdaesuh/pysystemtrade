@@ -1,4 +1,5 @@
--e file:///home/jungdaesuh/code/software/trading/pysystemtrade
+# Frozen from the working .venv (uv pip freeze), editable self-install excluded.
+# Restore: uv venv --python 3.11 .venv && uv pip install -r requirements-lock.txt && uv pip install -e .
 aeventkit==2.1.0
 black==23.11.0
 blinker==1.9.0

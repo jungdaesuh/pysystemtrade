@@ -1,15 +1,21 @@
 # HANDOFF — Personal systematic trading program on pysystemtrade   ·   task-key: pysystemtrade-trading-program
 
-> Updated 2026-07-12 16:00 EDT · Status: **GATE 1 RE-CLOSED under amended faithful
-> criteria** (audit remediation COMPLETE: per-instrument G1b w/ pre-registered MXP
-> exemption PASS exit-0; strengthened G1c stored-vs-recomputed at recorded capital
-> PASS exit-0; paper position+trade limits ENFORCED in Mongo via set_paper_limits.py;
-> deps locked, control config fixed, env fixed). **Monday IS eligible as Gate 2 Day 1**:
-> supervised run_stack_handler (never yet fired) during market hours 9:30-14:00 ET →
-> fills → reconcile report → if clean, Day 1 of 10. Before LIVE futures (unchanged):
-> micro-contract strategy at 25% vol per policy (current config = standard contracts
-> at 20%, validates process only), Gate 3 on real funding, automated kill controls,
-> separate live host. User side: margin application + deposit.
+> Updated 2026-07-12 17:30 EDT · Status: **audit round 2 remediated & validated.**
+> G1b: pure-function checker + 9 regression tests, boundary/coverage/freshness
+> asserts, PASS exit-0. G1c: full order-artifact parity (reference price/contract
+> exact, 5 stack orders match band-derived expectations, config identity, independent
+> sim recompute path), PASS exit-0. Orders REGENERATED through active limits. Daily
+> cycle: overlap lock (proven by concurrent run), authenticated broker check, freshness
+> assertion; the EXACT cron command ran end-to-end EXIT 0. Lockfile reproducible;
+> private configs chmod 600. **Monday = supervised pipeline COMMISSIONING** (stack
+> handler first fire + reconcile). Whether it also counts as Day 1 depends on the
+> PENDING Gate 2p/2s split (DECISIONS 2026-07-12) — USER must adopt/reject.
+> USER items: Gate 2p/2s decision · margin application · deposit · optional SMTP
+> credential for real email alerts · optional sudo ufw rule to close the wildcard
+> :4002 listener (`sudo ufw allow from 127.0.0.1 to any port 4002 && sudo ufw deny 4002`).
+> Before LIVE futures (unchanged): micro-contract strategy at 25% vol, Gate 3 on real
+> funding, automated kill controls (drawdown/reconcile-break/tracking-error), separate
+> live host, scheduled full automation after 3 clean supervised days.
 
 ## Goal
 
