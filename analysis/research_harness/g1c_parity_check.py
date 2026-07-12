@@ -49,12 +49,12 @@ def main() -> None:
         production_system = production_classic_futures_system(data, CONFIG_FILENAME)
         production = final_positions(production_system, PILOT_INSTRUMENTS)
 
-    sim_system = futures_system(
-        data=dbFuturesSimData(), config=Config(CONFIG_FILENAME)
-    )
+    sim_system = futures_system(data=dbFuturesSimData(), config=Config(CONFIG_FILENAME))
     sim = final_positions(sim_system, PILOT_INSTRUMENTS)
 
-    print(f"{'':10}{'sim notional':>14}{'prod notional':>14}{'diff':>12}  buffered band (prod)")
+    print(
+        f"{'':10}{'sim notional':>14}{'prod notional':>14}{'diff':>12}  buffered band (prod)"
+    )
     all_ok = True
     for code in PILOT_INSTRUMENTS:
         diff = production[code]["notional"] - sim[code]["notional"]

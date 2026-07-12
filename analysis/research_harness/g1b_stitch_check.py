@@ -51,15 +51,23 @@ def main() -> None:
     std_ok = abs(ann_std / ANCHOR_ANN_STD - 1) <= ANN_STD_RELATIVE_BAND
     days_ok = n_days > ANCHOR_N_DAYS
 
-    print(f"full-period sharpe : {sharpe:.3f}  (anchor {ANCHOR_SHARPE} +/- {SHARPE_BAND})"
-          f"  {'PASS' if sharpe_ok else 'FAIL'}")
-    print(f"ann_std pctpts     : {ann_std:.2f}  (anchor {ANCHOR_ANN_STD} +/- "
-          f"{ANN_STD_RELATIVE_BAND:.0%})  {'PASS' if std_ok else 'FAIL'}")
-    print(f"n_days             : {n_days}  (> {ANCHOR_N_DAYS})  "
-          f"{'PASS' if days_ok else 'FAIL'}")
+    print(
+        f"full-period sharpe : {sharpe:.3f}  (anchor {ANCHOR_SHARPE} +/- {SHARPE_BAND})"
+        f"  {'PASS' if sharpe_ok else 'FAIL'}"
+    )
+    print(
+        f"ann_std pctpts     : {ann_std:.2f}  (anchor {ANCHOR_ANN_STD} +/- "
+        f"{ANN_STD_RELATIVE_BAND:.0%})  {'PASS' if std_ok else 'FAIL'}"
+    )
+    print(
+        f"n_days             : {n_days}  (> {ANCHOR_N_DAYS})  "
+        f"{'PASS' if days_ok else 'FAIL'}"
+    )
     print(f"last date          : {returns.index[-1].date()}")
-    print(f"max calendar gap after seed boundary: {max_gap}d "
-          f"(63d MXP hole-bridge documented)")
+    print(
+        f"max calendar gap after seed boundary: {max_gap}d "
+        f"(63d MXP hole-bridge documented)"
+    )
     print(f"\nG1b: {'PASS' if (sharpe_ok and std_ok and days_ok) else 'FAIL'}")
 
 
