@@ -1,17 +1,15 @@
 # HANDOFF — Personal systematic trading program on pysystemtrade   ·   task-key: pysystemtrade-trading-program
 
-> Updated 2026-07-12 14:30 EDT · Status: **GATE 1 REOPENED** — external audit VALIDATED
-> (see DECISIONS 2026-07-12; every claim confirmed). Audit items 1-3 FIXED tonight with
-> evidence (scipy pinned + lockfile + anchor bitwise-reverified; private_control_config.yaml
-> created, scheduling now sees paper_classic; zsh/bashrc env fixed; black clean).
-> Monday is a SUPERVISED BRING-UP session, NOT Gate 2 Day 1. Before any day counts:
-> (a) G1b amendment + faithful per-instrument checker (nonzero exit, pre-registered
-> hole exemptions), (b) G1c vs STORED production positions at recorded capital,
-> (c) paper trade/position limits + alerts, (d) then supervised stack handler + clean
-> reconcile. Before LIVE futures additionally: micro-contract strategy at 25% vol per
-> policy (current chapter-15 config is standard contracts at 20% — validates process
-> only), Gate 3 on real funding, kill controls, separate live host.
-> User side unchanged: margin application + deposit.
+> Updated 2026-07-12 16:00 EDT · Status: **GATE 1 RE-CLOSED under amended faithful
+> criteria** (audit remediation COMPLETE: per-instrument G1b w/ pre-registered MXP
+> exemption PASS exit-0; strengthened G1c stored-vs-recomputed at recorded capital
+> PASS exit-0; paper position+trade limits ENFORCED in Mongo via set_paper_limits.py;
+> deps locked, control config fixed, env fixed). **Monday IS eligible as Gate 2 Day 1**:
+> supervised run_stack_handler (never yet fired) during market hours 9:30-14:00 ET →
+> fills → reconcile report → if clean, Day 1 of 10. Before LIVE futures (unchanged):
+> micro-contract strategy at 25% vol per policy (current config = standard contracts
+> at 20%, validates process only), Gate 3 on real funding, automated kill controls,
+> separate live host. User side: margin application + deposit.
 
 ## Goal
 
