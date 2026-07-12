@@ -2,13 +2,21 @@
 
 Implements the adopted criterion faithfully (the original checker tested the
 portfolio calendar only and could not fail a pipeline — see DECISIONS
-2026-07-12 external-audit entry):
+2026-07-12 external-audit entry), hardened after a follow-up audit found the
+gap scan alone let an empty or one-point series report continuity OK:
 
-  1. Per-instrument continuity: every pilot instrument's adjusted price series
-     must have no gap over 5 BUSINESS days after the seed boundary, except
-     windows pre-registered as hole-bridges at stitch time (currently exactly
-     one: MXP, the CME FX-migration hole).
-  2. Portfolio bands vs the frozen-seed anchor: sharpe 0.478 +/- 0.10,
+  1. Boundary anchor: every pilot instrument's adjusted price series must have
+     at least one observation on/before the seed boundary and at least one
+     after (else "no stitched data").
+  2. Per-instrument continuity: no gap over 5 BUSINESS days after the seed
+     boundary, except windows pre-registered as hole-bridges at stitch time
+     (currently exactly one: MXP, the CME FX-migration hole).
+  3. Minimum coverage: post-boundary observations must cover >= 90% of the
+     business days between the boundary and the series' last date, after
+     excluding business days inside exemption windows.
+  4. Freshness: each instrument's last date must be within 5 business days of
+     the freshest last date across the pilot six.
+  5. Portfolio bands vs the frozen-seed anchor: sharpe 0.478 +/- 0.10,
      ann_std 32.87 +/- 15% relative, n_days > 13,422.
 
 Exits nonzero on any failure so pipelines fail closed.
@@ -29,6 +37,8 @@ ANN_STD_RELATIVE_BAND = 0.15
 ANCHOR_N_DAYS = 13422
 SEED_END = pd.Timestamp("2024-03-28")
 MAX_GAP_BDAYS = 5
+MIN_COVERAGE = 0.90
+MAX_STALE_BDAYS = 5
 BDAYS_IN_YEAR = 256
 
 # Pre-registered hole-bridge exemptions (DECISIONS.md 2026-07-10 gap-stitch entry,
@@ -38,30 +48,69 @@ HOLE_EXEMPTIONS = {
 }
 
 
-def instrument_gap_failures(diag) -> list:
+def continuity_failures(
+    dates: pd.DatetimeIndex,
+    exemptions: list[tuple[pd.Timestamp, pd.Timestamp]],
+) -> list[str]:
+    """Pure continuity assertions for one instrument's observation dates.
+
+    Checks the boundary anchor (observations on both sides of SEED_END),
+    post-boundary gaps vs MAX_GAP_BDAYS outside the (start, end) `exemptions`
+    windows, and MIN_COVERAGE of post-boundary business days (exempt business
+    days excluded). Returns human-readable failure strings; empty means pass.
+    """
+    observed = dates.normalize().unique().sort_values()
+    stitched = observed[observed > SEED_END]
+    if len(stitched) == 0 or len(stitched) == len(observed):
+        return [
+            f"no stitched data: {len(observed) - len(stitched)} observations "
+            f"on/before {SEED_END.date()}, {len(stitched)} after"
+        ]
+
     failures = []
-    for code in PILOT_INSTRUMENTS:
-        series = pd.Series(diag.get_adjusted_prices(code)).dropna()
-        stitched = series.index[series.index > SEED_END].normalize().unique()
-        exempt = HOLE_EXEMPTIONS.get(code, [])
-        worst_allowed = 0
-        for previous, current in zip(stitched[:-1], stitched[1:]):
-            gap_bdays = int(np.busday_count(previous.date(), current.date())) - 1
-            if gap_bdays <= MAX_GAP_BDAYS:
-                continue
-            if any(
-                start <= previous and current <= end + pd.Timedelta(days=4)
-                for start, end in exempt
-            ):
-                worst_allowed = max(worst_allowed, gap_bdays)
-                continue
-            failures.append((code, previous.date(), current.date(), gap_bdays))
-        exempt_note = f" (exempt bridge: {worst_allowed}bd)" if worst_allowed else ""
-        print(
-            f"  {code:10} continuity OK{exempt_note}"
-            if not [f for f in failures if f[0] == code]
-            else f"  {code:10} GAP VIOLATION"
+    for previous, current in zip(stitched[:-1], stitched[1:]):
+        gap_bdays = int(np.busday_count(previous.date(), current.date())) - 1
+        if gap_bdays <= MAX_GAP_BDAYS:
+            continue
+        if any(
+            start <= previous and current <= end + pd.Timedelta(days=4)
+            for start, end in exemptions
+        ):
+            continue
+        failures.append(
+            f"{gap_bdays} business days missing "
+            f"{previous.date()}..{current.date()} (no exemption)"
         )
+
+    required = pd.bdate_range(SEED_END + pd.Timedelta(days=1), stitched[-1])
+    for start, end in exemptions:
+        required = required[(required < start) | (required > end)]
+    if len(required):
+        coverage = required.isin(stitched).mean()
+        if coverage < MIN_COVERAGE:
+            failures.append(
+                f"coverage {coverage:.1%} of {len(required)} non-exempt business "
+                f"days {SEED_END.date()}..{stitched[-1].date()} "
+                f"(minimum {MIN_COVERAGE:.0%})"
+            )
+    return failures
+
+
+def freshness_failures(last_dates: dict[str, pd.Timestamp]) -> list[str]:
+    """Pure cross-instrument staleness check on `last_dates` (code -> last
+    observation date, non-empty): every instrument must be within
+    MAX_STALE_BDAYS business days of the freshest last date. Returns
+    human-readable failure strings; empty means pass."""
+    freshest = max(last_dates.values())
+    failures = []
+    for code, last in sorted(last_dates.items()):
+        stale_bdays = int(np.busday_count(last.date(), freshest.date()))
+        if stale_bdays > MAX_STALE_BDAYS:
+            failures.append(
+                f"{code} stale: last observation {last.date()} is {stale_bdays} "
+                f"business days behind freshest {freshest.date()} "
+                f"(max {MAX_STALE_BDAYS})"
+            )
     return failures
 
 
@@ -73,12 +122,39 @@ def main() -> None:
     from systems.provided.futures_chapter15.basesystem import futures_system
 
     print("== per-instrument continuity (adopted criterion) ==")
+    failures = []
+    last_dates = {}
     with dataBlob(log_name="g1b_check") as data:
-        failures = instrument_gap_failures(diagPrices(data))
-    for code, start, end, gap in failures:
+        diag = diagPrices(data)
+        for code in PILOT_INSTRUMENTS:
+            series = pd.Series(diag.get_adjusted_prices(code)).dropna()
+            instrument_failures = continuity_failures(
+                series.index, HOLE_EXEMPTIONS.get(code, [])
+            )
+            print(
+                f"  {code:10} continuity OK"
+                if not instrument_failures
+                else f"  {code:10} CONTINUITY VIOLATION"
+            )
+            failures.extend(f"{code}: {failure}" for failure in instrument_failures)
+            if len(series):
+                last_dates[code] = series.index.max().normalize()
+
+    print("== cross-instrument freshness ==")
+    if last_dates:
+        stale = freshness_failures(last_dates)
         print(
-            f"  FAIL {code}: {gap} business days missing {start}..{end} (no exemption)"
+            f"  freshest last date {max(last_dates.values()).date()}; "
+            + (
+                f"all {len(last_dates)} instruments within {MAX_STALE_BDAYS} bdays"
+                if not stale
+                else f"{len(stale)} STALE"
+            )
         )
+        failures.extend(stale)
+
+    for failure in failures:
+        print(f"  FAIL {failure}")
     continuity_ok = not failures
 
     print("== portfolio bands vs anchor ==")
