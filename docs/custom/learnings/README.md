@@ -84,3 +84,12 @@ Seed entries (from the 2026-07 setup sessions):
   ensure-and-relaunch first, never assume it is still up — `daily_cycle_pilot.py`
   self-heals (port probe → relaunch via `~/ibc/gatewaystart-headless.sh` → wait for
   4002), validated end-to-end with the Gateway genuinely down.
+- **Gates are closed by their adopted text, not by a passing script** (2026-07-12,
+  from a validated external audit) — the G1b checker tested a weaker criterion than
+  the adopted document (portfolio calendar vs per-instrument 5-bd gaps) and printed
+  PASS while MXP sat 44 business days in violation; separately, strategy process
+  config was written to private_config.yaml when the scheduling code reads
+  private_control_config.yaml — it "worked" only via a bypass script. Rule: before
+  declaring any gate/config done, (1) re-read the adopted criterion and diff it
+  against what the checker actually computes, and (2) verify config through the
+  CONSUMING code path (call the reader, not just the writer).

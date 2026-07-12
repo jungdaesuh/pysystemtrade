@@ -94,7 +94,9 @@ class ibDailyBarFetcher:
         # config's IBSymbol may be a local-symbol root that can't resolve
         # expired contracts at all. Fetch under both the config symbol and the
         # instrument code and keep the longest series.
-        candidates = dict.fromkeys([str(self.config["IBSymbol"]), str(self.config.name)])
+        candidates = dict.fromkeys(
+            [str(self.config["IBSymbol"]), str(self.config.name)]
+        )
         best = pd.Series(dtype=float)
         for symbol in candidates:
             series = self._fetch_for_symbol(symbol, contract_id, today)
@@ -288,7 +290,11 @@ def build_gap_segment(
                 hole_start = outgoing_prices.index[-1]
                 hole_end = incoming_prices.index[0]
                 hole_days = (hole_end - hole_start).days
-                if hole_end <= prev_roll or hole_days <= 0 or hole_days > MAX_HOLE_BRIDGE_DAYS:
+                if (
+                    hole_end <= prev_roll
+                    or hole_days <= 0
+                    or hole_days > MAX_HOLE_BRIDGE_DAYS
+                ):
                     raise ValueError(
                         f"cannot bridge {outgoing} -> {incoming}: "
                         f"{hole_days}d hole exceeds {MAX_HOLE_BRIDGE_DAYS}d cap"

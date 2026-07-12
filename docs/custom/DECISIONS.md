@@ -217,3 +217,37 @@ Entry template:
   fills). First live test Monday during market hours; a clean day = Gate 2 day 1 of 10.
 - Judge on: Monday 2026-07-13 — automated cycle at 18:30 + supervised stack-handler
   session; positions must reconcile.
+
+## 2026-07-12 — External audit VALIDATED: Gate 1 REOPENED; remediation items 1-3 done
+- Decision: an external review challenged the program's state; every checkable claim
+  was verified empirically and CONFIRMED. Gate 1 is REOPENED and Gate 2's day count
+  is DEFERRED until the audit's required sequence completes. Adopted in full.
+- Confirmed findings: (1) G1b as adopted (no >5bd gaps) is violated by MXP's 44-bd
+  hole; the checker tested portfolio-calendar only, ignored max_gap in its PASS, and
+  didn't exit nonzero. (2) G1c compared two near-identical constructions, not stored
+  production positions — too weak to close a gate. (3) Strategy/policy mismatch:
+  policy says micro futures at 25% vol; implementation is standard contracts at 20%
+  — the $1M paper run validates PROCESS, not the sub-$10k live strategy. (4)
+  process_configuration_methods was in private_config.yaml but scheduling reads
+  private_control_config.yaml → standard runners saw NO strategies. (5)
+  statsmodels/scipy drift broke reconcile + Gate 3 report imports. (6) No trade/
+  position limits configured. (7) zsh lacked PYSYS_PRIVATE_CONFIG_DIR (and the
+  .bashrc export was mangled onto another line). (8) 4 custom files unformatted.
+- Fixed tonight, with evidence: scipy pinned 1.13.1 (statsmodels imports OK;
+  pyproject bounded scipy<1.15; requirements-lock.txt committed, 45 pins) and the
+  G1a anchor re-verified BITWISE after the downgrade (0.478/32.87/13,422, run
+  20260712_140940). private_control_config.yaml created; live check now returns
+  run_systems -> ['paper_classic'], run_strategy_order_generator -> ['paper_classic'];
+  misplaced block removed from private_config.yaml. ~/.zshrc export added, ~/.bashrc
+  line unmangled. Black applied to all custom scripts (clean).
+- REMAINING before Paper Day 1 counts: (a) amend G1b via decision entry (explicit
+  pre-registered hole-bridge exemptions; per-instrument gap check; nonzero exit) and
+  re-implement the checker faithfully; (b) strengthen G1c to compare STORED production
+  optimal positions vs sim at recorded capital; (c) configure paper trade/position
+  limits + alerts; (d) then the supervised stack-handler run and clean reconcile.
+- REMAINING before live futures (unchanged by tonight): micro-futures strategy config
+  at 25% vol per policy; Gate 3 on real funding; automated kill controls; separate
+  live host; ten representative clean paper days.
+- Lesson (for learnings/): closing a gate requires implementing the ADOPTED criterion,
+  not a criterion that happens to pass — and config placement must be verified by the
+  CONSUMING code path, not by where writing it felt natural.

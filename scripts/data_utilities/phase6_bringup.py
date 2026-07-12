@@ -45,9 +45,7 @@ def main() -> None:
             total = capital.get_current_total_capital()
             print(f"  total capital already set: {total:,.0f}")
         except missingData:
-            broker_value = dataBroker(
-                data
-            ).get_total_capital_value_in_base_currency()
+            broker_value = dataBroker(data).get_total_capital_value_in_base_currency()
             capital.create_initial_capital(
                 broker_account_value=broker_value,
                 total_capital=broker_value,
