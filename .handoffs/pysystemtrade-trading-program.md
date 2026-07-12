@@ -1,9 +1,17 @@
 # HANDOFF — Personal systematic trading program on pysystemtrade   ·   task-key: pysystemtrade-trading-program
 
-> Updated 2026-07-11 03:00 EDT · Status: GATE 1 CLOSED (G1a+G1b+G1c all PASS, G1c bitwise) · CRON INSTALLED (weekdays 18:30 ET, self-healing cycle, first firing Mon 2026-07-13) · PHASE 6 PRIMED — capital seeded ($1,000,171), production backtest writing optimal positions, 5 instrument orders ON THE STACK (US10 −1, MXP −1, CORN −29, EUROSTX +4, V2X −58). NEXT SESSION (Monday, market hours): run_stack_handler executes the stack on paper → reconcile → Gate 2 day 1 of 10. User side: margin application + deposit.
->
-> Monday session: `phase6_bringup.py` reruns safely (dedup proven); then run_stack_handler
-> (never yet run — the one untested link), then reconcile report.
+> Updated 2026-07-12 14:30 EDT · Status: **GATE 1 REOPENED** — external audit VALIDATED
+> (see DECISIONS 2026-07-12; every claim confirmed). Audit items 1-3 FIXED tonight with
+> evidence (scipy pinned + lockfile + anchor bitwise-reverified; private_control_config.yaml
+> created, scheduling now sees paper_classic; zsh/bashrc env fixed; black clean).
+> Monday is a SUPERVISED BRING-UP session, NOT Gate 2 Day 1. Before any day counts:
+> (a) G1b amendment + faithful per-instrument checker (nonzero exit, pre-registered
+> hole exemptions), (b) G1c vs STORED production positions at recorded capital,
+> (c) paper trade/position limits + alerts, (d) then supervised stack handler + clean
+> reconcile. Before LIVE futures additionally: micro-contract strategy at 25% vol per
+> policy (current chapter-15 config is standard contracts at 20% — validates process
+> only), Gate 3 on real funding, kill controls, separate live host.
+> User side unchanged: margin application + deposit.
 
 ## Goal
 
