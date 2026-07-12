@@ -1,6 +1,23 @@
 # HANDOFF — Personal systematic trading program on pysystemtrade   ·   task-key: pysystemtrade-trading-program
 
-> Updated 2026-07-12 17:30 EDT · Status: **audit round 2 remediated & validated.**
+> Updated 2026-07-12 18:00 EDT · Status: **MACHINE PAUSED FOR SHUTDOWN — all clean.**
+> Everything committed & pushed through `5cff3381`; zero uncommitted work. Stopped
+> deliberately: cron entry commented `#PAUSED 2026-07-12#` (restore:
+> `crontab ~/ibc/crontab_backup_20260712.txt`), IB Gateway + Xvfb killed, Mongo
+> stopped gracefully (restart policy unless-stopped → STAYS DOWN after reboot).
+>
+> ## RESUME AFTER REBOOT (in order)
+> 1. `docker start pysystemtrade-mongo` (it will NOT auto-start)
+> 2. Gateway only when needed: `~/ibc/gatewaystart-headless.sh` (or let the cycle self-heal)
+> 3. Re-enable cron when ready: `crontab ~/ibc/crontab_backup_20260712.txt`
+> 4. Five paper orders sit inert on the instrument stack (US10 −1, MXP −1, CORN −29,
+>    EUROSTX +4, V2X −58) — they execute ONLY when run_stack_handler is run supervised.
+> 5. Next milestone: supervised pipeline commissioning during market hours (9:30–14:00
+>    ET weekday) — stack handler first fire → reconcile report.
+> 6. PENDING USER decisions: Gate 2p/2s split adoption (DECISIONS 2026-07-12) · margin
+>    application · deposit · optional SMTP credential · optional ufw rule for :4002.
+>
+> Previous status (audit round 2 remediated & validated):
 > G1b: pure-function checker + 9 regression tests, boundary/coverage/freshness
 > asserts, PASS exit-0. G1c: full order-artifact parity (reference price/contract
 > exact, 5 stack orders match band-derived expectations, config identity, independent
