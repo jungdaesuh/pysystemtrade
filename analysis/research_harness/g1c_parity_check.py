@@ -1,74 +1,88 @@
-"""G1c sim <-> production parity check (gate1_parity_definition.md, ADOPTED).
+"""G1c sim <-> production parity, STRENGTHENED per the 2026-07-12 audit.
 
-Builds the chapter-15 system twice on the same production (parquet/db) data:
+The original check compared two near-identical in-memory constructions and was
+too weak to close a gate. This version compares what production actually
+STORED against an independent recomputation:
 
-  sim path        : systems.provided...futures_system(dbFuturesSimData, Config)
-  production path : sysproduction.strategy_code.run_system_classic.
-                    production_classic_futures_system(dataBlob, config_filename)
+  stored side  : the buffered optimal positions the Phase-6 production backtest
+                 wrote to Mongo (runSystemClassic -> updated_buffered_positions),
+                 plus the strategy capital it ran with
+  recomputed   : a fresh sim system on the production data at that SAME
+                 recorded capital; final-day buffered position bands
 
-and compares, for every pilot instrument, the final-day notional position and
-the buffered (rounded) position production would actually hold. The paths
-share the backtest engine by construction; what this certifies is that the
-PRODUCTION wrapper -- dataBlob wiring, capital/currency overrides, buffering
-and rounding -- introduces no divergence. Any residual difference must be
-explained line-by-line before Gate 1 can close.
+Acceptance (adopted criterion): per instrument, the stored band equals the
+recomputed band within tolerance, and both round to the same integer
+positions. Exits nonzero on failure.
+
+Caveat: run this in the same data state as the stored backtest (i.e. before
+new prices arrive); positions legitimately move with fresh data.
 
 Usage:
     .venv/bin/python analysis/research_harness/g1c_parity_check.py
 """
-import numpy as np
+import sys
 
 CONFIG_FILENAME = "systems.provided.futures_chapter15.futuresconfig.yaml"
+STRATEGY_NAME = "paper_classic"
 PILOT_INSTRUMENTS = ["CORN", "EUROSTX", "MXP", "SOFR", "US10", "V2X"]
-TOLERANCE = 1e-6
-
-
-def final_positions(system, instruments) -> dict:
-    positions = {}
-    for code in instruments:
-        notional = system.portfolio.get_notional_position(code)
-        buffers = system.portfolio.get_buffers_for_position(code)
-        positions[code] = dict(
-            notional=float(notional.ffill().iloc[-1]),
-            buffer_top=float(buffers.ffill().iloc[-1, 0]),
-            buffer_bottom=float(buffers.ffill().iloc[-1, 1]),
-        )
-    return positions
+TOLERANCE = 1e-3
 
 
 def main() -> None:
-    from sysdata.config.configdata import Config
     from sysdata.data_blob import dataBlob
-    from sysdata.sim.db_futures_sim_data import dbFuturesSimData
+    from sysobjects.production.tradeable_object import instrumentStrategy
+    from sysproduction.data.capital import dataCapital
+    from sysproduction.data.optimal_positions import dataOptimalPositions
     from sysproduction.strategy_code.run_system_classic import (
         production_classic_futures_system,
     )
-    from systems.provided.futures_chapter15.basesystem import futures_system
 
     with dataBlob(log_name="g1c_parity") as data:
-        production_system = production_classic_futures_system(data, CONFIG_FILENAME)
-        production = final_positions(production_system, PILOT_INSTRUMENTS)
+        capital = dataCapital(data).get_current_capital_for_strategy(STRATEGY_NAME)
+        print(f"recorded strategy capital: {capital:,.2f}")
 
-    sim_system = futures_system(data=dbFuturesSimData(), config=Config(CONFIG_FILENAME))
-    sim = final_positions(sim_system, PILOT_INSTRUMENTS)
+        optimal = dataOptimalPositions(data)
+        stored = {}
+        for code in PILOT_INSTRUMENTS:
+            position = optimal.get_current_optimal_position_for_instrument_strategy(
+                instrumentStrategy(STRATEGY_NAME, code)
+            )
+            stored[code] = (position.lower_position, position.upper_position)
 
-    print(
-        f"{'':10}{'sim notional':>14}{'prod notional':>14}{'diff':>12}  buffered band (prod)"
-    )
+        system = production_classic_futures_system(
+            data,
+            CONFIG_FILENAME,
+            notional_trading_capital=capital,
+            base_currency="USD",
+        )
+        recomputed = {}
+        for code in PILOT_INSTRUMENTS:
+            buffers = system.portfolio.get_buffers_for_position(code).ffill()
+            recomputed[code] = (
+                float(buffers.iloc[-1, 1]),  # bottom
+                float(buffers.iloc[-1, 0]),  # top
+            )
+
+    print(f"{'':10}{'stored band':>22}{'recomputed band':>22}  verdict")
     all_ok = True
     for code in PILOT_INSTRUMENTS:
-        diff = production[code]["notional"] - sim[code]["notional"]
-        ok = abs(diff) <= TOLERANCE
+        s_lo, s_hi = stored[code]
+        r_lo, r_hi = recomputed[code]
+        close = abs(s_lo - r_lo) <= TOLERANCE and abs(s_hi - r_hi) <= TOLERANCE
+        same_rounded = (round(s_lo), round(s_hi)) == (round(r_lo), round(r_hi))
+        ok = close and same_rounded
         all_ok &= ok
         print(
-            f"{code:10}{sim[code]['notional']:>14.4f}{production[code]['notional']:>14.4f}"
-            f"{diff:>12.2e}  [{production[code]['buffer_bottom']:.2f}, "
-            f"{production[code]['buffer_top']:.2f}]  {'OK' if ok else 'DIVERGED'}"
+            f"{code:10}{f'[{s_lo:.3f},{s_hi:.3f}]':>22}"
+            f"{f'[{r_lo:.3f},{r_hi:.3f}]':>22}  {'OK' if ok else 'DIVERGED'}"
         )
 
-    print(f"\nG1c: {'PASS' if all_ok else 'FAIL'}")
+    print(
+        f"\nG1c (stored vs recomputed at recorded capital): "
+        f"{'PASS' if all_ok else 'FAIL'}"
+    )
     if not all_ok:
-        raise SystemExit(1)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

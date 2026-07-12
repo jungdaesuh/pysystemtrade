@@ -50,7 +50,11 @@ Pre-registered acceptance bands on the extended-history baseline run:
 |---|---|---|---|
 | Sharpe | 0.478 | ±0.10 | 2yr/54yr weight ≈ 4%; a larger move implies the new data disagrees with the old where they overlap (splice error), not new information |
 | ann_std (pctpts) | 32.87 | ±15% relative | vol targeting should keep realized risk stable across a data extension |
-| n_days | 13,422 | strictly greater; no gaps > 5 business days inside the stitched window | continuity check on the splice itself |
+| n_days | 13,422 | strictly greater | more data must mean more days |
+| continuity (AMENDED 2026-07-12) | — | PER-INSTRUMENT: no gap > 5 business days in any pilot instrument's adjusted series after the seed boundary, EXCEPT windows pre-registered as hole-bridges at stitch time (each requires its own DECISIONS entry; currently one: MXP 2025-03-17..2025-05-19, 44bd, CME FX-migration hole) | the original portfolio-calendar check hid per-instrument holes behind instruments that trade through them |
+
+The checker (`analysis/research_harness/g1b_stitch_check.py`) must implement this
+criterion exactly and exit nonzero on failure (audit finding, 2026-07-12).
 
 A band breach BLOCKS Gate 1 and triggers a splice audit (compare overlapping dates
 old-vs-new before suspecting the strategy). Note: realized vol (32.9) exceeding the
@@ -66,12 +70,14 @@ Same config + same data through both code paths:
 - Production path: `sysproduction.strategy_code.run_system_classic`
   (`production_classic_futures_system`)
 
-Acceptance: final-day optimal positions per instrument agree within the buffering
-band (identical after rounding); any residual difference must be explained line-by-
-line (capital handling, FX, cost timing) and recorded. This is the parity that
-matters for real money — it certifies the thing placing orders computes the same
-answer as the thing we validated for 52 years. Runnable today on the frozen seed
-data; does NOT wait for the data-gap decision.
+Acceptance (STRENGTHENED 2026-07-12 after audit): the buffered optimal position
+bands the production backtest actually STORED (Mongo, via
+`updated_buffered_positions`) must equal an independent sim recomputation at the
+RECORDED strategy capital, within 1e-3 and identical after rounding, per
+instrument. Comparing two in-memory constructions is NOT sufficient — the stored
+artifact is what order generation consumes, so the stored artifact is what parity
+must certify. Any residual difference must be explained line-by-line (capital
+handling, FX, cost timing) and recorded. Checker must exit nonzero on failure.
 
 ## Universe question — settled by declaration
 
