@@ -142,20 +142,24 @@ class ibOrdersClient(ibContractsClient):
     ) -> ibOrder:
         ib_BS_str, ib_qty = resolveBS_for_list(trade_list)
 
+        # tif must be explicit: a blank tif trips IB order-preset error 10349,
+        # which this account surfaces as an order-killing error message and the
+        # stack handler then treats the (possibly already filled) order as
+        # cancelled. Same quirk as scripts/ib/deploy_phase1.py.
         if order_type == market_order_type:
-            ib_order = ibMarketOrder(ib_BS_str, ib_qty)
+            ib_order = ibMarketOrder(ib_BS_str, ib_qty, tif="DAY")
         elif order_type is limit_order_type:
             if limit_price is None:
                 self.log.critical("Need to have limit price with limit order!")
                 return missing_order
             else:
-                ib_order = ibLimitOrder(ib_BS_str, ib_qty, limit_price)
+                ib_order = ibLimitOrder(ib_BS_str, ib_qty, limit_price, tif="DAY")
         elif order_type is stop_loss_order_type:
             if limit_price is None:
                 self.log.critical("Need to have limit price with limit order!")
                 return missing_order
             else:
-                ib_order = ibStopOrder(ib_BS_str, ib_qty, limit_price)
+                ib_order = ibStopOrder(ib_BS_str, ib_qty, limit_price, tif="DAY")
 
         elif order_type is snap_mkt_type:
             ## auxPrice is the offset so this will submit an order buy at the best offer, etc

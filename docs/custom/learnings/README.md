@@ -93,3 +93,16 @@ Seed entries (from the 2026-07 setup sessions):
   declaring any gate/config done, (1) re-read the adopted criterion and diff it
   against what the checker actually computes, and (2) verify config through the
   CONSUMING code path (call the reader, not just the writer).
+- **IB error 10349 kills orders in the production path too — and can race a fill**
+  (2026-07-15) — the blank-tif/order-preset quirk fixed in deploy_phase1 also lived in
+  `sysbrokers/IB/client/ib_orders_client.py`: every stack-handler broker order was
+  cancelled at submission, EXCEPT one marketable limit that FILLED in the same second
+  its cancel arrived, creating a broker-vs-system position break. Fix: explicit
+  tif="DAY" at the single order-construction site. Rule: any IB order construction
+  anywhere in the stack must set tif explicitly, and a "cancelled" order can still
+  have filled — always reconcile positions after execution anomalies.
+- **Never flatten broker-side only** (2026-07-15) — fixing the break by selling the
+  stray at IB created the reverse break (system +1, broker 0) because the fill HAD
+  been booked into the system position tables. Rule: reconcile position breaks
+  through the system's own books (balancing adjustments via updatePositions), or
+  book the broker trade into the system — the two ledgers must move together.

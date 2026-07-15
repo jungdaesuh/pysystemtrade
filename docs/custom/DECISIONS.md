@@ -295,3 +295,29 @@ Entry template:
   days, then gets scheduled — pre-registered here. (F8) wildcard :4002 listener needs
   a sudo firewall rule — USER ITEM (commands in handoff); separate live host + Gate 3
   + Phase-1 live hardening remain before-live queue, unchanged.
+
+## 2026-07-15 — COMMISSIONING RUN EXECUTED: pipeline proven, one root-cause fix, one gate discovered
+- What ran: four supervised stack-handler passes during market hours (first-ever
+  execution through this repo's order path). Final state: **EUROSTX +4 COMPLETE at
+  avg 6297.25 (4 slices); V2X -5 of -62 partial at avg 19.97 (5 slices)** — nine real
+  paper fills, every one booked correctly through broker -> contract -> instrument
+  stacks with matching broker-side positions and NO position break at close.
+- Root-cause fix (committed): IB error 10349 (blank tif + order preset) killed every
+  broker order at submission — same quirk as deploy_phase1, now fixed at the source
+  in `sysbrokers/IB/client/ib_orders_client.py` (explicit tif="DAY" on market/limit/
+  stop orders). Proven by the nine fills that followed.
+- Commissioning war stories (all resolved): a marketable EUROSTX limit FILLED at IB in
+  the same second the 10349 message killed it system-side -> position break (broker +1,
+  system 0); flattened broker-side, which created the REVERSE break (system +1, broker
+  0) because fills had been booked after all -> reconciled through the system's own
+  position tables (balancing adjustments), not the broker. Rule captured in learnings.
+  The stray's 43-minute life banked EUR 30 by luck; booked as commissioning noise.
+- DISCOVERED GATE: the 'best' execution algo sizes slices from market depth; CME/CBOT
+  delayed data provides none ("market conditions -> size zero"), so US10/MXP/CORN/SOFR
+  never spawn broker orders. EUREX delayed data works. **Paper trading beyond EUREX
+  requires either (a) CME market-data subscriptions (~$/mo, the cost plan expected
+  this at live anyway) or (b) a market-order algo override for paper.** USER DECISION.
+- Verdict: commissioning PASSED for the pipeline itself (the audit's "GO for
+  supervised commissioning" fulfilled). NOT a Gate 2 day (Gate 2p/2s still PENDING
+  USER; CME instruments blocked). Positions held into tomorrow: EUROSTX +4, V2X -5,
+  with the open V2X instrument order resuming at the next supervised session.
