@@ -321,3 +321,19 @@ Entry template:
   supervised commissioning" fulfilled). NOT a Gate 2 day (Gate 2p/2s still PENDING
   USER; CME instruments blocked). Positions held into tomorrow: EUROSTX +4, V2X -5,
   with the open V2X instrument order resuming at the next supervised session.
+
+## 2026-07-16 — Visa compliance note (J-1): passive investing permitted; futures go-live gets a legal check
+- Research finding (web sources, logged): passive personal investing (stocks/ETFs/
+  bonds, own money) is broadly permitted for J-1 holders — not "employment". The gray
+  zone is frequent, businesslike trading that resembles an occupation, which could be
+  characterized as unauthorized employment. USCIS defines no bright line.
+- Applied to this program: Phase 1 barbell (buy + band-rebalance a few times/yr) is
+  unambiguously passive — GREEN. Paper trading involves no income — no issue. The
+  live futures engine (slow trend-following, low turnover, fully automated, own
+  money, income incidental to the scholar role) sits passive-side of the line but is
+  not zero-gray — AMBER.
+- Pre-registered mitigation: before the September live-futures go-live, one
+  consultation with an immigration attorney (separate from the tax professional)
+  confirming the automated low-turnover engine is consistent with J-1 status; also
+  review sponsor/program documents for outside-activity clauses. Barbell deployment
+  does NOT wait on this.
