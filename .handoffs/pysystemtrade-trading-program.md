@@ -27,11 +27,12 @@ micro futures with clean daily reconciliation, scaled per policy.
        `PYSYS_PRIVATE_CONFIG_DIR=$HOME/pysystemtrade-private .venv/bin/python /tmp/claude-1000/-home-jungdaesuh-code-software-trading-pysystemtrade/8c9c89bb-949f-427e-8784-d203f70fff10/scratchpad/probe_cme_data.py`
        (live-mode reqMktData on conIds SOFR3 395594167 / ZN 840227361 / 6M 761663080;
        real bid/ask sizes = active). Last probe 07-17 00:14: Error 354 all three.
-2. [ ] **Daily data cycle each evening while cron is paused** (positions are held —
-       data currency matters):
+2. [ ] **Evening ops now scheduled (user-approved 2026-07-17)**: system cron RESUMED
+       (18:30 weekdays, daily_cycle_pilot → ~/ibc/logs/daily_cycle.log) + a Claude
+       session-only wakeup 18:47 weekdays (verifies cron, runs EOD stack cleanup +
+       data probe, reports; expires ~07-24 or when session dies — RE-CREATE it in a
+       new session). Manual fallback:
        `PYSYS_PRIVATE_CONFIG_DIR=$HOME/pysystemtrade-private .venv/bin/python scripts/data_utilities/daily_cycle_pilot.py`
-       Last ran 07-17 00:14 → all six current through 07-16, freshness OK, exit 0.
-       Or user says "resume cron": `crontab ~/ibc/crontab_backup_20260712.txt`.
 3. [ ] **Next commissioning session** (market hours; 09:31–14:00 ET best, all venues
        liquid): `... .venv/bin/python scripts/data_utilities/commission_stack_handler.py --minutes 15`
        Outstanding stack: CORN −29, US10 −1, MXP −1, SOFR −1, V2X −62 (−5 already
@@ -98,7 +99,8 @@ micro futures with clean daily reconciliation, scaled per policy.
 - Gates: `analysis/research_harness/g1b_stitch_check.py`, `g1c_parity_check.py`
   (both exit nonzero on fail); anchor: `run_battery.py --variants baseline --jobs 1`
   → 0.478/32.87/13422 exactly.
-- CRON: **PAUSED** (line commented). Resume: `crontab ~/ibc/crontab_backup_20260712.txt`.
+- CRON: RESUMED 2026-07-17 (18:30 weekdays daily cycle, user-approved) + Claude
+  18:47 wakeup (session-only, see next action 2). Backup: ~/ibc/crontab_backup_20260712.txt.
 - Paper account DUR207416: ~$999.7k NLV; futures +4 FESX Sep26, −5 FVS Oct26; five
   ETF rehearsal positions (SGOV 68/VTI 2/VEA 14/GLDM 9/VGIT 11). Live U26413969:
   unfunded, Cash type, futures permissions requested 07-16.
