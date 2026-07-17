@@ -8,7 +8,8 @@
 > 354 on all three ⇒ "next-day activation" ruled mostly out, billing hold on the
 > unfunded live account is now the leading explanation → USER portal check/deposit).
 > Daily cycle ran 07-17 00:14: all six instruments current through 07-16, exit 0.
-> Cron PAUSED since 07-12. Gate 1 CLOSED; Gate 2 not started (2p/2s PENDING USER).
+> Cron PAUSED since 07-12. Gate 1 CLOSED. **Gate 2p/2s ADOPTED 2026-07-17** — clock
+> live, Day 1 = today if clean (criteria + counting rules: DECISIONS 2026-07-17).
 
 ## Goal
 Production-grade personal systematic trading program: (a) real-money barbell per
@@ -34,10 +35,10 @@ micro futures with clean daily reconciliation, scaled per policy.
        Outstanding stack: CORN −29, US10 −1, MXP −1, SOFR −1, V2X −62 (−5 already
        filled). With data active, expect all six to execute. Afterwards run the
        reconcile report (imports work since scipy pin).
-4. [ ] USER DECISIONS pending: **Gate 2p/2s split adoption** (DECISIONS 2026-07-12 —
-       defines when days count); **margin application** status on U26413969; **ACH
-       deposit** (unblocks data billing + Phase 1 barbell deploy); security sudo
-       items below.
+4. [ ] USER DECISIONS pending: **margin application** status on U26413969; **ACH
+       deposit** (unblocks data billing + Phase 1 barbell deploy + Gate 3 math →
+       Gate 2s config); security sudo items below. (Gate 2p/2s: ADOPTED 07-17 —
+       clean-day criteria + counting rules in DECISIONS 2026-07-17.)
 5. [ ] USER security items (from 2026-07-16 audit, commands in DECISIONS/chat):
        remove passwordless sudo (`sudo visudo`); disable SSH password auth; enable
        ufw (allow tailscale0 first!); `sudo apt upgrade` + reboot off-hours.
@@ -73,7 +74,9 @@ micro futures with clean daily reconciliation, scaled per policy.
 - [x] IBKR portal progress 2026-07-16 (user): futures trading permissions signed
       (US + Germany), NP questionnaire signed, CME/CBOT data subscribed — activation
       UNVERIFIED (Error 354 at 18:02 probe).
-- [ ] Gate 2: NOT started; needs 2p/2s adoption + data activation + clean days.
+- [ ] Gate 2p: IN PROGRESS since 2026-07-17 (adopted) — 0/10 clean days; needs ≥3
+      counted days with CME/CBOT execution to close. Gate 2s: config build gated on
+      funding amount (Gate 3 math).
 - [ ] Barbell real-money deploy: waits on deposit (script proven on paper 2026-07-10).
 
 ## Environment & how to run
@@ -98,7 +101,9 @@ micro futures with clean daily reconciliation, scaled per policy.
   unfunded, Cash type, futures permissions requested 07-16.
 
 ## Decisions & rationale (recent; full journal in docs/custom/DECISIONS.md)
-- Gate 2 split PROPOSED (2p process / 2s strategy on micro+25%vol config) — PENDING USER.
+- Gate 2 split ADOPTED 2026-07-17 (2p: 10 clean days chapter-15 pipeline, cumulative,
+  pipeline-defect resets count, ≥3 days must include CME/CBOT execution; 2s: ≥10 days
+  on micro+25%vol go-live config; both before any live order).
 - Free gap-stitch over vendor (funding <$10k); Gate 1 amended criteria; four
   research null-wins; barbell policy; W-9 branch; IRP on hold (PFIC).
 - Paper commissioning verdict: pipeline PASSED; days don't count until 2p/2s adopted.
