@@ -337,3 +337,30 @@ Entry template:
   confirming the automated low-turnover engine is consistent with J-1 status; also
   review sponsor/program documents for outside-activity clauses. Barbell deployment
   does NOT wait on this.
+
+## 2026-07-17 — GATE 2 SPLIT ADOPTED (user: "adopt"): 2p/2s now binding; clock starts today
+- USER DECISION: the 2026-07-12 proposal is adopted as written. **Gate 2p (process)**:
+  10 clean days of the paper pipeline on the chapter-15 config. **Gate 2s (strategy)**:
+  >=10 clean paper days on the actual go-live configuration (micro contracts, 25% vol
+  target, universe set by Gate 3 capital math). BOTH must pass before any live order.
+- Clock: counting starts 2026-07-17 (adoption date). The 2026-07-15 commissioning run
+  met the bar but does NOT count retroactively, per the proposal's own terms.
+- Clean-day criteria (operator interpretation, pre-registered now; user may veto):
+  (1) daily data cycle exit 0, all six pilot instruments fresh within 3bd;
+  (2) system backtest + order generation ran for paper_classic;
+  (3) all spawned orders progressed through the stacks without manual surgery —
+      partial fills carried over (e.g. V2X grinding) are clean;
+  (4) zero unresolved position breaks at day close (system vs broker);
+  (5) no manual data or position repairs.
+- Counting rules (pre-registered): days are cumulative, not consecutive. A day that
+  fails due to an EXTERNAL cause (exchange holiday, vendor outage, data-subscription
+  pending) simply does not count. A day that fails due to a DEFECT IN OUR PIPELINE
+  (anything needing a code fix in the order/data path) RESETS the 2p count to zero —
+  the gate exists to prove the process, so a process defect restarts the proof.
+- CME-data blockage ruling (the 07-15 discovered gate): while CME/CBOT data remains
+  inactive, an otherwise-clean day counts toward 2p, BUT Gate 2p cannot CLOSE until
+  at least 3 counted days include broker-order execution on CME/CBOT instruments —
+  the US leg must be proven end-to-end, not just EUREX.
+- Consequence: Gate 2s work (micro + 25%-vol config build) is gated on the funding
+  amount (Gate 3 capital math) -> waits on the user's deposit decision. 2p and 2s
+  days may overlap once the 2s config exists.
