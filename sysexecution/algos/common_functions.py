@@ -1,5 +1,8 @@
 # functions used by multiple algos
 import time
+
+import numpy as np
+
 from sysdata.data_blob import dataBlob
 from sysproduction.data.broker import dataBroker
 from syscore.genutils import quickTimer
@@ -75,6 +78,10 @@ def check_current_limit_price_at_inside_spread(
 
     ticker_object = broker_order_with_controls.ticker
     current_side_price = ticker_object.current_side_price
+
+    # no valid quote on our side of the book: no basis to move the limit price
+    if np.isnan(current_side_price):
+        return limit_price_is_at_inside_spread
 
     if current_limit_price == current_side_price:
         return limit_price_is_at_inside_spread
