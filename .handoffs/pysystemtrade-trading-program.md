@@ -1,12 +1,14 @@
 # HANDOFF — Personal systematic trading program on pysystemtrade   ·   task-key: pysystemtrade-trading-program
 
-> Updated 2026-07-16 23:53 EDT · Status: **PAPER SYSTEM IS LIVE WITH POSITIONS** —
+> Updated 2026-07-17 00:15 EDT · Status: **PAPER SYSTEM IS LIVE WITH POSITIONS** —
 > commissioning executed 2026-07-15 (9 real paper fills; EUROSTX +4 complete @ avg
 > 6297.25, V2X −5 of −62 partial @ avg 19.97; NLV ~$999.7k). Four US instruments
 > (CORN/US10/MXP/SOFR) blocked on CME+CBOT data-subscription ACTIVATION (bought
-> 2026-07-16 pm; probe at 18:02 still "Error 354 not subscribed" — likely held on the
-> unfunded live account or next-day activation). Cron PAUSED since 07-12 shutdown.
-> Gate 1 CLOSED (amended criteria); Gate 2 not started (2p/2s split PENDING USER).
+> 2026-07-16 pm; re-probed 07-17 00:14 in LIVE mode with exact conIds — still Error
+> 354 on all three ⇒ "next-day activation" ruled mostly out, billing hold on the
+> unfunded live account is now the leading explanation → USER portal check/deposit).
+> Daily cycle ran 07-17 00:14: all six instruments current through 07-16, exit 0.
+> Cron PAUSED since 07-12. Gate 1 CLOSED; Gate 2 not started (2p/2s PENDING USER).
 
 ## Goal
 Production-grade personal systematic trading program: (a) real-money barbell per
@@ -15,16 +17,17 @@ policy, (b) paper futures pipeline against IBKR through three gates, (c) engine 
 micro futures with clean daily reconciliation, scaled per policy.
 
 ## Next actions  (start here)
-1. [ ] **Verify CME/CBOT data active** (blocks the 4 US instruments): user checks
-       Portal → Settings → Market Data Subscriptions for Active/Pending/billing flag;
-       machine-side probe:
-       `PYSYS_PRIVATE_CONFIG_DIR=$HOME/pysystemtrade-private .venv/bin/python -` with
-       ib_async reqMktData on ZN/SOFR3 after `reqMarketDataType(1)` — live bid/ask
-       sizes = active. Likely requires the LIVE-account deposit to land first (fees
-       bill there; balance $0).
+1. [ ] **Verify CME/CBOT data active** (blocks the 4 US instruments): USER checks
+       Portal → Settings → Market Data Subscriptions for Active/Pending/billing flag
+       (probably needs the LIVE-account deposit — fees bill there; balance $0).
+       Machine-side probe script (re-runnable):
+       `PYSYS_PRIVATE_CONFIG_DIR=$HOME/pysystemtrade-private .venv/bin/python /tmp/claude-1000/-home-jungdaesuh-code-software-trading-pysystemtrade/8c9c89bb-949f-427e-8784-d203f70fff10/scratchpad/probe_cme_data.py`
+       (live-mode reqMktData on conIds SOFR3 395594167 / ZN 840227361 / 6M 761663080;
+       real bid/ask sizes = active). Last probe 07-17 00:14: Error 354 all three.
 2. [ ] **Daily data cycle each evening while cron is paused** (positions are held —
        data currency matters):
        `PYSYS_PRIVATE_CONFIG_DIR=$HOME/pysystemtrade-private .venv/bin/python scripts/data_utilities/daily_cycle_pilot.py`
+       Last ran 07-17 00:14 → all six current through 07-16, freshness OK, exit 0.
        Or user says "resume cron": `crontab ~/ibc/crontab_backup_20260712.txt`.
 3. [ ] **Next commissioning session** (market hours; 09:31–14:00 ET best, all venues
        liquid): `... .venv/bin/python scripts/data_utilities/commission_stack_handler.py --minutes 15`
