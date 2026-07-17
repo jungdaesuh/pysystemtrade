@@ -8,8 +8,10 @@
 > 354 on all three ⇒ "next-day activation" ruled mostly out, billing hold on the
 > unfunded live account is now the leading explanation → USER portal check/deposit).
 > Daily cycle ran 07-17 00:14: all six instruments current through 07-16, exit 0.
-> Cron PAUSED since 07-12. Gate 1 CLOSED. **Gate 2p/2s ADOPTED 2026-07-17** — clock
-> live, Day 1 = today if clean (criteria + counting rules: DECISIONS 2026-07-17).
+> Cron PAUSED since 07-12. Gate 1 CLOSED. **Gate 2p/2s ADOPTED 2026-07-17**; the
+> 07-17 session found+fixed a zero-limit-price defect (IB sentinel quotes, commit
+> `7ce72fb0`) so per counting rules the day does NOT count — **next Day-1 candidate
+> Mon 2026-07-20** on fixed code. Positions: EUROSTX +4, V2X −7 (2 more fills @20.30).
 
 ## Goal
 Production-grade personal systematic trading program: (a) real-money barbell per
@@ -74,9 +76,10 @@ micro futures with clean daily reconciliation, scaled per policy.
 - [x] IBKR portal progress 2026-07-16 (user): futures trading permissions signed
       (US + Germany), NP questionnaire signed, CME/CBOT data subscribed — activation
       UNVERIFIED (Error 354 at 18:02 probe).
-- [ ] Gate 2p: IN PROGRESS since 2026-07-17 (adopted) — 0/10 clean days; needs ≥3
-      counted days with CME/CBOT execution to close. Gate 2s: config build gated on
-      funding amount (Gate 3 math).
+- [ ] Gate 2p: IN PROGRESS — 0/10 clean days (07-17 attempt voided by the
+      zero-limit-price defect per counting rules; fixed + 8 regression tests,
+      commit `7ce72fb0`; next candidate Mon 07-20). Needs ≥3 counted days with
+      CME/CBOT execution to close. Gate 2s: config build gated on funding (Gate 3).
 - [ ] Barbell real-money deploy: waits on deposit (script proven on paper 2026-07-10).
 
 ## Environment & how to run
