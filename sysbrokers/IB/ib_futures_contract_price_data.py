@@ -1,3 +1,5 @@
+import numpy as np
+
 from syscore.dateutils import Frequency, DAILY_PRICE_FREQ
 from syscore.exceptions import missingContract, missingData
 from sysdata.data_blob import dataBlob
@@ -19,6 +21,16 @@ from sysobjects.contracts import futuresContract, listOfFuturesContracts
 from syslogging.logger import *
 
 
+def quote_price_or_nan_if_sentinel(quote_price: float) -> float:
+    # IB publishes sentinel quotes for an empty side of the book: -1, and 0 on
+    # delayed feeds. A genuine top-of-book futures quote is strictly positive,
+    # so normalise sentinels to nan and the isnan validity checks in
+    # sysexecution.tick_data treat them as missing data rather than prices.
+    if quote_price <= 0:
+        return np.nan
+    return quote_price
+
+
 class ibTickerObject(tickerObject):
     def __init__(self, ticker_with_BS: tickerWithBS, broker_client: ibPriceClient):
         ticker = ticker_with_BS.ticker
@@ -33,10 +45,10 @@ class ibTickerObject(tickerObject):
         self._broker_client.refresh()
 
     def bid(self):
-        return self.ticker.bid
+        return quote_price_or_nan_if_sentinel(self.ticker.bid)
 
     def ask(self):
-        return self.ticker.ask
+        return quote_price_or_nan_if_sentinel(self.ticker.ask)
 
     def bid_size(self):
         return self.ticker.bidSize

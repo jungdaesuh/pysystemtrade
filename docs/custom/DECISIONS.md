@@ -364,3 +364,28 @@ Entry template:
 - Consequence: Gate 2s work (micro + 25%-vol config build) is gated on the funding
   amount (Gate 3 capital math) -> waits on the user's deposit decision. 2p and 2s
   days may overlap once the 2s config exists.
+
+## 2026-07-17 — Day-1 attempt: 2 clean V2X fills, then a pipeline defect found, root-fixed same day; day does NOT count
+- Session (10:39-10:55 ET, supervised): EOD stack hygiene (safe_stack_removal cleared
+  the stale 07-15 orders, partial fills preserved), fresh backtest + order generation
+  through limits (5 orders; EUROSTX correctly zero — held +4 sits inside its band),
+  then the stack-handler pass. V2X filled -2 @ 20.30 (broker -7 == system -7, zero
+  break). US instruments still size-zero (CME data inactive, probed 10:33: Error 354).
+- DEFECT: five consecutive V2X broker orders rejected by IB — Error 201 "Message must
+  contain field # 44" (FIX Price). DB evidence: all five stored limit_price=0.0 from
+  offside_price=0.0 — the delayed EUREX feed published a ZERO BID (empty-book
+  sentinel) and the tick validity gate only checked isnan, so 0.0 passed as a real
+  quote. Two filled orders just before had genuine prices (20.35/20.40).
+- ROOT FIX (committed, tested): (1) `sysbrokers/IB/ib_futures_contract_price_data.py`
+  `quote_price_or_nan_if_sentinel` — bid/ask <= 0 normalised to nan at the IB ticker
+  boundary, restoring every downstream isnan validity gate; (2) the aggressive
+  re-peg path (`check_current_limit_price_at_inside_spread`) returns the no-change
+  sentinel on a nan side price instead of proposing nan as the new limit.
+  8 regression tests in `tests/test_execution_quote_validity.py` (17 pass with G1).
+- GATE 2p RULING (per the adopted counting rules, same day): this is a DEFECT IN OUR
+  PIPELINE requiring a code fix in the order path -> 2026-07-17 does NOT count and
+  the count resets (0 -> 0; no prior days lost). Next Day-1 candidate: Monday
+  2026-07-20, running the fixed code.
+- Bookkeeping: the five rejected zero-fill broker orders remain on the stack for
+  tonight's EOD cleanup (allow_zero_completions); positions after session:
+  EUROSTX +4, V2X -7, NLV ~$997.6k paper.

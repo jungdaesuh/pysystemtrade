@@ -106,3 +106,14 @@ Seed entries (from the 2026-07 setup sessions):
   been booked into the system position tables. Rule: reconcile position breaks
   through the system's own books (balancing adjustments via updatePositions), or
   book the broker trade into the system — the two ledgers must move together.
+- **IB sentinel quotes are not prices — normalise at the broker boundary**
+  (2026-07-17) — IB delayed feeds publish 0.0 (and IB generally uses -1) for an
+  empty side of the book. The tick validity gate only checked isnan, so a zero
+  V2X bid flowed through the 'best' algo as offside price -> limit_price=0.0 ->
+  five IB rejections "Error 201: Message must contain field # 44" (FIX field 44
+  = Price; ib_async serialises the zero as unset). Fix at the ingestion SSOT:
+  `ibTickerObject.bid()/ask()` normalise quotes <= 0 to nan
+  (`quote_price_or_nan_if_sentinel`), so every downstream isnan gate holds; plus
+  the aggressive re-peg path returns no-change when the side price is nan. Rule:
+  broker adapters must translate vendor sentinels into the system's own
+  missing-data representation at the boundary — never let them travel as values.
