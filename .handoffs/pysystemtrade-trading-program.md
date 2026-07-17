@@ -125,6 +125,11 @@ micro futures with clean daily reconciliation, scaled per policy.
 
 ## Open questions / blockers
 - CME/CBOT data activation (next action 1) — likeliest hold: unfunded live account.
+  Probes all Error 354: 07-16 18:02, 07-17 00:14 / 10:33 / 19:17.
+- WATCH: EUROSTX 07-17 intraday sampling filled FORWARD (Dec26) but PRICE (Sep26)
+  came back NaN → adjusted series stops at 07-16 while multiple is current. Should
+  self-heal at Monday's sampling; if PRICE is still NaN then, investigate Sep26
+  contract sampling before the session.
 - Margin application status — user hasn't confirmed submitting it.
 - Funding amount/timing — gates Gate 3, barbell deploy, data billing.
 - Gate 2p/2s adoption — user.
