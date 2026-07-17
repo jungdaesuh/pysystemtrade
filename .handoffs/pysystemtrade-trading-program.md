@@ -8,7 +8,7 @@
 > 354 on all three ⇒ "next-day activation" ruled mostly out, billing hold on the
 > unfunded live account is now the leading explanation → USER portal check/deposit).
 > Daily cycle ran 07-17 00:14: all six instruments current through 07-16, exit 0.
-> Cron PAUSED since 07-12. Gate 1 CLOSED. **Gate 2p/2s ADOPTED 2026-07-17**; the
+> Cron RESUMED 07-17 + 18:47 Claude wakeup. Gate 1 CLOSED. **Gate 2p/2s ADOPTED 2026-07-17**; the
 > 07-17 session found+fixed a zero-limit-price defect (IB sentinel quotes, commit
 > `7ce72fb0`) so per counting rules the day does NOT count — **next Day-1 candidate
 > Mon 2026-07-20** on fixed code. Positions: EUROSTX +4, V2X −7 (2 more fills @20.30).
@@ -35,9 +35,10 @@ micro futures with clean daily reconciliation, scaled per policy.
        `PYSYS_PRIVATE_CONFIG_DIR=$HOME/pysystemtrade-private .venv/bin/python scripts/data_utilities/daily_cycle_pilot.py`
 3. [ ] **Next commissioning session** (market hours; 09:31–14:00 ET best, all venues
        liquid): `... .venv/bin/python scripts/data_utilities/commission_stack_handler.py --minutes 15`
-       Outstanding stack: CORN −29, US10 −1, MXP −1, SOFR −1, V2X −62 (−5 already
-       filled). With data active, expect all six to execute. Afterwards run the
-       reconcile report (imports work since scipy pin).
+       Stacks are cleared nightly (EOD cleanup) — Monday's session starts with
+       phase6_bringup.py to regenerate orders from fresh optimals (07-17 optimals
+       were ~CORN −27, US10 −1, MXP −1, SOFR −2, V2X −58 remaining). With data
+       active, expect all six to execute. Afterwards run the reconcile report.
 4. [ ] USER DECISIONS pending: **margin application** status on U26413969; **ACH
        deposit** (unblocks data billing + Phase 1 barbell deploy + Gate 3 math →
        Gate 2s config); security sudo items below. (Gate 2p/2s: ADOPTED 07-17 —
