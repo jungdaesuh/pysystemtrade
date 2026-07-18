@@ -48,7 +48,13 @@ micro futures with clean daily reconciliation, scaled per policy.
 5. [ ] USER security items (from 2026-07-16 audit, commands in DECISIONS/chat):
        remove passwordless sudo (`sudo visudo`); disable SSH password auth; enable
        ufw (allow tailscale0 first!); `sudo apt upgrade` + reboot off-hours.
-6. [ ] Pre-registered follow-ups: schedule full automation only after 3 clean
+6. [ ] **Battery slot 1 RUNNING since 07-18 ~02:50** (queue adopted, DECISIONS
+       2026-07-18): 8 estimation variants re-run post-#1650 fix, jobs=4. On
+       completion: `compare_runs.py` each vs base run `20260718_023309`, log
+       verdicts (re-certify nulls or overturn), then slot 2 (slow breakout).
+       If found dead after a session restart: re-launch same command (specs in
+       lit_review_upgrades_2026-07-18.md).
+7. [ ] Pre-registered follow-ups: schedule full automation only after 3 clean
        supervised days; G1b re-check 2026-08-10; immigration-attorney consult before
        live go-live (visa note, DECISIONS 2026-07-16); tax pro (PFIC/FBAR).
 
