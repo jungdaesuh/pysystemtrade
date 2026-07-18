@@ -421,3 +421,19 @@ Entry template:
   slow breakout, speed pruning, normalised momentum, seasonal carry,
   vol-blend/buffer sweep); Tier-1 hygiene timing (statsmodels 0.14.6 +
   drop scipy pin); upstream PR contributions yes/no.
+
+## 2026-07-18 — BATTERY QUEUE ADOPTED (user: "approve queue"); slot 1 correction re-run STARTED
+- USER DECISION: Tier-2 queue adopted in proposed order: (1) correction re-run
+  of both estimation experiments post-#1650; (2) slow breakout ensemble;
+  (3) speed pruning; (4) normalised momentum; (5) seasonally-adjusted carry;
+  (6) vol-blend/buffer sweep. One slot at a time, verdict logged win-or-null
+  before the next; specs in docs/custom/plans/lit_review_upgrades_2026-07-18.md.
+- Slot 1 PRE-REGISTRATION (started 2026-07-18 ~02:50 EDT, jobs=4): all eight
+  original estimation variants (handcraft/shrinkage/hrp/equal x instrument,
+  fw_ x forecast), identical specs to the 2026-07-08/07-11 originals, on
+  post-fix code. Baseline for pairing: run 20260718_023309 (post-fix anchor,
+  bitwise-identical to the pre-fix anchor). Hypotheses unchanged from the
+  originals; expectation: still null (DeMiguel; Carver random-data). Any
+  variant whose paired bootstrap now EXCLUDES zero in favour of estimation
+  overturns the original null and gets a fresh DECISIONS verdict; otherwise
+  the original nulls are RE-CERTIFIED on clean code.
