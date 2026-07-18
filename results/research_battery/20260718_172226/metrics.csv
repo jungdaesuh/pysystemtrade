@@ -1,0 +1,7 @@
+variant,window,ann_return_pctpts,ann_std_pctpts,sharpe,worst_drawdown_pctpts,n_days
+carry_seasonal,full,14.87,32.39,0.459,-179.97,13422
+carry_seasonal,1980s,14.81,36.01,0.411,-120.38,2609
+carry_seasonal,1990s,23.42,31.48,0.744,-90.71,2610
+carry_seasonal,2000s,12.31,27.96,0.44,-68.77,2609
+carry_seasonal,2010s,10.12,21.84,0.463,-47.36,2608
+carry_seasonal,2020s,8.7,23.75,0.366,-43.45,1107

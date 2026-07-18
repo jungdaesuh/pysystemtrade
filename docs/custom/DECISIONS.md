@@ -521,3 +521,13 @@ Entry template:
   diff vs baseline > 0. Else NULL. Secondary (reported, non-deciding):
   effect concentration in CORN, cost drag delta. Paired vs run
   20260718_172032's baseline (bitwise-validated anchor with gross curves).
+
+## 2026-07-18 — SLOT-5 VERDICT: seasonally-adjusted carry NULL (significantly negative)
+- Run 20260718_172226 paired vs 20260718_172032 baseline: diff -0.019, CI95
+  [-0.036, -0.003] (excludes zero on the NEGATIVE side), P(beat)=0.009,
+  walk-forward 2.3% windows positive. Worse in all five decades.
+- VERDICT: NULL and rejected with prejudice — the AFTS-style seasonal mean at
+  our spec (256bd, scalar 30, 0.125 weight) HURT. Rule remains quarantined in
+  battery_rules.py; carry keeps 0.50. Secondary (CORN concentration) moot at
+  a negative portfolio-level result.
+- Queue: slot 6 (vol-blend x span x buffer validation sweep) — final slot.
