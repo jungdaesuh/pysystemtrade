@@ -437,3 +437,21 @@ Entry template:
   variant whose paired bootstrap now EXCLUDES zero in favour of estimation
   overturns the original null and gets a fresh DECISIONS verdict; otherwise
   the original nulls are RE-CERTIFIED on clean code.
+
+## 2026-07-18 — SLOT-1 VERDICT: all eight estimation nulls RE-CERTIFIED on fixed code (with an honest asterisk)
+- Run 20260718_171342 (8 variants, specs identical to originals, post-#1650
+  code); paired vs post-fix anchor baseline 20260718_023309; statistics =
+  harness bootstrap (2000 reps, 25d blocks) + 10y walk-forward. Table:
+  results/research_battery/20260718_171342/variant_vs_baseline_postfix.csv.
+- PRE-REGISTERED PRIMARY (bootstrap CI excludes zero): NOT met by any variant
+  -> original nulls re-certified; production stays on fixed handcrafted
+  weights. The record is now clean: nulls hold on correct code.
+- HONEST ASTERISK (observed, not acted on): the bug's removal shifted results
+  in the predicted direction — point diffs now mostly positive (hrp +0.075,
+  equal +0.061, fw_handcraft +0.089; P(beat) 0.82-0.89) and the hrp/equal
+  walk-forward CIs sit entirely positive ([0.021,0.161] / [0.034,0.118],
+  86%/77% windows positive). Under the pre-registered criterion this is not a
+  win, and criteria-shopping after results is forbidden. IF the user wants to
+  pursue it later: requires a NEW pre-registration (stricter primary, e.g.
+  both bootstrap AND walk-forward CIs exclude zero, longer blocks) as a fresh
+  queue slot — logged here as optional candidate, no default action.
