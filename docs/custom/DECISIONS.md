@@ -486,3 +486,16 @@ Entry template:
   required (e.g. same spec judged on new out-of-sample data as it accrues, or
   a joint criterion declared in advance). Optional future slot only.
 - Queue: slot 3 vacuous (already logged) -> slot 4 (normalised momentum) next.
+
+## 2026-07-18 — SLOT 4 PRE-REGISTERED AND STARTED: normalised momentum substitution
+- Spec (variant `normmom_sub`): normmom16/32/64 (ewmac_calc_vol on vol-
+  normalised price; rob_system fixed scalars 4.117/2.759/1.871) SUBSTITUTED
+  for ewmac16_64/32_128/64_256 at identical weights (0.21/0.08/0.21), carry
+  0.50 unchanged. Harness extended to record gross curves so cost drag
+  (gross - net) is measurable; baseline re-run in-battery for like-for-like
+  gross (also re-validates the anchor through the modified harness).
+- PRE-REGISTERED CRITERIA (before results): STRICT WIN = bootstrap CI95 lo of
+  Sharpe diff > 0. ADOPT-AS-SUBSTITUTE = SR non-inferior (CI95 lo > -0.05)
+  AND annualised cost drag reduced >= 20% vs baseline (the published claim is
+  cost reduction at equal signal quality — Dudler et al ~40% turnover cut).
+  Anything else = NULL, keep EWMAC.

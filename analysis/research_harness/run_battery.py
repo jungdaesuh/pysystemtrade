@@ -109,6 +109,16 @@ def _breakout_rule(lookback: int) -> dict:
     )
 
 
+def _normmom_rule(Lfast: int, Lslow: int, forecast_scalar: float) -> dict:
+    # rule form and fixed scalars from systems/provided/rob_system/config.yaml
+    return dict(
+        function="systems.provided.rules.ewmac.ewmac_calc_vol",
+        data=["rawdata.get_cumulative_daily_vol_normalised_returns"],
+        other_args=dict(Lfast=Lfast, Lslow=Lslow),
+        forecast_scalar=forecast_scalar,
+    )
+
+
 VARIANTS = dict(
     baseline=dict(),
     handcraft=_estimated("handcraft"),
@@ -119,6 +129,23 @@ VARIANTS = dict(
     fw_shrinkage=_fw_estimated("shrinkage"),
     fw_hrp=_fw_estimated("hrp"),
     fw_equal=_fw_estimated("equal_weights"),
+    # slot 4 (lit review 2026-07-18): normalised momentum SUBSTITUTED for the
+    # matched-speed EWMAC rules at identical weights; the published claim is
+    # equal signal quality at lower turnover, so the verdict pairs SR
+    # non-inferiority with measured cost drag (gross - net)
+    normmom_sub=dict(
+        extra_trading_rules=dict(
+            normmom16=_normmom_rule(16, 64, 4.116536590599602),
+            normmom32=_normmom_rule(32, 128, 2.758872936017786),
+            normmom64=_normmom_rule(64, 256, 1.8706800701120874),
+        ),
+        forecast_weights=dict(
+            normmom16=0.21,
+            normmom32=0.08,
+            normmom64=0.21,
+            carry=0.50,
+        ),
+    ),
     # slot 2 (lit review 2026-07-18): breakout80+160 at 10% each, carved
     # pro-rata from the EWMAC sleeve (x0.6), carry untouched; FDM unchanged
     # (conservative against the variant)
@@ -139,8 +166,9 @@ VARIANTS = dict(
 )
 
 
-def run_variant(name: str, vol_func: str | None = None) -> pd.Series:
-    """Build and run one system; return daily percent returns. Top-level for spawn."""
+def run_variant(name: str, vol_func: str | None = None) -> pd.DataFrame:
+    """Build and run one system; return daily percent returns (net + gross,
+    so cost drag = gross - net is judgeable per variant). Top-level for spawn."""
     from sysdata.config.configdata import Config
     from sysdata.sim.csv_futures_sim_data import csvFuturesSimData
     from systems.provided.futures_chapter15.basesystem import futures_system
@@ -155,7 +183,13 @@ def run_variant(name: str, vol_func: str | None = None) -> pd.Series:
     if vol_func is not None:
         config.volatility_calculation = dict(func=f"sysquant.estimators.vol.{vol_func}")
     system = futures_system(data=csvFuturesSimData(), config=config)
-    return pd.Series(system.accounts.portfolio().percent)
+    portfolio_account = system.accounts.portfolio()
+    return pd.DataFrame(
+        dict(
+            net=pd.Series(portfolio_account.percent),
+            gross=pd.Series(portfolio_account.gross.percent),
+        )
+    )
 
 
 def window_metrics(daily_pct: pd.Series, start, end) -> dict | None:
@@ -334,7 +368,7 @@ def main() -> None:
         dict(variant=variant, window=window_name, **metrics)
         for variant, curve in curves.items()
         for window_name, start, end in WINDOWS
-        if (metrics := window_metrics(curve, start, end)) is not None
+        if (metrics := window_metrics(curve["net"], start, end)) is not None
     ]
 
     run_tag = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -349,8 +383,14 @@ def main() -> None:
     print(table.to_string(index=False))
     print(f"\nwritten: {out_dir / 'metrics.csv'}")
 
-    aligned = pd.concat(curves, axis=1).dropna()
+    aligned = pd.concat(
+        {name: curve["net"] for name, curve in curves.items()}, axis=1
+    ).dropna()
     aligned.to_csv(out_dir / "curves.csv")
+    aligned_gross = pd.concat(
+        {name: curve["gross"] for name, curve in curves.items()}, axis=1
+    ).dropna()
+    aligned_gross.to_csv(out_dir / "gross_curves.csv")
 
     if args.bootstrap and len(args.variants) > 1:
         ci_table = bootstrap_sharpe_differences(
