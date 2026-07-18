@@ -542,3 +542,28 @@ Entry template:
   lo > 0 AND the improvement is monotone-plausible (neighbouring cells agree
   in direction, guarding against a lone lucky cell). Expected outcome:
   defaults re-certified, no change.
+
+## 2026-07-18 — SLOT-6 VERDICT: defaults re-certified; BATTERY QUEUE COMPLETE
+- Run 20260718_172433 (36 cells): sanity anchor vb_d35_s30_b10 reproduced the
+  baseline BITWISE (0.478/32.87/13422). Best cell vb_d25_s50_b5: diff +0.024,
+  CI95 [-0.010,+0.060], P(beat)=0.914 -> no cell clears CI lo > 0. VERDICT:
+  NULL — vol span 35d / slow blend 0.3 / buffer 0.10 stay. Observed structure
+  (reported, not acted on): coherent insignificant tilt toward MORE slow-vol
+  blend (s50 tops every span) and TIGHTER buffer (b5 tops every group) —
+  direction matches Carver 2025-11; magnitude never significant.
+  Table: results/research_battery/20260718_172433/sweep_vs_anchor.csv.
+- QUEUE COMPLETE (adopted 2026-07-18, executed same day): slot 1 = eight
+  estimation nulls RE-CERTIFIED on post-#1650 code (asterisk logged); slot 2
+  = breakout ensemble NULL by CI lo -0.001; slot 3 = VACUOUS (fast speeds
+  already pruned in baseline); slot 4 = normmom NULL (cost claim failed to
+  replicate, drag +4.6%); slot 5 = seasonal carry NULL, significantly
+  negative; slot 6 = defaults re-certified.
+- BOTTOM LINE: the chapter-15 baseline survived the full literature-driven
+  assault — now including the corrected estimation code. The research
+  factory's cumulative verdict stands: at N=6 with our costs, no signal,
+  weighting, vol, or tuning upgrade clears a pre-registered bar. The one
+  literature-backed lever with large expected effect remains UNIVERSE
+  EXPANSION (+0.2-0.4 SR for 6->30), which is a Gate-3/funding decision, not
+  a battery experiment. Tier-1 hygiene (statsmodels 0.14.6 + drop scipy pin;
+  scheduling cost reports; execution measurement fields) remains open as
+  ops work, no user decision required beyond timing.
