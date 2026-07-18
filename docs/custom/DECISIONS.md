@@ -455,3 +455,20 @@ Entry template:
   pursue it later: requires a NEW pre-registration (stricter primary, e.g.
   both bootstrap AND walk-forward CIs exclude zero, longer blocks) as a fresh
   queue slot — logged here as optional candidate, no default action.
+
+## 2026-07-18 — SLOT 2 PRE-REGISTERED AND STARTED: slow breakout ensemble; slot 3 declared VACUOUS
+- Slot 2 spec (variant `breakout_ens`, run_battery): add breakout80 +
+  breakout160 (natural scaling, no scalar) at 0.10 forecast weight each,
+  carved pro-rata from the EWMAC sleeve (16_64/32_128/64_256 x0.6 ->
+  0.126/0.048/0.126), carry untouched at 0.50; FDM left at baseline
+  (conservative against the variant). Paired vs post-fix anchor baseline
+  20260718_023309, harness bootstrap + 10y walk-forward.
+- PRE-REGISTERED CRITERIA (before results): WIN/ADOPT = bootstrap CI95 of
+  Sharpe diff excludes zero from below (lo > 0). NULL/KEEP-BASELINE =
+  anything else, incl. positive-but-not-significant. Secondary (reported,
+  non-deciding): drawdown, turnover delta.
+- Slot 3 (speed pruning) declared VACUOUS: chapter-15 baseline forecast
+  weights already exclude ewmac2_8/4_16/8_32 (weights only on 16_64/32_128/
+  64_256/carry) — the pruning the literature supports is already our
+  baseline. No run needed; queue advances to slot 4 (normalised momentum)
+  after slot 2.
