@@ -510,3 +510,14 @@ Entry template:
   turnover cut) failed to replicate on our six instruments; keep EWMAC.
   Table: results/research_battery/20260718_172032/normmom_verdict.csv.
 - Queue: slot 5 (seasonally-adjusted carry) next.
+
+## 2026-07-18 — SLOT 5 PRE-REGISTERED AND STARTED: seasonally-adjusted carry
+- Spec (variant `carry_seasonal`): new rule = 256bd simple rolling mean of
+  raw_carry (cancels the annual seasonal cycle; AFTS treatment; rule lives in
+  analysis/research_harness/battery_rules.py until adopted), scalar 30 reused
+  from plain carry (conservative), added at 0.125 carved from the carry
+  sleeve (carry 0.50 -> 0.375), EWMAC weights untouched.
+- PRE-REGISTERED CRITERIA (before results): WIN = bootstrap CI95 lo of Sharpe
+  diff vs baseline > 0. Else NULL. Secondary (reported, non-deciding):
+  effect concentration in CORN, cost drag delta. Paired vs run
+  20260718_172032's baseline (bitwise-validated anchor with gross curves).

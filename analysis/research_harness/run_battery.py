@@ -146,6 +146,27 @@ VARIANTS = dict(
             carry=0.50,
         ),
     ),
+    # slot 5 (lit review 2026-07-18): seasonally-adjusted carry added at 25%
+    # of the carry sleeve (0.50 -> 0.375 + 0.125); scalar 30 reused from
+    # plain carry (conservative: the seasonal mean has lower dispersion, so
+    # 30 understates its effective weight)
+    carry_seasonal=dict(
+        extra_trading_rules=dict(
+            carry_seasonal=dict(
+                function="analysis.research_harness.battery_rules.seasonal_carry",
+                data=["rawdata.raw_carry"],
+                other_args=dict(span_days=256),
+                forecast_scalar=30,
+            ),
+        ),
+        forecast_weights=dict(
+            ewmac16_64=0.21,
+            ewmac32_128=0.08,
+            ewmac64_256=0.21,
+            carry=0.375,
+            carry_seasonal=0.125,
+        ),
+    ),
     # slot 2 (lit review 2026-07-18): breakout80+160 at 10% each, carved
     # pro-rata from the EWMAC sleeve (x0.6), carry untouched; FDM unchanged
     # (conservative against the variant)
