@@ -531,3 +531,14 @@ Entry template:
   battery_rules.py; carry keeps 0.50. Secondary (CORN concentration) moot at
   a negative portfolio-level result.
 - Queue: slot 6 (vol-blend x span x buffer validation sweep) — final slot.
+
+## 2026-07-18 — SLOT 6 PRE-REGISTERED AND STARTED: vol-blend x span x buffer validation sweep (final slot)
+- Spec: 36 cells — vol span {25,35,50}bd x proportion_of_slow_vol
+  {0,0.2,0.3,0.5} x buffer_size {0.05,0.10,0.15}; cell d35_s30_b10 must
+  reproduce the baseline bitwise (sanity anchor). All other config unchanged.
+- PRE-REGISTERED CRITERIA (before results): this is a VALIDATION sweep of the
+  current defaults, per Carver 2025-11 (25-36d near-optimal; blend marginal).
+  ADOPT-CHANGE only if a cell beats d35_s30_b10 with paired bootstrap CI95
+  lo > 0 AND the improvement is monotone-plausible (neighbouring cells agree
+  in direction, guarding against a lone lucky cell). Expected outcome:
+  defaults re-certified, no change.

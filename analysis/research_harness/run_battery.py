@@ -119,6 +119,22 @@ def _normmom_rule(Lfast: int, Lslow: int, forecast_scalar: float) -> dict:
     )
 
 
+def _vol_buffer_variant(days: int, slow_proportion: float, buffer_size: float) -> dict:
+    return dict(
+        volatility_calculation=dict(
+            func="sysquant.estimators.vol.mixed_vol_calc",
+            name_returns_attr_in_rawdata="daily_returns",
+            multiplier_to_get_daily_vol=1.0,
+            days=days,
+            min_periods=10,
+            slow_vol_years=10,
+            proportion_of_slow_vol=slow_proportion,
+            vol_abs_min=0.0000000001,
+        ),
+        buffer_size=buffer_size,
+    )
+
+
 VARIANTS = dict(
     baseline=dict(),
     handcraft=_estimated("handcraft"),
@@ -184,6 +200,19 @@ VARIANTS = dict(
             carry=0.50,
         ),
     ),
+)
+
+# slot 6 (lit review 2026-07-18): vol-blend x span x buffer validation sweep;
+# cell d35_s30_b10 duplicates the baseline config as a sanity anchor
+VARIANTS.update(
+    {
+        f"vb_d{days}_s{int(slow * 100)}_b{int(buffer * 100)}": _vol_buffer_variant(
+            days, slow, buffer
+        )
+        for days in (25, 35, 50)
+        for slow in (0.0, 0.2, 0.3, 0.5)
+        for buffer in (0.05, 0.10, 0.15)
+    }
 )
 
 
