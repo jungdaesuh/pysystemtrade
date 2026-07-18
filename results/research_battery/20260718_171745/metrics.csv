@@ -1,0 +1,7 @@
+variant,window,ann_return_pctpts,ann_std_pctpts,sharpe,worst_drawdown_pctpts,n_days
+breakout_ens,full,16.78,33.11,0.507,-172.47,13422
+breakout_ens,1980s,18.19,37.37,0.487,-117.19,2609
+breakout_ens,1990s,25.65,31.96,0.803,-85.74,2610
+breakout_ens,2000s,13.32,28.23,0.472,-71.31,2609
+breakout_ens,2010s,11.03,22.46,0.491,-44.64,2608
+breakout_ens,2020s,9.46,25.3,0.374,-47.86,1107
