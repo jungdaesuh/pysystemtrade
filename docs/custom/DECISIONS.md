@@ -472,3 +472,17 @@ Entry template:
   64_256/carry) — the pruning the literature supports is already our
   baseline. No run needed; queue advances to slot 4 (normalised momentum)
   after slot 2.
+
+## 2026-07-18 — SLOT-2 VERDICT: breakout ensemble NULL by pre-registered criterion (near-miss, logged faithfully)
+- Run 20260718_171745, paired vs anchor 20260718_023309: Sharpe diff +0.028,
+  bootstrap CI95 [-0.001, +0.058], P(beat)=0.972; walk-forward 44 windows,
+  93.2% positive, wf CI [+0.018, +0.047]. Table:
+  results/research_battery/20260718_171745/breakout_vs_baseline.csv.
+- PRE-REGISTERED BAR (set before results): WIN requires bootstrap CI95 lo > 0.
+  lo = -0.001 -> **NULL; baseline keeps its weights.** This is the discipline
+  working as designed: a 97% probability-of-beating does not clear a bar set
+  at CI-excludes-zero, and moving the bar after seeing results is forbidden.
+- Not seed-shopped, not re-specced. IF revisited: fresh pre-registration
+  required (e.g. same spec judged on new out-of-sample data as it accrues, or
+  a joint criterion declared in advance). Optional future slot only.
+- Queue: slot 3 vacuous (already logged) -> slot 4 (normalised momentum) next.
