@@ -389,3 +389,35 @@ Entry template:
 - Bookkeeping: the five rejected zero-fill broker orders remain on the stack for
   tonight's EOD cleanup (allow_zero_completions); positions after session:
   EUROSTX +4, V2X -7, NLV ~$997.6k paper.
+
+## 2026-07-18 — LITERATURE REVIEW (6 parallel units): one upstream bug adopted, upgrade queue PROPOSED
+- Six-unit orchestrated review (trend / non-trend / portfolio / vol-sizing /
+  execution / upstream delta); synthesis of record:
+  `docs/custom/plans/lit_review_upgrades_2026-07-18.md` (ranked tiers + merged
+  does-not-work list with citations).
+- TIER-0 ADOPTED SAME NIGHT: upstream PR #1650 (sign error in SR-cost
+  adjustment, sysquant/returns.py) cherry-picked as b85befbb after independent
+  local verification of the root cause (cost dict = SR of cost curves,
+  negative; our line double-negated -> estimation layer ADDED costs to
+  returns). Upstream's 4 regression tests pass. G1a anchor re-verified BITWISE
+  after adoption (0.478/32.87/13422, results/research_battery/20260718_023309)
+  -> production fixed-weights path provably unaffected.
+- HONESTY CONSEQUENCE: the two estimation nulls (estimated instrument weights
+  2026-07-08; estimated forecast weights 2026-07-11) were computed with the
+  bugged code in the weight-fitting path — biased AGAINST estimation (weights
+  fitted on cost-rewarded returns, then charged real costs). Correction re-run
+  of both, same specs, proposed as battery slot 1. Expectation: still null
+  (DeMiguel 2009; Carver random-data), but the record must be clean.
+- KEY SYNTHESIS FINDINGS: (1) universe expansion dominates all weighting
+  cleverness (~order of magnitude in expected ΔSR; Carver's published N-curve)
+  — a Gate-3/go-live design lever, not a battery experiment; (2) vol-sizing
+  research direction declared EXHAUSTED (config already runs the
+  best-evidenced blended EWMA; HAR null matches literature); (3) execution:
+  keep original-best (Carver 12y live TCA), add measurement before any A/B;
+  paper fills simulate no queue -> paper execution A/Bs are relative-only;
+  (4) we are 0 commits behind upstream after the cherry-pick; our tif +
+  sentinel fixes are upstream-PR candidates (issue #1580 matches tif exactly).
+- PENDING USER: Tier-2 battery queue order (slot 1 correction re-run, then
+  slow breakout, speed pruning, normalised momentum, seasonal carry,
+  vol-blend/buffer sweep); Tier-1 hygiene timing (statsmodels 0.14.6 +
+  drop scipy pin); upstream PR contributions yes/no.
