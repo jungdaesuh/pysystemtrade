@@ -100,6 +100,15 @@ def _fw_estimated(method: str) -> dict:
     )
 
 
+def _breakout_rule(lookback: int) -> dict:
+    # no forecast_scalar: the rule's x40 range normalisation is its scaling
+    return dict(
+        function="systems.provided.rules.breakout.breakout",
+        data=["rawdata.get_daily_prices"],
+        other_args=dict(lookback=lookback),
+    )
+
+
 VARIANTS = dict(
     baseline=dict(),
     handcraft=_estimated("handcraft"),
@@ -110,6 +119,23 @@ VARIANTS = dict(
     fw_shrinkage=_fw_estimated("shrinkage"),
     fw_hrp=_fw_estimated("hrp"),
     fw_equal=_fw_estimated("equal_weights"),
+    # slot 2 (lit review 2026-07-18): breakout80+160 at 10% each, carved
+    # pro-rata from the EWMAC sleeve (x0.6), carry untouched; FDM unchanged
+    # (conservative against the variant)
+    breakout_ens=dict(
+        extra_trading_rules=dict(
+            breakout80=_breakout_rule(80),
+            breakout160=_breakout_rule(160),
+        ),
+        forecast_weights=dict(
+            ewmac16_64=0.126,
+            ewmac32_128=0.048,
+            ewmac64_256=0.126,
+            breakout80=0.10,
+            breakout160=0.10,
+            carry=0.50,
+        ),
+    ),
 )
 
 
@@ -120,8 +146,12 @@ def run_variant(name: str, vol_func: str | None = None) -> pd.Series:
     from systems.provided.futures_chapter15.basesystem import futures_system
 
     config = Config(CONFIG_PATH)
-    for key, value in VARIANTS[name].items():
+    overrides = dict(VARIANTS[name])
+    extra_trading_rules = overrides.pop("extra_trading_rules", None)
+    for key, value in overrides.items():
         setattr(config, key, value)
+    if extra_trading_rules is not None:
+        config.trading_rules = {**config.trading_rules, **extra_trading_rules}
     if vol_func is not None:
         config.volatility_calculation = dict(func=f"sysquant.estimators.vol.{vol_func}")
     system = futures_system(data=csvFuturesSimData(), config=config)
