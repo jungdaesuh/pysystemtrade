@@ -499,3 +499,14 @@ Entry template:
   AND annualised cost drag reduced >= 20% vs baseline (the published claim is
   cost reduction at equal signal quality — Dudler et al ~40% turnover cut).
   Anything else = NULL, keep EWMAC.
+
+## 2026-07-18 — SLOT-4 VERDICT: normalised momentum NULL — cost-reduction claim did not replicate
+- Run 20260718_172032 (baseline re-run in-battery: anchor 0.478/32.87/13422
+  BITWISE through the gross-curve harness change). normmom_sub: SR diff
+  +0.027, CI95 [-0.010,+0.062], P(beat)=0.929 -> non-inferior (lo > -0.05,
+  criterion leg PASSED) but NOT a strict win. Cost drag: baseline 0.650 vs
+  normmom 0.680 pctpts/yr -> -4.6% (an INCREASE; required: >=20% reduction).
+- VERDICT: NULL — the substitution's published rationale (Dudler et al ~40%
+  turnover cut) failed to replicate on our six instruments; keep EWMAC.
+  Table: results/research_battery/20260718_172032/normmom_verdict.csv.
+- Queue: slot 5 (seasonally-adjusted carry) next.
