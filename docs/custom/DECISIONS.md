@@ -567,3 +567,28 @@ Entry template:
   a battery experiment. Tier-1 hygiene (statsmodels 0.14.6 + drop scipy pin;
   scheduling cost reports; execution measurement fields) remains open as
   ops work, no user decision required beyond timing.
+
+## 2026-07-20 — EUROSTX spike quarantine root-caused; operator approval executed (designed workflow)
+- Root cause of the 07-17..07-20 EUROSTX Sep26 PRICE gap: the contract's
+  stored HOURLY series was EMPTY (never populated), so every price-update
+  cycle false-positived the spike check and ABORTED the contract's writes —
+  chronic, silent (spike email unsent: no SMTP credential, known user item).
+  Direct IB fetches verified the "spike" was a normal -0.2%/day move.
+- Intervention (2026-07-20 ~19:20, logged): mirrored the interactive manual-
+  check approval — fetched cleaned broker prices, wrote hourly (437 rows) +
+  daily with check_for_spike=False, merged, propagated multiple+adjusted.
+  EUROSTX now current intraday. This is pysystemtrade's DESIGNED operator
+  workflow (interactive_manual_check_historical_prices equivalent), not a
+  code change. Script: scratchpad/approve_eurostx_spike.py (session copy).
+- Residual noise (left alone deliberately): V2X 2026-07/08/09 bare contracts
+  flag the same empty-series false positive; none is in the V2X trio, no
+  downstream effect. If they persist, same approval applies.
+- Ops note: Gateway dropped once ~19:15 (unscheduled; relaunched in 10s,
+  no impact). Watch for recurrence.
+- GATE 2p DAY-1 JUDGMENT: PENDING USER — criteria 1-4 met (cycle exit 0 and
+  fresh; backtest+orders ran; stack flow clean, 1 V2X fill @20.00, zero
+  break). Criterion 5 ("no manual data repairs") requires a ruling: the
+  spike APPROVAL is the system's designed human-in-the-loop gate (operator
+  duty, prices verified, nothing repaired retroactively; condition predates
+  the 2p clock) — reading A counts the day; strict reading B does not.
+  Recommendation: A. User adjudicates.
