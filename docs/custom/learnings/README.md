@@ -117,3 +117,14 @@ Seed entries (from the 2026-07 setup sessions):
   the aggressive re-peg path returns no-change when the side price is nan. Rule:
   broker adapters must translate vendor sentinels into the system's own
   missing-data representation at the boundary — never let them travel as values.
+- **An empty stored price series turns the spike guard into a permanent
+  quarantine** (2026-07-20) — EUROSTX Sep26's hourly series was never
+  populated, so each cycle's spike check false-positived and aborted ALL
+  writes for the contract (daily bars included), starving multiple/adjusted
+  prices — silently, because the spike alert email had no SMTP credential.
+  Rule: when a contract's price column goes NaN while siblings sample, grep
+  the cycle log for "Spike found" FIRST; verify against a direct IB fetch;
+  approve via the designed check_for_spike=False write (the interactive
+  tool's equivalent), never by hand-editing stored data. And an alerting
+  path that cannot deliver is a silent-failure amplifier — fix the SMTP
+  credential before trusting any "no news is good news" signal.
