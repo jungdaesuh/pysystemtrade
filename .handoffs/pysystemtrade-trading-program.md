@@ -134,10 +134,14 @@ micro futures with clean daily reconciliation, scaled per policy.
 ## Open questions / blockers
 - CME/CBOT data activation (next action 1) — likeliest hold: unfunded live account.
   Probes all Error 354: 07-16 18:02, 07-17 00:14 / 10:33 / 19:17.
-- WATCH: EUROSTX 07-17 intraday sampling filled FORWARD (Dec26) but PRICE (Sep26)
-  came back NaN → adjusted series stops at 07-16 while multiple is current. Should
-  self-heal at Monday's sampling; if PRICE is still NaN then, investigate Sep26
-  contract sampling before the session.
+- RESOLVED 07-20: EUROSTX NaN-PRICE was the spike guard chronically false-
+  positiving on an EMPTY hourly series (aborting all writes, silently — no
+  SMTP). Operator-approved via check_for_spike=False write (designed
+  workflow); series current intraday. V2X 07/08/09 bare contracts still flag
+  the same pattern — harmless (non-trio), approve likewise if persistent.
+- Gate 2p DAY-1 (07-20): criteria 1-4 MET; criterion 5 ruling PENDING USER
+  (spike approval = designed operatorship vs strict no-manual-repairs;
+  DECISIONS 2026-07-20, recommendation: count).
 - Margin application status — user hasn't confirmed submitting it.
 - Funding amount/timing — gates Gate 3, barbell deploy, data billing.
 - Gate 2p/2s adoption — user.
