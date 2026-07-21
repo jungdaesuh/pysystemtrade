@@ -592,3 +592,13 @@ Entry template:
   duty, prices verified, nothing repaired retroactively; condition predates
   the 2p clock) — reading A counts the day; strict reading B does not.
   Recommendation: A. User adjudicates.
+
+## 2026-07-20 — USER RULING: Day 1 COUNTS — Gate 2p at 1/10
+- User adopted reading A: designed human-in-the-loop gates (price-spike
+  approval with verification, roll confirmations and the like) are normal
+  operatorship and do NOT void a clean day. Precedent recorded for future
+  judgments. Criteria 1-4 were met outright; criterion 5 satisfied under
+  this ruling.
+- GATE 2p: 1/10 clean days. Constraint unchanged: >=3 counted days must
+  include CME/CBOT execution before 2p can close — data activation (user
+  portal/deposit) remains the critical path.
