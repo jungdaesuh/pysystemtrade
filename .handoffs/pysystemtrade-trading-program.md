@@ -33,10 +33,12 @@ micro futures with clean daily reconciliation, scaled per policy.
        data probe, reports; expires ~07-24 or when session dies — RE-CREATE it in a
        new session). Manual fallback:
        `PYSYS_PRIVATE_CONFIG_DIR=$HOME/pysystemtrade-private .venv/bin/python scripts/data_utilities/daily_cycle_pilot.py`
-3. [ ] **Day-1 session SCHEDULED Mon 07-20 09:37 ET** (user "go" given 07-18; Claude
-       one-shot wakeup, session-only — if the session died before it fired, run it
-       manually): gateway up → data probe → EUROSTX watch check → phase6_bringup →
-       `... .venv/bin/python scripts/data_utilities/commission_stack_handler.py --minutes 15`
+3. [ ] **Sessions now RECURRING weekdays 09:37 ET** (standing authorization,
+       user 2026-07-21; session-only Claude cron, expires ~07-28 — RE-CREATE in
+       a new session). Sequence: gateway up → data probe → spike/trio sanity
+       check → phase6_bringup → commission_stack_handler --minutes 15 →
+       reconcile → report. Day-judging with user after each evening cycle.
+       Manual fallback: same sequence, any market-hours time.
        Stacks are cleared nightly (EOD cleanup) — Monday's session starts with
        phase6_bringup.py to regenerate orders from fresh optimals (07-17 optimals
        were ~CORN −27, US10 −1, MXP −1, SOFR −2, V2X −58 remaining). With data
