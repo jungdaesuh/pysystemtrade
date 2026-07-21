@@ -602,3 +602,14 @@ Entry template:
 - GATE 2p: 1/10 clean days. Constraint unchanged: >=3 counted days must
   include CME/CBOT execution before 2p can close — data activation (user
   portal/deposit) remains the critical path.
+
+## 2026-07-21 — Evening ops: V2X bare-contract quarantines approved (same empty-series pattern)
+- Verified before writing: stored == broker where both existed (Aug 18.35,
+  Sep 19.15 identical); July stored EMPTY vs broker 17.75 — a sane contango
+  curve point. Approved all three via the designed check_for_spike=False
+  write (July +369h/+164d rows, Aug +372h, Sep +317h). Precedent per the
+  2026-07-20 user ruling: designed operator gates, day-neutral.
+- No session ran today (scheduling gap, owned in chat; standing weekday
+  09:37 schedule created with user approval) -> Gate 2p remains 1/10,
+  nothing to judge. Cycle clean; EUROSTX spike fix HELD (no recurrence);
+  CME data dark day 6.
