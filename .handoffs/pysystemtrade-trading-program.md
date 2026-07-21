@@ -139,9 +139,9 @@ micro futures with clean daily reconciliation, scaled per policy.
   SMTP). Operator-approved via check_for_spike=False write (designed
   workflow); series current intraday. V2X 07/08/09 bare contracts still flag
   the same pattern — harmless (non-trio), approve likewise if persistent.
-- Gate 2p DAY-1 (07-20): criteria 1-4 MET; criterion 5 ruling PENDING USER
-  (spike approval = designed operatorship vs strict no-manual-repairs;
-  DECISIONS 2026-07-20, recommendation: count).
+- Gate 2p: **1/10** (Day 1 = 07-20, user-ruled: designed operator gates such
+  as verified spike approvals do NOT void days — precedent in DECISIONS
+  2026-07-20). ≥3 counted days still need CME/CBOT execution to close.
 - Margin application status — user hasn't confirmed submitting it.
 - Funding amount/timing — gates Gate 3, barbell deploy, data billing.
 - Gate 2p/2s adoption — user.
