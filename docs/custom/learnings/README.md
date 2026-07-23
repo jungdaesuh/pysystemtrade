@@ -128,3 +128,17 @@ Seed entries (from the 2026-07 setup sessions):
   tool's equivalent), never by hand-editing stored data. And an alerting
   path that cannot deliver is a silent-failure amplifier — fix the SMTP
   credential before trusting any "no news is good news" signal.
+- **Directly run_in_background stack-handler sessions get reaped early; launch
+  foreground and let the timeout auto-background them** (2026-07-23) — Day-1
+  commissioning succeeded when launched foreground (hit the 600s foreground
+  timeout, was MOVED to background, completed exit 0). Days 2 and 3, launched
+  directly with run_in_background=true, were both KILLED within ~a minute at
+  the spawn step — not OOM (kernel log clean today; 53Gi free), not IB, not a
+  pipeline defect: every kill left a verifiably clean state (no break, no
+  dangling IB order, positions matched). Re-running Day 3 foreground
+  (auto-backgrounded on timeout) completed and filled. Rule: run
+  commission_stack_handler / long stack sessions in the FOREGROUND with a
+  timeout (they auto-background and survive); do not launch them directly as
+  background tasks. After ANY interrupted execution pass, verify IB open
+  orders + positions vs system before doing anything else (a killed session
+  can hide a fill — see 2026-07-15).
