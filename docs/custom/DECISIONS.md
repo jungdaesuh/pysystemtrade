@@ -613,3 +613,26 @@ Entry template:
   09:37 schedule created with user approval) -> Gate 2p remains 1/10,
   nothing to judge. Cycle clean; EUROSTX spike fix HELD (no recurrence);
   CME data dark day 6.
+
+## 2026-07-23 — Day-3 session: two background KILLS (clean), root-caused, completed via foreground re-run
+- Two consecutive scheduled sessions (Day-2 07-22, Day-3 07-23) launched with
+  run_in_background were KILLED early at the spawn step. Investigated (not
+  assumed): kernel log shows NO OOM today (last OOM 07-16); 53Gi RAM free; IB
+  healthy. Each kill left a verifiably SAFE state — instrument+contract orders
+  spawned with zero fills, broker stack empty, zero dangling IB orders,
+  broker positions == system positions. No pipeline defect (no code bug) ->
+  not a day-voiding event under the 2026-07-17 rules; it's an incomplete run.
+- Root cause: launch method. Day-1 (WORKED) was foreground, auto-moved to
+  background on the 600s timeout. Direct-background launches get reaped.
+  Fix adopted: launch these sessions foreground with a timeout (learnings
+  2026-07-23). Standing-session cron prompt should follow suit.
+- Day-3 re-run (foreground, 8 min, auto-backgrounded, exit 0): V2X filled
+  -1 @ 20.40 -> position -9; EUROSTX +4 unchanged; broker == system (-9/+4),
+  zero break, zero rejection. One filled broker order rests for evening
+  cleanup. Clean execution.
+- GATE 2p Day-3 JUDGMENT: PENDING USER after the evening cycle. Criteria 1-4
+  met (data sanity clean; backtest+orders through limits; clean fill; zero
+  break). The two upstream kills were operational interruptions with verified
+  clean state, not pipeline defects — recommendation: COUNTS (would bring
+  Gate 2p to 2/10, pending user; Day-2 07-22 was never completed and does
+  not count).
