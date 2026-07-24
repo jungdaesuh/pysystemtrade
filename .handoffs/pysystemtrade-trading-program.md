@@ -34,13 +34,16 @@ micro futures with clean daily reconciliation, scaled per policy.
        new session). Manual fallback:
        `PYSYS_PRIVATE_CONFIG_DIR=$HOME/pysystemtrade-private .venv/bin/python scripts/data_utilities/daily_cycle_pilot.py`
 3. [ ] **Sessions RECURRING weekdays 09:37 ET** (standing auth, user 07-21;
-       session-only Claude cron job 82933864, expires ~07-30 — RE-CREATE in a
+       session-only Claude cron job 7cbd65e6, expires ~07-31 — RE-CREATE in a
        new session). Sequence: gateway up → data probe → spike/trio sanity →
-       phase6_bringup → **commission_stack_handler --minutes 8 FOREGROUND with
-       540000ms timeout** (NOT run_in_background — it gets reaped at spawn;
-       foreground auto-backgrounds and completes, learnings 07-23) → reconcile
-       → report. After any interrupted pass, verify IB open orders + positions
-       vs system FIRST. Day-judging with user after each evening cycle.
+       phase6_bringup → **commission_stack_handler --minutes 3 FOREGROUND,
+       300000ms timeout** (short so it finishes in-foreground; session kills
+       07-22..07-24 are HOST MEMORY CONTENTION from the user's 15.5Gi fusion
+       job, NOT a pipeline defect — DECISIONS 2026-07-24; one clean booked
+       fill = day's pipeline-proof). Killed → verify clean, re-run once, then
+       STOP. **After ANY interrupted pass, check IB open orders + positions vs
+       system FIRST** (a killed session can hide a BOOKED fill). Never kill the
+       user's processes. Day-judging with user after each evening cycle.
        Stacks are cleared nightly (EOD cleanup) — Monday's session starts with
        phase6_bringup.py to regenerate orders from fresh optimals (07-17 optimals
        were ~CORN −27, US10 −1, MXP −1, SOFR −2, V2X −58 remaining). With data
@@ -143,11 +146,14 @@ micro futures with clean daily reconciliation, scaled per policy.
   SMTP). Operator-approved via check_for_spike=False write (designed
   workflow); series current intraday. V2X 07/08/09 bare contracts still flag
   the same pattern — harmless (non-trio), approve likewise if persistent.
-- Gate 2p: **1/10 counted** (Day 1 = 07-20). Day-3 07-23 executed clean after
-  a foreground re-run (V2X −9; two background-launch kills, verified harmless)
-  — judgment PENDING USER (recommend COUNTS → 2/10; DECISIONS 2026-07-23).
-  Day-2 07-22 never completed, does not count. ≥3 counted days still need
-  CME/CBOT execution to close (data dark 8 days).
+- Gate 2p: **1/10 counted** (Day 1 = 07-20); Day-3 07-23 (V2X −9) and Day-4
+  07-24 (V2X −11, 2 fills) both executed CLEAN after memory-contention kills,
+  judgments PENDING USER (recommend both COUNT → 3/10). Day-2 07-22 never
+  completed. ≥3 counted days still need CME/CBOT execution to close (data dark
+  9 days) — this, not the day count, is the binding constraint.
+- HOST HEALTH (user-awareness): memory-tight when the fusion job runs
+  (07-24: 1.3Gi free, swap 93%). Trading pipeline unaffected (state clean
+  through every kill) but long sessions get reaped — hence --minutes 3.
 - Margin application status — user hasn't confirmed submitting it.
 - Funding amount/timing — gates Gate 3, barbell deploy, data billing.
 - Gate 2p/2s adoption — user.
