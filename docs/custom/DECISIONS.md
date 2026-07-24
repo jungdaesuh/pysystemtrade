@@ -636,3 +636,31 @@ Entry template:
   clean state, not pipeline defects — recommendation: COUNTS (would bring
   Gate 2p to 2/10, pending user; Day-2 07-22 was never completed and does
   not count).
+
+## 2026-07-24 — Day-4 session: kill root cause is MACHINE MEMORY CONTENTION (user's fusion job), not launch method
+- Day-4 (foreground, auto-backgrounded) was KILLED — breaking the 2026-07-23
+  "foreground survives" theory. Re-investigated properly: NOT a code/pipeline
+  defect. Root cause = host memory pressure: 1.3Gi free RAM, swap 50/54Gi
+  (93%). Top consumer = PID 2613902, a 15.5Gi simsopt stellarator
+  optimization (single_stage_banana, user's ACTIVE fusion research, started
+  08:13, git worktree) — NOT touched (user's work). Trading sessions that run
+  long as backgrounded tasks get squeezed out under this load. journalctl
+  showed no OOM line for the python session specifically, but the pressure is
+  real and sufficient.
+- SAFETY through both kills: verified clean each time. The first (killed)
+  session even FILLED V2X -1 (->-10) and BOOKED it correctly before dying —
+  system == broker at -10, zero break. This is why the post-kill
+  IB-vs-system check is mandatory (a killed session can hide a booked fill).
+- Completion: short 3-min foreground re-run (completes without backgrounding,
+  minimal reap window) filled another V2X -1 -> position -11; system ==
+  broker (-11 / EUROSTX +4), zero break, zero rejection. Day-4 execution
+  CLEAN.
+- REVISED understanding (supersedes 2026-07-23 launch-method theory): kills
+  are load-dependent, not deterministic by launch path. Mitigation: keep
+  sessions SHORT (--minutes 3) so they finish in-foreground; the day's
+  pipeline-proof is achieved as soon as one fill books cleanly. Standing cron
+  updated to --minutes 3. Persistent memory tightness on this shared host is
+  a USER-AWARENESS item (fusion jobs + multiple sessions + firefox).
+- GATE 2p Day-4 JUDGMENT: PENDING USER. Criteria met (data clean; orders
+  through limits; two clean V2X fills; zero break; the interruptions needed
+  verification but NO manual repair). Recommend COUNTS.
