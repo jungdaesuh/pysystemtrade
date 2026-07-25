@@ -664,3 +664,25 @@ Entry template:
 - GATE 2p Day-4 JUDGMENT: PENDING USER. Criteria met (data clean; orders
   through limits; two clean V2X fills; zero break; the interruptions needed
   verification but NO manual repair). Recommend COUNTS.
+
+## 2026-07-25 — Ops tooling moved into the repo after /tmp sweep; missed Friday cleanup completed
+- FRAGILITY FOUND: the nightly ops scripts lived only in the session scratchpad
+  (/tmp) and were swept. Every scheduled pass referencing them would have
+  failed; Friday 07-24's evening cleanup did not run (stacks still held 5
+  instrument / 5 contract / 2 filled V2X broker orders on Saturday morning).
+- FIXED: promoted to version-controlled scripts —
+  scripts/data_utilities/eod_stack_cleanup.py, probe_market_data.py,
+  approve_contract_spike.py, plus stack_reporting.py (shared print_stacks, now
+  also used by commission_stack_handler.py — duplicate removed, SSOT).
+  probe_market_data.py resolves contracts via the system's own priced-contract
+  mapping instead of hardcoded conIds, so it survives rolls. All scheduled jobs
+  repointed at the repo paths.
+- Cleanup completed Saturday: all three stacks cleared (Friday's two V2X fills
+  were already booked). Positions verified: system == broker (V2X -11,
+  EUROSTX +4), zero break. NLV 1,000,631.
+- Probe caveat recorded: run during trading hours only — Saturday's run showed
+  NO LIVE DATA for all six including EUREX instruments, which reflects closed
+  markets, not the subscription. CME/CBOT activation therefore UNCHANGED at
+  last known state (dark since 07-16); next real check is Monday's session.
+- GATE 2p: unchanged, 1/10 counted. Day-3 (07-23) and Day-4 (07-24) executed
+  clean and remain PENDING USER judgment (recommend both COUNT -> 3/10).

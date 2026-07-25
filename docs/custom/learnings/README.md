@@ -142,3 +142,13 @@ Seed entries (from the 2026-07 setup sessions):
   background tasks. After ANY interrupted execution pass, verify IB open
   orders + positions vs system before doing anything else (a killed session
   can hide a fill — see 2026-07-15).
+- **Operational scripts must live in the repo, not the scratchpad** (2026-07-25)
+  — the nightly ops tools (stack cleanup, data probe, spike approval) were
+  written to /tmp and referenced by absolute path from scheduled jobs. /tmp was
+  swept and every scheduled evening/morning pass would have failed on a missing
+  file; Friday's cleanup silently didn't run, leaving filled orders on the
+  stacks over the weekend. Rule: anything a schedule invokes, or that is run
+  more than once, belongs in scripts/ under version control. Scratchpad is for
+  one-shot analysis only. Corollary: a market-data probe run outside trading
+  hours reports "no data" for everything — schedule probes inside the session,
+  or the result is unreadable.

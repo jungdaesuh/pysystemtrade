@@ -19,20 +19,7 @@ Usage (during market hours, supervised):
 import argparse
 import time
 
-
-def print_stacks(data) -> None:
-    from sysproduction.data.orders import dataOrders
-
-    orders = dataOrders(data)
-    for name, stack in (
-        ("instrument", orders.db_instrument_stack_data),
-        ("contract", orders.db_contract_stack_data),
-        ("broker", orders.db_broker_stack_data),
-    ):
-        stack_orders = stack.get_list_of_orders()
-        print(f"  {name} stack: {len(stack_orders)} orders")
-        for order in stack_orders:
-            print(f"    {order}")
+from stack_reporting import print_stacks
 
 
 def main() -> None:
