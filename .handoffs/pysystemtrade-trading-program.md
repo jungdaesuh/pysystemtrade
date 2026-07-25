@@ -23,10 +23,10 @@ micro futures with clean daily reconciliation, scaled per policy.
 1. [ ] **Verify CME/CBOT data active** (blocks the 4 US instruments): USER checks
        Portal → Settings → Market Data Subscriptions for Active/Pending/billing flag
        (probably needs the LIVE-account deposit — fees bill there; balance $0).
-       Machine-side probe script (re-runnable):
-       `PYSYS_PRIVATE_CONFIG_DIR=$HOME/pysystemtrade-private .venv/bin/python /tmp/claude-1000/-home-jungdaesuh-code-software-trading-pysystemtrade/8c9c89bb-949f-427e-8784-d203f70fff10/scratchpad/probe_cme_data.py`
-       (live-mode reqMktData on conIds SOFR3 395594167 / ZN 840227361 / 6M 761663080;
-       real bid/ask sizes = active). Last probe 07-17 00:14: Error 354 all three.
+       Machine-side probe, **during trading hours only** (closed markets report
+       NO LIVE DATA for everything and prove nothing):
+       `PYSYS_PRIVATE_CONFIG_DIR=$HOME/pysystemtrade-private .venv/bin/python scripts/data_utilities/probe_market_data.py CORN US10 MXP SOFR EUROSTX V2X`
+       Dark since purchase 07-16 through 07-24 (9 sessions).
 2. [ ] **Evening ops now scheduled (user-approved 2026-07-17)**: system cron RESUMED
        (18:30 weekdays, daily_cycle_pilot → ~/ibc/logs/daily_cycle.log) + a Claude
        session-only wakeup 18:47 weekdays (verifies cron, runs EOD stack cleanup +
@@ -34,16 +34,22 @@ micro futures with clean daily reconciliation, scaled per policy.
        new session). Manual fallback:
        `PYSYS_PRIVATE_CONFIG_DIR=$HOME/pysystemtrade-private .venv/bin/python scripts/data_utilities/daily_cycle_pilot.py`
 3. [ ] **Sessions RECURRING weekdays 09:37 ET** (standing auth, user 07-21;
-       session-only Claude cron job 7cbd65e6, expires ~07-31 — RE-CREATE in a
-       new session). Sequence: gateway up → data probe → spike/trio sanity →
-       phase6_bringup → **commission_stack_handler --minutes 3 FOREGROUND,
-       300000ms timeout** (short so it finishes in-foreground; session kills
-       07-22..07-24 are HOST MEMORY CONTENTION from the user's 15.5Gi fusion
-       job, NOT a pipeline defect — DECISIONS 2026-07-24; one clean booked
-       fill = day's pipeline-proof). Killed → verify clean, re-run once, then
-       STOP. **After ANY interrupted pass, check IB open orders + positions vs
-       system FIRST** (a killed session can hide a BOOKED fill). Never kill the
-       user's processes. Day-judging with user after each evening cycle.
+       Claude cron cc9dca64) + **evening ops 18:47 weekdays** (cron 2e11985b).
+       BOTH are session-only and AUTO-EXPIRE AFTER 7 DAYS (~08-01) — they died
+       once already and Friday 07-24's cleanup silently didn't run. RE-CREATE
+       them in any new session and after each expiry; check with CronList.
+       Morning sequence: gateway up → `scripts/data_utilities/probe_market_data.py
+       CORN US10 MXP SOFR EUROSTX V2X` → spike/trio sanity (approve via
+       `scripts/data_utilities/approve_contract_spike.py`) → phase6_bringup →
+       **commission_stack_handler --minutes 3 FOREGROUND, 300000ms timeout**
+       (short so it finishes in-foreground; kills 07-22..07-24 are HOST MEMORY
+       CONTENTION from the user's 15.5Gi fusion job, NOT a pipeline defect —
+       DECISIONS 07-24; one cleanly booked fill = the day's pipeline-proof).
+       Killed → verify clean, re-run once, then STOP. **After ANY interrupted
+       pass, check IB open orders + positions vs system FIRST** (a killed
+       session can hide a BOOKED fill). Evening: cycle check → spike check →
+       `scripts/data_utilities/eod_stack_cleanup.py` (verify it RAN) →
+       reconcile. Never kill the user's processes. Day-judging with the user.
        Stacks are cleared nightly (EOD cleanup) — Monday's session starts with
        phase6_bringup.py to regenerate orders from fresh optimals (07-17 optimals
        were ~CORN −27, US10 −1, MXP −1, SOFR −2, V2X −58 remaining). With data
