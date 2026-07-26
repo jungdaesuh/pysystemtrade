@@ -1,188 +1,283 @@
 # HANDOFF — Personal systematic trading program on pysystemtrade   ·   task-key: pysystemtrade-trading-program
 
-> Updated 2026-07-17 00:15 EDT · Status: **PAPER SYSTEM IS LIVE WITH POSITIONS** —
-> commissioning executed 2026-07-15 (9 real paper fills; EUROSTX +4 complete @ avg
-> 6297.25, V2X −5 of −62 partial @ avg 19.97; NLV ~$999.7k). Four US instruments
-> (CORN/US10/MXP/SOFR) blocked on CME+CBOT data-subscription ACTIVATION (bought
-> 2026-07-16 pm; re-probed 07-17 00:14 in LIVE mode with exact conIds — still Error
-> 354 on all three ⇒ "next-day activation" ruled mostly out, billing hold on the
-> unfunded live account is now the leading explanation → USER portal check/deposit).
-> Daily cycle ran 07-17 00:14: all six instruments current through 07-16, exit 0.
-> Cron RESUMED 07-17 + 18:47 Claude wakeup. Gate 1 CLOSED. **Gate 2p/2s ADOPTED 2026-07-17**; the
-> 07-17 session found+fixed a zero-limit-price defect (IB sentinel quotes, commit
-> `7ce72fb0`) so per counting rules the day does NOT count — **next Day-1 candidate
-> Mon 2026-07-20** on fixed code. Positions: EUROSTX +4, V2X −7 (2 more fills @20.30).
+> Updated 2026-07-26 00:08 EDT (Sun) · Status: **PAPER SYSTEM LIVE, GATE 2p IN
+> PROGRESS 1/10.** Paper account holds EUROSTX +4 / V2X −11, NLV $1,000,631,
+> books reconcile exactly (broker == system, verified 07-25). Four US instruments
+> (CORN/US10/MXP/SOFR) have NEVER traded — CME/CBOT market data still not
+> activated 9 sessions after purchase; this, not the day count, is the binding
+> constraint on Gate 2p. Sessions + evening ops run on Claude crons that
+> AUTO-EXPIRE ~08-01 (see Next action 2). Gate 1 CLOSED. Research battery queue
+> COMPLETE (all null — baseline defended).
 
 ## Goal
 Production-grade personal systematic trading program: (a) real-money barbell per
-policy, (b) paper futures pipeline against IBKR through three gates, (c) engine live
-~Sept 2026 if gates pass, (d) research factory. **Done when:** engine trades live on
-micro futures with clean daily reconciliation, scaled per policy.
+policy, (b) paper futures pipeline against IBKR through three gates, (c) engine
+live ~Sept 2026 if gates pass, (d) research factory. **Done when:** engine trades
+live on micro futures with clean daily reconciliation, scaled per policy.
 
 ## Next actions  (start here)
-1. [ ] **Verify CME/CBOT data active** (blocks the 4 US instruments): USER checks
-       Portal → Settings → Market Data Subscriptions for Active/Pending/billing flag
-       (probably needs the LIVE-account deposit — fees bill there; balance $0).
-       Machine-side probe, **during trading hours only** (closed markets report
-       NO LIVE DATA for everything and prove nothing):
-       `PYSYS_PRIVATE_CONFIG_DIR=$HOME/pysystemtrade-private .venv/bin/python scripts/data_utilities/probe_market_data.py CORN US10 MXP SOFR EUROSTX V2X`
-       Dark since purchase 07-16 through 07-24 (9 sessions).
-2. [ ] **Evening ops now scheduled (user-approved 2026-07-17)**: system cron RESUMED
-       (18:30 weekdays, daily_cycle_pilot → ~/ibc/logs/daily_cycle.log) + a Claude
-       session-only wakeup 18:47 weekdays (verifies cron, runs EOD stack cleanup +
-       data probe, reports; expires ~07-24 or when session dies — RE-CREATE it in a
-       new session). Manual fallback:
-       `PYSYS_PRIVATE_CONFIG_DIR=$HOME/pysystemtrade-private .venv/bin/python scripts/data_utilities/daily_cycle_pilot.py`
-3. [ ] **Sessions RECURRING weekdays 09:37 ET** (standing auth, user 07-21;
-       Claude cron cc9dca64) + **evening ops 18:47 weekdays** (cron 2e11985b).
-       BOTH are session-only and AUTO-EXPIRE AFTER 7 DAYS (~08-01) — they died
-       once already and Friday 07-24's cleanup silently didn't run. RE-CREATE
-       them in any new session and after each expiry; check with CronList.
-       Morning sequence: gateway up → `scripts/data_utilities/probe_market_data.py
-       CORN US10 MXP SOFR EUROSTX V2X` → spike/trio sanity (approve via
-       `scripts/data_utilities/approve_contract_spike.py`) → phase6_bringup →
-       **commission_stack_handler --minutes 3 FOREGROUND, 300000ms timeout**
-       (short so it finishes in-foreground; kills 07-22..07-24 are HOST MEMORY
-       CONTENTION from the user's 15.5Gi fusion job, NOT a pipeline defect —
-       DECISIONS 07-24; one cleanly booked fill = the day's pipeline-proof).
-       Killed → verify clean, re-run once, then STOP. **After ANY interrupted
-       pass, check IB open orders + positions vs system FIRST** (a killed
-       session can hide a BOOKED fill). Evening: cycle check → spike check →
-       `scripts/data_utilities/eod_stack_cleanup.py` (verify it RAN) →
-       reconcile. Never kill the user's processes. Day-judging with the user.
-       Stacks are cleared nightly (EOD cleanup) — Monday's session starts with
-       phase6_bringup.py to regenerate orders from fresh optimals (07-17 optimals
-       were ~CORN −27, US10 −1, MXP −1, SOFR −2, V2X −58 remaining). With data
-       active, expect all six to execute. Afterwards run the reconcile report.
-4. [ ] USER DECISIONS pending: **margin application** status on U26413969; **ACH
-       deposit** (unblocks data billing + Phase 1 barbell deploy + Gate 3 math →
-       Gate 2s config); security sudo items below. (Gate 2p/2s: ADOPTED 07-17 —
-       clean-day criteria + counting rules in DECISIONS 2026-07-17.)
-5. [ ] USER security items (from 2026-07-16 audit, commands in DECISIONS/chat):
-       remove passwordless sudo (`sudo visudo`); disable SSH password auth; enable
-       ufw (allow tailscale0 first!); `sudo apt upgrade` + reboot off-hours.
-6. [x] **Battery queue COMPLETE 07-18** (all verdicts in DECISIONS 2026-07-18):
-       every slot NULL — baseline survives; estimation nulls re-certified on
-       post-#1650 code. Remaining from lit review: Tier-1 hygiene (statsmodels
-       0.14.6 → drop scipy pin; schedule cost reports; execution measurement
-       fields) and Tier-3 universe expansion at funding. Upstream PR
-       contributions (tif fix → issue #1580, sentinel fix) PENDING USER.
-7. [ ] Pre-registered follow-ups: schedule full automation only after 3 clean
-       supervised days; G1b re-check 2026-08-10; immigration-attorney consult before
-       live go-live (visa note, DECISIONS 2026-07-16); tax pro (PFIC/FBAR).
+
+1. [ ] **Unblock CME/CBOT market data — the critical path.** Bought 2026-07-16;
+       every probe since has been dark (07-16, 07-17 ×3, 07-19, 07-20, 07-21,
+       07-22, 07-23, 07-24). Gate 2p CANNOT CLOSE until ≥3 counted days include
+       CME/CBOT execution, so nothing else finishes the gate.
+       - USER: IBKR Portal → Settings → Market Data Subscriptions — is it
+         Active / Pending / flagged for billing? Leading theory: the fee bills to
+         live account U26413969, which holds $0, so activation is held. An ACH
+         deposit likely releases it (and also unblocks the barbell + Gate 3 math).
+       - MACHINE (during trading hours ONLY — a closed market reports NO LIVE
+         DATA for everything and proves nothing):
+         `cd /home/jungdaesuh/code/software/trading/pysystemtrade && PYSYS_PRIVATE_CONFIG_DIR=$HOME/pysystemtrade-private .venv/bin/python scripts/data_utilities/probe_market_data.py CORN US10 MXP SOFR EUROSTX V2X`
+         LIVE on the US four = activated (loud news: all six then execute).
+
+2. [ ] **Re-create the two Claude crons — they expire ~2026-08-01 and die with
+       this session.** They already lapsed once and Friday 07-24's cleanup
+       silently didn't run. Check with CronList; if absent, recreate:
+       - **Morning session, weekdays 09:37 ET** (currently `cc9dca64`) — full
+         sequence in "Daily rhythm" below. Standing user authorization granted
+         2026-07-21; no fresh "go" needed.
+       - **Evening ops, weekdays 18:47 ET** (currently `2e11985b`) — verify the
+         18:30 system cron ran, spike check, EOD cleanup, reconcile, report.
+       The 18:30 system crontab entry (daily_cycle_pilot) is durable and survives
+       — only the Claude jobs expire.
+
+3. [ ] **Judge Gate 2p Days 3 and 4 with the user** (both executed clean; my
+       recommendation: both COUNT → 3/10). Details in DECISIONS 2026-07-23 /
+       07-24. Day 2 (07-22) never completed and does not count.
+
+4. [ ] **USER decisions still pending:** ACH deposit (unblocks data + barbell +
+       Gate 3); margin application status on U26413969; the four security sudo
+       items (remove passwordless sudo via `sudo visudo`; disable SSH password
+       auth; enable ufw — **allow tailscale0 FIRST**; `sudo apt upgrade` + reboot
+       off-hours); optional SMTP credential so price-spike alerts can actually
+       deliver (their silence hid a data outage for 3 days — DECISIONS 07-20).
+
+5. [ ] **Open engineering hygiene** (no user decision needed, do on a quiet day):
+       statsmodels 0.14.0 → 0.14.6, then drop the `scipy<1.15` cap and the
+       `scipy==1.13.1` lock pin (upstream fixed `_lazywhere`); re-verify the G1a
+       anchor bitwise after. Schedule `slippage_report.py` / `costs_report.py` and
+       update `data/futures/csvconfig/spreadcosts.csv` when realized costs diverge
+       >25%. Add execution measurement fields before any execution A/B (passive-vs-
+       aggressive final state, data-quality flag, post-fill markouts, rows for
+       abandoned orders) — all specified in the lit-review plan doc.
+
+6. [ ] **Pre-registered follow-ups:** G1b re-check 2026-08-10; immigration-attorney
+       consult before live go-live (DECISIONS 07-16); tax professional (PFIC/FBAR,
+       Samsung sale year); universe expansion 6→~30 at funding (the one
+       literature-backed lever worth ~+0.4 SR — Gate 3 design decision, NOT a
+       battery experiment); optional upstream PRs (our tif fix matches open
+       upstream issue #1580 exactly; sentinel fix has no upstream equivalent;
+       statsmodels pyproject bump).
+
+## Daily rhythm (what runs, in order)
+
+- **09:37 weekdays — commissioning session** (Claude cron): Gateway up
+  (`~/ibc/gatewaystart-headless.sh`, port 4002 then ~40s for API login) → probe
+  market data → data sanity (EUROSTX multiple-prices tail has non-NaN PRICE; grep
+  last night's `~/ibc/logs/daily_cycle.log` for `Spike found` on TRIO contracts of
+  HELD instruments — verify stored vs broker prices, then approve via
+  `scripts/data_utilities/approve_contract_spike.py INSTRUMENT DATE...` BEFORE the
+  backtest; bare non-trio flags are harmless) → `phase6_bringup.py` →
+  **`commission_stack_handler.py --minutes 3` FOREGROUND, 300000ms Bash timeout**
+  → reconcile → report. Do NOT judge the day.
+- **18:30 weekdays — daily data cycle** (system crontab, durable):
+  `daily_cycle_pilot.py` → `~/ibc/logs/daily_cycle.log`, asserts freshness.
+- **18:47 weekdays — evening ops** (Claude cron): verify the cycle logged
+  `freshness OK` TODAY → spike check → `eod_stack_cleanup.py` (**verify it
+  actually ran**) → reconcile positions → report.
+- **Day judging happens with the user**, after the evening cycle. Never self-count.
 
 ## State (with evidence)
-- [x] **Commissioning 2026-07-15**: first-ever execution through the full path.
-      9 fills booked correctly through broker→contract→instrument stacks, zero
-      position break at close. Evidence: DECISIONS 2026-07-15 entry; positions at IB.
-- [x] **Root-cause fix**: IB error 10349 (blank tif) killed all broker orders —
-      fixed in `sysbrokers/IB/client/ib_orders_client.py` (tif="DAY" on market/
-      limit/stop). Proven by the fills that followed. Commit `9f6ce4a8`.
-- [x] **Discovered gate**: 'best' algo sizes from market depth; CME/CBOT delayed
-      data provides none → the 4 US instruments never spawn broker orders. EUREX
-      delayed works. Fix = CME+CBOT subscription (bought, awaiting activation).
-- [x] **Position-break war story resolved**: fill raced its 10349 "cancel";
-      broker-side-only flatten then created the reverse break; reconciled through
-      system position tables. Rules in learnings (2026-07-15 entries).
-- [x] Gate 1 CLOSED under amended faithful criteria (G1a bitwise; G1b per-instrument
-      + MXP 44bd exemption, exit-0; G1c full artifact vs independent recompute).
-      Both checkers + 9 pure-function tests. Commits `eea1f182`, audit trail in
-      DECISIONS 2026-07-12.
-- [x] Risk controls: per-instrument position caps + 1-day trade caps in Mongo
-      (`scripts/data_utilities/set_paper_limits.py`); orders regenerated through them.
-- [x] Security audit 2026-07-16: IBC `AcceptIncomingConnectionAction=reject` set
-      (active since evening Gateway restart); mongo localhost-only ✓; secrets 600 ✓;
-      REMAINING = user sudo items (next action 5).
-- [x] Visa research logged (DECISIONS 2026-07-16): passive investing permitted;
-      Matter of Lett (BIA 1980) + Bhakta v. INS (9th Cir. 1981) favorable; engine
-      amber → attorney check pre-live. Barbell/paper green.
-- [x] IBKR portal progress 2026-07-16 (user): futures trading permissions signed
-      (US + Germany), NP questionnaire signed, CME/CBOT data subscribed — activation
-      UNVERIFIED (Error 354 at 18:02 probe).
-- [ ] Gate 2p: IN PROGRESS — 0/10 clean days (07-17 attempt voided by the
-      zero-limit-price defect per counting rules; fixed + 8 regression tests,
-      commit `7ce72fb0`; next candidate Mon 07-20). Needs ≥3 counted days with
-      CME/CBOT execution to close. Gate 2s: config build gated on funding (Gate 3).
-- [ ] Barbell real-money deploy: waits on deposit (script proven on paper 2026-07-10).
+
+- [x] **Gate 1 CLOSED** under amended criteria — G1a bitwise anchor
+      (0.478 / 32.87 / 13,422), G1b per-instrument continuity + MXP exemption,
+      G1c artifact vs independent recompute. Checkers:
+      `analysis/research_harness/g1b_stitch_check.py`, `g1c_parity_check.py`
+      (both exit nonzero on fail) + 9 tests in `tests/test_g1_checkers.py`.
+      Commit `eea1f182`; audit trail DECISIONS 2026-07-12.
+- [x] **Gate 2p/2s ADOPTED 2026-07-17.** 2p = 10 clean days on the chapter-15
+      pipeline, cumulative, ≥3 of them WITH CME/CBOT execution; a pipeline defect
+      needing a code fix RESETS the count; external causes (holiday, vendor
+      outage, data pending) simply don't count. 2s = ≥10 days on the real go-live
+      config (micro contracts, 25% vol, universe from Gate 3 capital math). Both
+      required before any live order. Clean-day criteria + counting rules:
+      DECISIONS 2026-07-17. Precedent 2026-07-20: designed human-in-the-loop
+      operator gates (verified spike approvals, roll confirmations) do NOT void a
+      day.
+- [x] **Gate 2p = 1/10 counted.** Day 1 = 2026-07-20 (user-ruled). Day 3 (07-23,
+      V2X → −9) and Day 4 (07-24, 2 fills, V2X → −11) both executed clean;
+      judgment PENDING USER. Day 2 (07-22) never completed.
+- [ ] **Gate 2s:** not started — config can't be built until the funding amount
+      fixes the Gate 3 capital math.
+- [x] **Positions verified 2026-07-25:** system == broker (EUROSTX/20260900 +4 vs
+      FESX Sep26 +4; V2X/20261000 −11 vs FVS Oct26 −11), zero dangling IB orders,
+      all three stacks empty, NLV $1,000,631. **Books have reconciled at every
+      single check since 07-15 — no unresolved break has ever survived a session.**
+- [x] **Three real code bugs found and root-fixed** (all committed, all with the
+      failure reproduced first):
+      1. Blank `tif` → IB error 10349 killed every broker order, and one filled in
+         the same second as its "cancel" → position break. Fix:
+         `sysbrokers/IB/client/ib_orders_client.py` explicit `tif="DAY"` on
+         market/limit/stop. Commit `9f6ce4a8`.
+      2. Sentinel quotes → delayed feeds publish bid `0.0` for an empty book side;
+         the validity gate only screened NaN, so limit orders went out priced 0.0
+         (5× IB Error 201 "must contain field #44"). Fix:
+         `sysbrokers/IB/ib_futures_contract_price_data.py`
+         `quote_price_or_nan_if_sentinel` normalises quotes ≤0 to NaN at the
+         ingestion boundary + nan-guard in
+         `sysexecution/algos/common_functions.py`. 8 tests in
+         `tests/test_execution_quote_validity.py`. Commit `7ce72fb0`.
+      3. Upstream SR-cost SIGN ERROR — `sysquant/returns.py` double-negated an
+         already-negative cost SR, so the weight-ESTIMATION layer ADDED costs to
+         returns (rewarding expensive rules). Cherry-picked upstream PR #1650 as
+         `b85befbb`; anchor re-verified bitwise; production unaffected (fixed
+         weights). Tainted two prior null experiments → re-run, see below.
+- [x] **Research battery queue COMPLETE 2026-07-18 — every slot NULL, baseline
+      defended.** Slot 1: all 8 estimation variants re-certified null on corrected
+      code (asterisk logged: point estimates moved positive but nothing cleared the
+      pre-registered CI bar; chasing it needs a NEW pre-registration). Slot 2:
+      breakout ensemble null (CI lo −0.001 — a 97% probability-of-beating that did
+      not clear the bar, and the bar was not moved). Slot 3: vacuous (chapter-15
+      already zero-weights the fast EWMACs). Slot 4: normalised momentum null —
+      its cost-reduction claim did not replicate (drag +4.6%). Slot 5: seasonal
+      carry null and significantly NEGATIVE. Slot 6: 36-cell vol/buffer sweep —
+      defaults re-certified, sanity-anchor cell bitwise. Full menu + citations +
+      merged does-not-work list: `docs/custom/plans/lit_review_upgrades_2026-07-18.md`.
+      Harness now also records gross curves so cost drag is measurable.
+- [x] **Ops scripts promoted from /tmp into the repo 2026-07-25** (commit
+      `757836fc`) after a `/tmp` sweep wiped them and broke the scheduled passes:
+      `scripts/data_utilities/eod_stack_cleanup.py`, `probe_market_data.py`
+      (resolves contracts via the system's own priced-contract mapping — no
+      hardcoded conIds, survives rolls), `approve_contract_spike.py`,
+      `stack_reporting.py` (shared `print_stacks`; duplicate removed from
+      `commission_stack_handler.py`).
+- [x] **Risk controls live:** per-instrument position caps + 1-day trade caps in
+      Mongo (`scripts/data_utilities/set_paper_limits.py`); every order is
+      generated through them.
+- [x] **Security audit 2026-07-16:** IBC `AcceptIncomingConnectionAction=reject`
+      applied; Mongo localhost-only; secrets mode 600. Remaining = user sudo items
+      (Next action 4).
+- [x] **Visa research logged** (DECISIONS 2026-07-16): passive investing permitted
+      for J-1; *Matter of Lett* (BIA 1980) and *Bhakta v. INS* (9th Cir. 1981)
+      favorable. Barbell + paper GREEN; automated live engine AMBER → attorney
+      check before go-live.
+- [x] **IBKR portal 2026-07-16 (user):** futures permissions signed (US +
+      Germany), NP questionnaire signed, CME/CBOT data purchased.
+- [ ] **Barbell real-money deploy:** waits on the deposit (script proven on paper
+      2026-07-10).
 
 ## Environment & how to run
-- cwd/repo/branch: `/home/jungdaesuh/code/software/trading/pysystemtrade` / fork / `develop`
-- HEAD: `b395c665` (all work committed+pushed; transient results/ dirs untracked).
-- Env: `.venv/bin/python` everything; `export PYSYS_PRIVATE_CONFIG_DIR="$HOME/pysystemtrade-private"`
-  (in ~/.bashrc AND ~/.zshrc since 07-12). Deps LOCKED: `requirements-lock.txt`
-  (scipy pinned 1.13.1 — statsmodels needs it; anchor re-verified bitwise).
-- Mongo: `docker start pysystemtrade-mongo` (unless-stopped; stays down after manual stop).
-- Gateway (headless): `~/ibc/gatewaystart-headless.sh`; port 4002 ~40s; logs
-  `~/ibc/logs/`. Exits itself daily 23:45 ET; cycle script self-heals it.
-- Daily cycle: `scripts/data_utilities/daily_cycle_pilot.py` — overlap-locked,
-  broker-session-verified, freshness-asserting (exit 1 on stale).
-- Commissioning: `scripts/data_utilities/commission_stack_handler.py --minutes N`.
-- Backtest+orders refresh (idempotent): `scripts/data_utilities/phase6_bringup.py`.
-- Gates: `analysis/research_harness/g1b_stitch_check.py`, `g1c_parity_check.py`
-  (both exit nonzero on fail); anchor: `run_battery.py --variants baseline --jobs 1`
-  → 0.478/32.87/13422 exactly.
-- CRON: RESUMED 2026-07-17 (18:30 weekdays daily cycle, user-approved) + Claude
-  18:47 wakeup (session-only, see next action 2). Backup: ~/ibc/crontab_backup_20260712.txt.
-- Paper account DUR207416: ~$999.7k NLV; futures +4 FESX Sep26, −5 FVS Oct26; five
-  ETF rehearsal positions (SGOV 68/VTI 2/VEA 14/GLDM 9/VGIT 11). Live U26413969:
-  unfunded, Cash type, futures permissions requested 07-16.
+
+- cwd / repo / branch: `/home/jungdaesuh/code/software/trading/pysystemtrade` /
+  personal fork of pst-group/pysystemtrade (upstream moved from robcarver17) /
+  `develop`. **HEAD `9e117a5b`**, everything committed and pushed; untracked
+  `results/research_battery/*` dirs and `email.log` are transient.
+- Python: `.venv/bin/python` for everything. Always
+  `PYSYS_PRIVATE_CONFIG_DIR=$HOME/pysystemtrade-private` (also exported in
+  `~/.bashrc` and `~/.zshrc`). Deps locked in `requirements-lock.txt`.
+- Mongo: `docker start pysystemtrade-mongo` (restart policy unless-stopped; stays
+  down after a manual stop).
+- Gateway (headless IBC + Xvfb): `~/ibc/gatewaystart-headless.sh`; port 4002 opens
+  in ~10-15s, API login ~40s; logs `~/ibc/logs/`. **It self-exits daily 23:45 ET**
+  — expect it down every morning; the cycle script self-heals it.
+- Scripts (all under `scripts/data_utilities/`): `daily_cycle_pilot.py` (data
+  cycle; overlap-locked, broker-verified, exits 1 on stale) ·
+  `commission_stack_handler.py --minutes N` (supervised execution pass) ·
+  `phase6_bringup.py` (idempotent backtest + order generation) ·
+  `eod_stack_cleanup.py` · `probe_market_data.py CODE...` ·
+  `approve_contract_spike.py INSTRUMENT DATE...` · `set_paper_limits.py`.
+- Research: `analysis/research_harness/run_battery.py --variants NAME --jobs N`
+  (anchor: `--variants baseline` → 0.478 / 32.87 / 13,422 exactly);
+  `compare_runs.py`; candidate rules quarantined in `battery_rules.py` until a
+  verdict graduates them.
+- Accounts: paper **DUR207416** (~$1.0M NLV; futures FESX Sep26 +4, FVS Oct26 −11;
+  plus five ETF rehearsal positions SGOV 68 / VTI 2 / VEA 14 / GLDM 9 / VGIT 11).
+  Live **U26413969**: unfunded, Cash type, futures permissions requested 07-16.
+- Host quirk: **memory-tight when the user's fusion job runs** (07-24: 1.3Gi free,
+  swap 93%, a 15.5Gi simsopt process). Long background sessions get reaped — hence
+  `--minutes 3`. Never kill the user's processes.
 
 ## Decisions & rationale (recent; full journal in docs/custom/DECISIONS.md)
-- Gate 2 split ADOPTED 2026-07-17 (2p: 10 clean days chapter-15 pipeline, cumulative,
-  pipeline-defect resets count, ≥3 days must include CME/CBOT execution; 2s: ≥10 days
-  on micro+25%vol go-live config; both before any live order).
-- Free gap-stitch over vendor (funding <$10k); Gate 1 amended criteria; four
-  research null-wins; barbell policy; W-9 branch; IRP on hold (PFIC).
-- Paper commissioning verdict: pipeline PASSED; days don't count until 2p/2s adopted.
-- Full automation deliberately deferred until 3 clean supervised days.
+
+- **Gate 2 split** (2p process / 2s strategy) adopted as written 07-17; counting
+  rules and clean-day criteria pre-registered BEFORE any day was judged.
+- **Designed operator gates don't void days** (07-20 user ruling) — spike
+  approvals and roll confirmations are normal operatorship, not manual repairs.
+- **Session kills are environmental, not defects** (07-24) — do not void days for
+  them; verify state and move on.
+- Free gap-stitch over a vendor feed (funding <$10k); Gate 1 amended criteria;
+  W-9 tax branch; Korean IRP on hold (PFIC); barbell policy unchanged.
+- Full automation stays deferred until 3 clean supervised days.
+- **Research posture:** the baseline survives everything tested. At N=6 with our
+  costs, no signal / weighting / vol / tuning upgrade has cleared a pre-registered
+  bar. More instruments beats better weights by roughly an order of magnitude.
 
 ## Dead ends / do NOT retry
-- Blank tif on ANY IB order (10349 kills or races); broker-side-only flattening;
-  closing gates against weaker criteria than adopted; config in private_config.yaml
-  when the consumer reads private_control_config.yaml; `pkill -f` without bracket
-  trick; dotted PYSYS paths; apt Mongo; `python -m venv` on uv interpreters;
-  DISPLAY=:0 Gateway launch; production price fetcher for expired contracts
-  (1y-from-now window — use expiry-anchored, see gap_stitch.py).
+
+- Blank `tif` on ANY IB order (10349 kills, and can race a fill).
+- Flattening a position break broker-side only — the fill may already be booked;
+  reconcile through the system's own position tables.
+- Launching long stack sessions directly with `run_in_background` — they get
+  reaped; run FOREGROUND with a timeout (and keep them short under memory load).
+- Probing market data outside trading hours — everything reports NO LIVE DATA.
+- Keeping operational scripts in `/tmp`/scratchpad — swept without warning.
+- Closing a gate against weaker criteria than the adopted text; moving a
+  pre-registered bar after seeing results.
+- Config in `private_config.yaml` when the consumer reads
+  `private_control_config.yaml`.
+- Production price fetcher for expired contracts (1y-from-now window — use the
+  expiry-anchored fetcher in `gap_stitch.py`).
+- `pkill -f` without the bracket trick; dotted PYSYS paths; apt Mongo;
+  `python -m venv` on uv interpreters; `DISPLAY=:0` Gateway launch.
+- Research dead ends (evidence in the lit-review doc): acceleration rules,
+  GARCH / implied-vol / regime vol for sizing, Moreira-Muir vol overlays,
+  tail-hedge puts, COT data, fast mean reversion, calendar seasonality,
+  cross-sectional anything at N=6, estimated weights at small N in any clothing.
 
 ## Open questions / blockers
-- CME/CBOT data activation (next action 1) — likeliest hold: unfunded live account.
-  Probes all Error 354: 07-16 18:02, 07-17 00:14 / 10:33 / 19:17.
-- RESOLVED 07-20: EUROSTX NaN-PRICE was the spike guard chronically false-
-  positiving on an EMPTY hourly series (aborting all writes, silently — no
-  SMTP). Operator-approved via check_for_spike=False write (designed
-  workflow); series current intraday. V2X 07/08/09 bare contracts still flag
-  the same pattern — harmless (non-trio), approve likewise if persistent.
-- Gate 2p: **1/10 counted** (Day 1 = 07-20); Day-3 07-23 (V2X −9) and Day-4
-  07-24 (V2X −11, 2 fills) both executed CLEAN after memory-contention kills,
-  judgments PENDING USER (recommend both COUNT → 3/10). Day-2 07-22 never
-  completed. ≥3 counted days still need CME/CBOT execution to close (data dark
-  9 days) — this, not the day count, is the binding constraint.
-- HOST HEALTH (user-awareness): memory-tight when the fusion job runs
-  (07-24: 1.3Gi free, swap 93%). Trading pipeline unaffected (state clean
-  through every kill) but long sessions get reaped — hence --minutes 3.
-- Margin application status — user hasn't confirmed submitting it.
-- Funding amount/timing — gates Gate 3, barbell deploy, data billing.
-- Gate 2p/2s adoption — user.
-- V2X remaining −57: fills grind ~1-lot slices; completes over sessions.
+
+- **CME/CBOT activation** (Next action 1) — likeliest hold: the unfunded live
+  account. Blocks 4 of 6 instruments and therefore Gate 2p closure.
+- **Funding amount and timing** — gates Gate 3, the barbell deploy, data billing,
+  and the Gate 2s config.
+- **Margin application** — user hasn't confirmed submitting it.
+- **V2X target not yet reached:** optimal is ≈ −65; position −11. Fills grind
+  ~1 lot per session on EUREX delayed data; it will close over many sessions.
+- Alerting is deaf until an SMTP credential exists (user item) — treat "no alert"
+  as no information, not as good news.
 
 ## Mental model
-- Two engines: barbell (real money, ETFs, human-triggered, green-lit incl. visa-wise)
-  and futures engine (paper, autonomous, leveraged — three gates + attorney check
-  before real money). Paper time ∝ autonomy × leverage.
-- The stack pipeline: instrument order → contract order (spawn) → broker orders
-  (algo slices, needs market depth for sizing) → fills propagate back up with
-  parent-child links. `commission_stack_handler.py` runs one supervised production
-  pass; `run_stack_handler` is the eventual scheduled daemon.
-- IB quirks bible: 10349 tif; expired-data expiry-anchoring; dual-listed symbols
-  (MXP/6M); 23:45 daily self-exit; one-session-per-account; delayed data has no
-  depth on CME (algo starves) but works on EUREX; subscriptions bill the LIVE
-  account and shared to paper; activation next-hour-or-next-day.
-- The knowledge loop is the product: DECISIONS.md (pre-registered, judged),
-  learnings/ (one rule per problem), battery results registry, this handoff.
+
+- **Two engines.** The barbell (real money, ETFs, human-triggered, green-lit
+  including visa-wise) and the futures engine (paper, autonomous, leveraged —
+  three gates + attorney check before real money). Required paper time scales with
+  autonomy × leverage.
+- **The stack pipeline:** instrument order → contract order (spawn) → broker
+  orders (algo slices, sized from market depth) → fills propagate back up through
+  parent-child links into the position tables. `commission_stack_handler.py` runs
+  one supervised production pass; `run_stack_handler` is the eventual daemon.
+  Stacks are cleared nightly, so each morning regenerates orders from fresh
+  optimals — never assume yesterday's orders persist.
+- **IB quirks bible:** blank tif → 10349; expired-contract history needs
+  expiry-anchored fetching; dual-listed symbols (MXP legacy vs 6M); Gateway
+  self-exits 23:45 ET; one API session per account; delayed data has NO depth on
+  CME so the 'best' algo sizes zero (EUREX delayed works); subscriptions bill the
+  LIVE account and share to paper; a "cancelled" order may still have filled.
+- **Why live-fire matters:** two of the three real bugs were undiscoverable by
+  backtest — they only exist in the broker interaction. That is what paper trading
+  is buying.
+- **The knowledge loop is the product:** DECISIONS.md (pre-registered, judged
+  win-or-null), learnings/README.md (one checkable rule per problem), the battery
+  results registry, and this handoff.
 
 ## Pointers
-- Plans: `docs/custom/plans/portfolio_policy.md` · `gate1_parity_definition.md` ·
+
+- Plans: `docs/custom/plans/portfolio_policy.md` ·
+  `gate1_parity_definition.md` · `lit_review_upgrades_2026-07-18.md` ·
   `ib_paper_trading_implementation_plan.md` · `upgrade_surgical_map.md`
-- Journal/learnings: `docs/custom/DECISIONS.md` · `docs/custom/learnings/README.md`
-- Cron backup: `~/ibc/crontab_backup_20260712.txt` · IBC config: `~/ibc/config.ini` (600)
-- Mistake book: `~/.claude/skills/crucible/shared/mistake-book.md` (117-118)
+- Journal / learnings: `docs/custom/DECISIONS.md` ·
+  `docs/custom/learnings/README.md`
+- Logs: `~/ibc/logs/daily_cycle.log` · `~/ibc/logs/` (Gateway)
+- Config (600, outside repo, never commit): `~/pysystemtrade-private/` ·
+  `~/ibc/config.ini` · cron backup `~/ibc/crontab_backup_20260712.txt`
+- Mistake book: `~/.claude/skills/crucible/shared/mistake-book.md`
