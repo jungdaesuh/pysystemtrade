@@ -152,3 +152,17 @@ Seed entries (from the 2026-07 setup sessions):
   one-shot analysis only. Corollary: a market-data probe run outside trading
   hours reports "no data" for everything — schedule probes inside the session,
   or the result is unreadable.
+
+## Trading-hours config is a three-frame comparison — all frames must match the host clock (2026-07-27)
+`okay_to_trade_now()` compares (a) saved weekly windows from
+ib_config_trading_hours.yaml — authored in the AUTHOR'S host time (upstream:
+London) — intersected with (b) IB's exchange-local hours shifted to
+GMT+GMT_offset_hours (default 0), against (c) `datetime.now()` on the
+deployment host. Deploy on any non-London host and every window silently
+shifts by the offset difference: on this EDT host US markets "opened" at
+15:00 EDT and CORN could never trade — while EUREX fills kept landing
+through the mis-shifted window, masking the defect as "US data problem".
+Rule: on deployment, author private_config_trading_hours.yaml in the host
+frame AND set GMT_offset_hours to the host's GMT offset; re-check at DST
+changes. Symptom to recognize: okay_to_trade=False during obvious liquid
+hours while a live-data probe succeeds.
