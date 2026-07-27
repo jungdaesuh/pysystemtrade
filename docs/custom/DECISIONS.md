@@ -686,3 +686,50 @@ Entry template:
   last known state (dark since 07-16); next real check is Monday's session.
 - GATE 2p: unchanged, 1/10 counted. Day-3 (07-23) and Day-4 (07-24) executed
   clean and remain PENDING USER judgment (recommend both COUNT -> 3/10).
+
+## 2026-07-27 — CME/CBOT data ACTIVE; trading-hours timezone-frame defect found + fixed; Gateway killed by LAN IP flap; stacks cleaned flat
+- CME/CBOT DATA ACTIVATED (9-session drought over): probe returned LIVE
+  bid/ask with depth for all six — CORN 474.5x152/474.75x208, US10, MXP,
+  SOFR, EUROSTX, V2X. The four US instruments are unblocked; Gate 2p's
+  ">=3 counted days with CME/CBOT execution" is now reachable.
+- SPIKE APPROVALS (verified first, stored==broker at every overlap):
+  EUROSTX/20260900 (Friday +1.3% recovery 6219->6301, live 6358 consistent;
+  +34 hourly +1 daily rows), CORN/20260900 and /20261200 (moves ~2%,
+  continuous into Monday's live quotes; +8 hourly +1 daily each). Merged
+  prices rewritten. Non-trio CORN 2027xx flags left per standing rule.
+- PASS 1 (10:10-10:18): V2X filled 3 x -1 @ 20.05 -> position -14, booked
+  broker->contract->instrument, zero break. US four spawned contract orders
+  but produced NO broker orders.
+- DEFECT FOUND (config, not code): saved trading-hours windows in
+  sysbrokers/IB/ib_config_trading_hours.yaml are authored in LONDON host
+  time, and GMT_offset_hours defaulted to 0, but okay_to_trade_now()
+  compares against the HOST clock (EDT) — every window sat 5h late. US
+  markets "opened" 15:00 EDT; CORN (day session ends 14:20 EDT) could NEVER
+  trade; today's V2X fills slipped through the mis-shifted EUREX window.
+  FIX (both knobs the framework provides, in the private dir):
+  private_config_trading_hours.yaml authored in EDT frame (US/Central
+  10:00-15:00, MET 03:00-10:00, etc.) + GMT_offset_hours: -4 in
+  private_config.yaml. VERIFIED: US10/MXP/SOFR okay_to_trade=True in the
+  liquid window, CORN correctly gated to its real 11:30-14:20 EDT
+  intersection, EUREX correctly closed after 10:00 EDT. NOTE: set
+  GMT_offset_hours to -5 at the November DST change.
+- RE-RUN (permitted once, validating the fix): US10 broker order 31
+  (-1 limit @ 108.484375) submitted to IB and managed by 'best' — then the
+  Gateway DIED mid-manage (ConnectionError: Socket disconnect).
+- GATEWAY DEATH ROOT CAUSE: journal shows the host LAN IP flapping
+  192.168.68.52 <-> .53 at exactly 10:27 (tailscaled "gateway and self IP
+  changed" x5, 10:27-10:28). Network bounce, NOT memory (75Gi available),
+  NOT a pipeline defect. USER ITEM: host has a DHCP lease fight or dual
+  interfaces racing; static IP / single interface would stop random IB
+  session kills.
+- POST-INTERRUPTION RECONCILIATION (mandatory, 07-24 precedent): US10 order
+  found RESTING UNFILLED at IB (no hidden fill); positions matched exactly
+  (V2X -14, EUROSTX +4). safe_stack_removal cancelled it and cleared all
+  three stacks; IB confirms ZN order status=Cancelled filled=0. Final state
+  flat and reconciled; no trading after the cleanup (re-run allowance
+  spent, Gateway trust low).
+- GATE 2p Day judgment: PENDING USER (do not self-judge). Facts for the
+  ruling: 3 clean V2X fills booked with zero break; a CONFIG defect was
+  found and fixed mid-session (the 07-17 voiding rule names code fixes);
+  no CME/CBOT fill today (US10 cancelled unfilled). Also still pending:
+  Days 3-4 rulings (recommend both COUNT -> 3/10).
