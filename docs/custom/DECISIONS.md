@@ -733,3 +733,26 @@ Entry template:
   found and fixed mid-session (the 07-17 voiding rule names code fixes);
   no CME/CBOT fill today (US10 cancelled unfilled). Also still pending:
   Days 3-4 rulings (recommend both COUNT -> 3/10).
+
+## 2026-07-28 — FIRST CME/CBOT EXECUTION: US10, MXP filled complete; SOFR partial; zero break
+- Probe: all six LIVE (second consecutive session — activation stable).
+- Data sanity clean: EUROSTX multiple tail 6333.0 @ 07-27 16:00; no trio
+  spikes (far-CORN 2027xx noise only).
+- Backtest orders: US10 -2, MXP -2, CORN -21, SOFR -5, V2X -44.
+- Handler pass (10:13-10:17, corrected trading-hours config active):
+  US10 -2 FILLED @ 108.734375 (both lots at the offer — passive, zero
+  spread cost); MXP -2 FILLED @ ~0.05707; SOFR -2 of -5 @ 96.005/96.00;
+  CORN untouched (real-hours window opens 11:30 EDT — correct gating);
+  V2X skipped (EUREX window closed 10:00 EDT — correct gating). US10 and
+  MXP orders completed and cleared off all stacks in-session.
+- Reconciliation: ZERO breaks across all five positions (V2X -14,
+  EUROSTX +4, US10 -2, MXP -2, SOFR -2); no working orders at IB.
+  Remaining stack orders (CORN -21, SOFR -3 residual, V2X -44) carry to
+  evening cleanup; tomorrow regenerates.
+- Yesterday's trading-hours frame fix is thereby VALIDATED in production:
+  the US four were blocked solely by the config defect, now proven fixed
+  end-to-end with real fills.
+- GATE 2p Day judgment: PENDING USER. Facts: fully clean session, no
+  defects, no interruptions, first day satisfying the "CME/CBOT
+  execution" criterion. Pending alongside: Days 3-4 (07-23/24, recommend
+  count) and Day-5 (07-27, config-defect ruling).
