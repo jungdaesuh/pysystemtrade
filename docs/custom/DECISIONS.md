@@ -777,3 +777,18 @@ Entry template:
 - ZERO breaks (V2X -14, EUROSTX +4, US10 -2, MXP -2, SOFR -3); no working
   orders at IB; no interruptions. Second consecutive CME-execution day.
 - Day judgment PENDING USER (now five days pending: 3, 4, 5, 6, 7).
+
+## 2026-07-29 evening — V2X trio quarantine (real vol spike) verified + approved; multiples healed; clean close
+- Cycle succeeded but tonight's V2X trio (20260900c/20261000p/20261100f, HELD
+  -14) was spike-quarantined: V2X rallied ~+3.3% intraday (19.95 -> 20.6) as
+  EUROSTX fell — genuine vol move. VERIFIED stored==broker at every daily
+  overlap; morning live probe (20.2/20.25 @ 10:07) independently confirms.
+  Approved all three; +16/+13/+11 hourly rows; re-ran multiple/adjusted
+  update (cycle had run against quarantined data) — V2X multiples now
+  current to 07-29 15:00 @ 20.6.
+- SOFR flags (2026-27 months) non-trio (trio is 2029) — noise. CORN 2027xx
+  noise unchanged.
+- Cleanup verified: stacks 0/0/0. ZERO breaks; positions V2X -14,
+  EUROSTX +4, US10 -2, MXP -2, SOFR -3. NLV 999,583 (-$3.5k on the day:
+  short vol into a vol rally + long equity into a dip — position P&L, not
+  operational).
