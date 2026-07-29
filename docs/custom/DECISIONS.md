@@ -767,3 +767,13 @@ Entry template:
   account-type taxonomy ever requires a "margin-type" classification for
   futures permissions, surface to the user BEFORE proceeding; in no case is
   cash ever borrowed.
+
+## 2026-07-29 — Day-7: clean session, SOFR fill, zero break
+- All six LIVE (third consecutive session). Data sane, no trio spikes.
+- Orders: CORN -21, SOFR -3, V2X -45 (US10/MXP inside buffers — no orders,
+  buffering working as designed).
+- Fill: SOFR -1 @ 95.98 -> position -3. CORN gated to 11:30 window, V2X
+  gated by EUREX close — both correct.
+- ZERO breaks (V2X -14, EUROSTX +4, US10 -2, MXP -2, SOFR -3); no working
+  orders at IB; no interruptions. Second consecutive CME-execution day.
+- Day judgment PENDING USER (now five days pending: 3, 4, 5, 6, 7).
