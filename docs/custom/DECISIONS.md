@@ -756,3 +756,14 @@ Entry template:
   defects, no interruptions, first day satisfying the "CME/CBOT
   execution" criterion. Pending alongside: Days 3-4 (07-23/24, recommend
   count) and Day-5 (07-27, config-defect ruling).
+
+## 2026-07-28 — USER RULING (binding): no borrowing, no margin loans
+- The user rules: NO margin loans, NO borrowing of any kind, ever. Dropped
+  "margin application" from the pending list.
+- Clarification recorded for precision: futures performance-bond margin is
+  collateral posted from own cash, not borrowing — the program's futures
+  trading remains permitted and remains fully cash-collateralized with the
+  conservative go-live config (micro contracts, 25% vol target). If broker
+  account-type taxonomy ever requires a "margin-type" classification for
+  futures permissions, surface to the user BEFORE proceeding; in no case is
+  cash ever borrowed.
