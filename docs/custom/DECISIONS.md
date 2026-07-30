@@ -802,3 +802,29 @@ Entry template:
 - ZERO breaks (V2X -14, EUROSTX +4, US10 -2, MXP -2, SOFR -5); no working
   orders; no interruptions. Third consecutive CME-execution day.
 - Days pending user ruling: 3, 4, 5, 6, 7, 8.
+
+## 2026-07-30 — CORRECTION: gateway kills are NetworkManager connectivity probes, NOT DHCP
+- SUPERSEDES the 07-27 entry's root cause ("DHCP lease fight or dual
+  interfaces racing"). That was inferred from a DHCP-renewal line 49s before
+  the flip and was WRONG — an over-read of a coincidence.
+- ACTUAL MECHANISM (journal 07-30 10:29:18): NetworkManager's periodic
+  connectivity probe (http://connectivity-check.ubuntu.com/, configured in
+  /usr/lib/NetworkManager/conf.d/20-connectivity-ubuntu.conf) momentarily
+  fails; NM drops to CONNECTED_LOCAL, executes "policy: set 'PlasmaLab'
+  (wlp174s0) as default for IPv4 routing and DNS", then reverts to
+  enp173s0 ~1s later. Default route + DNS move twice per event.
+- FREQUENCY: ~18 flips/day, ~130 in the last 7 days (Jul 23-30). Each is a
+  chance to sever a live IB socket; two Gateway deaths so far (07-27
+  mid-trade, 07-30 post-session).
+- HOST HAS BOTH LINKS BY DESIGN (user wants Wi-Fi as fallback): enp173s0
+  192.168.68.52 metric 100, wlp174s0 192.168.68.53 metric 600, same Deco
+  router 192.168.68.1/22, lease 7200s.
+- PRESCRIBED FIX (user's sudo): drop
+  /etc/NetworkManager/conf.d/99-connectivity-off.conf with
+  [connectivity]\nenabled=false, reload NetworkManager. Preserves genuine
+  carrier-loss failover to Wi-Fi (link-state driven), removes probe-driven
+  false alarms. Static IP / Deco address reservation NO LONGER NEEDED —
+  withdraw that recommendation.
+- PROCESS NOTE: the first root cause was published to the user before the
+  surrounding journal lines were read. Read the full event window before
+  naming a cause.
