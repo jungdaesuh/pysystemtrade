@@ -792,3 +792,13 @@ Entry template:
   EUROSTX +4, US10 -2, MXP -2, SOFR -3. NLV 999,583 (-$3.5k on the day:
   short vol into a vol rally + long equity into a dip — position P&L, not
   operational).
+
+## 2026-07-30 — Day-8: clean session, SOFR complete at optimal, zero break
+- All six LIVE (fourth consecutive). Data sane; no trio spikes overnight.
+- Fill: SOFR -2 @ 95.965 -> position -5 (optimal band reached; order
+  completed in-session). CORN/V2X untouched — session-timing gap (pass at
+  ~10:14 misses EUREX close 10:00 and CORN open 11:30), fix options put to
+  user 07-29, awaiting choice.
+- ZERO breaks (V2X -14, EUROSTX +4, US10 -2, MXP -2, SOFR -5); no working
+  orders; no interruptions. Third consecutive CME-execution day.
+- Days pending user ruling: 3, 4, 5, 6, 7, 8.
