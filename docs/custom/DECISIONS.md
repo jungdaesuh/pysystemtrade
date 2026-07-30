@@ -828,3 +828,17 @@ Entry template:
 - PROCESS NOTE: the first root cause was published to the user before the
   surrounding journal lines were read. Read the full event window before
   naming a cause.
+
+## 2026-07-30 evening — clean close, NLV recovers +$7.3k
+- Cycle succeeded; Gateway self-healed after the 10:29 probe-flip death.
+  Prices current to 07-30 for all instruments.
+- Spike flags all NON-TRIO (V2X/20260800 vs trio 0900/1000/1100; SOFR
+  2026-27 vs trio 2029; CORN far months) — noise, no approvals needed.
+- Cleanup verified: stacks 0/0/0. CORN -20 and V2X -43 zero-fill completed
+  (session-timing gap, unchanged pending user's schedule choice).
+- ZERO breaks; positions V2X -14, EUROSTX +4, US10 -2, MXP -2, SOFR -5.
+- NLV 1,006,839 (+$7,256 on the day, +$3.7k week-to-date): vol fell back
+  (short V2X gained) while EUROSTX rallied 6252->6356 (long +4 gained) —
+  both legs worked. Yesterday's -$3.5k more than recovered.
+- Route flips continue (~10 since noon) — the connectivity-probe fix is
+  prescribed but NOT yet applied (needs user sudo).
