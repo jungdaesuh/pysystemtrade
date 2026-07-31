@@ -842,3 +842,18 @@ Entry template:
   both legs worked. Yesterday's -$3.5k more than recovered.
 - Route flips continue (~10 since noon) — the connectivity-probe fix is
   prescribed but NOT yet applied (needs user sudo).
+
+## 2026-07-31 — Day-9: clean session, SOFR fill; crons renewed
+- All six LIVE (fifth consecutive). Data sane; no trio spikes overnight.
+- Risk-off session at the open: CORN 473.75->464.75 (-1.9%), US10 108.5->
+  108.08, SOFR 95.955->95.89. Backtest deepened shorts accordingly.
+- Fill: SOFR -1 @ 95.89 -> position -6. CORN -21 and V2X -47 zero-filled
+  again (session-timing gap, unchanged pending user's schedule choice).
+- ZERO breaks (V2X -14, EUROSTX +4, US10 -2, MXP -2, SOFR -6); no working
+  orders; no interruptions. Fourth consecutive CME-execution day.
+- CRONS RENEWED before the 08-01 expiry: morning 3260f938 (09:37 wkdy),
+  evening 3184ceee (18:47 wkdy); old cc9dca64/2e11985b deleted. Both now
+  carry the known-context section (session-timing gap, NM route flips) so a
+  fresh session does not re-diagnose settled issues. NOTE: session-only,
+  7-day expiry -> renew again by 2026-08-07.
+- Days pending user ruling: 3, 4, 5, 6, 7, 8, 9.
