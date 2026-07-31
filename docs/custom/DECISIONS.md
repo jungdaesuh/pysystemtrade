@@ -857,3 +857,19 @@ Entry template:
   fresh session does not re-diagnose settled issues. NOTE: session-only,
   7-day expiry -> renew again by 2026-08-07.
 - Days pending user ruling: 3, 4, 5, 6, 7, 8, 9.
+
+## 2026-07-31 evening — clean close; recurring spike noise investigated and cleared
+- Cycle succeeded; prices current to 07-31. Cleanup verified, stacks 0/0/0.
+- ZERO breaks; V2X -14, EUROSTX +4, US10 -2, MXP -2, SOFR -6.
+- NLV 1,008,174 (+$1,335 on the day; +$7,543 on the week from 1,000,631).
+- RECURRING SPIKE NOISE INVESTIGATED (the same 9 flags nightly: CORN
+  20270300/0500/0700, SOFR 2026-27 months, V2X 20260800). NOT the 07-20
+  empty-series quarantine failure mode: these contracts hold 439-586 stored
+  rows and their daily series are COMPLETE with no gaps 07-22..07-30. The
+  flags come from jumpy hourly bars on illiquid far months; the daily write
+  lands regardless, so the merged series stays intact. VERDICT: cosmetic,
+  no data loss, no action needed. Do not re-investigate.
+- RESIDUAL RISK NOTED: 9 nightly false flags is alert fatigue — a real trio
+  flag could hide among them. Mitigated today by filtering flags against the
+  trio list programmatically (now baked into both cron prompts). If the
+  noise grows, consider a per-contract spike threshold for far months.
