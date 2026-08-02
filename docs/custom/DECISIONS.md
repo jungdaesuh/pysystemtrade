@@ -873,3 +873,16 @@ Entry template:
   flag could hide among them. Mitigated today by filtering flags against the
   trio list programmatically (now baked into both cron prompts). If the
   noise grows, consider a per-contract spike threshold for far months.
+
+## 2026-08-02 — USER APPROVED Option 1: morning session moved to 08:57, midday CORN pass added
+- Fixes the session-timing gap (pass at ~10:14 landed between EUREX close
+  10:00 and CORN open 11:30; V2X frozen at -14 vs optimal ~-61, CORN never
+  traded).
+- New schedule (all weekdays): 08:57 morning session 91314987 (trading pass
+  lands ~09:30-09:45, inside EUREX window; morning pass no longer cleans
+  stacks — leftovers carry to midday); 11:36 midday light pass 85663c3b
+  (executes stack leftovers in CORN's 11:30-14:20 window; no backtest, no
+  approvals); 18:47 evening ops 3184ceee unchanged. Old morning 3260f938
+  deleted.
+- Expected from tomorrow: V2X/EUROSTX execute in the morning, CORN gets its
+  first fill at midday. All session-only crons; renew by 2026-08-07/09.
