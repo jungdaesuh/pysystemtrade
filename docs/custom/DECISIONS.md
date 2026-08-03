@@ -914,3 +914,16 @@ Entry template:
   CORN -2, MXP -2, SOFR -6); no working orders.
 - Option 1 schedule fully validated: EUREX morning + CORN midday both
   delivered on day one.
+
+## 2026-08-03 evening — clean close on the first Option-1 day
+- Cycle succeeded; prices current to 08-03. Only the known 9 far-month
+  noise flags (investigated 07-31, cosmetic).
+- Cleanup verified: stacks 0/0/0. CORN -19 and V2X -45 remainders zero-fill
+  completed as designed; tomorrow regenerates at fresh prices.
+- ZERO breaks across all six held instruments (V2X -17, EUROSTX +4,
+  US10 -2, CORN -2, MXP -2, SOFR -6).
+- NLV 1,008,421 (+$247 on the day). Long EUROSTX and short V2X both gained
+  on the equity rally / vol decline; rate shorts gave some back.
+- Day-10 was the first fully-covered day: EUREX executed in the morning
+  pass, CORN at midday, all six instruments now proven through the
+  pipeline. Days pending user ruling: 3,4,5,6,7,8,9,10.
