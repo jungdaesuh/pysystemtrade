@@ -897,3 +897,20 @@ Entry template:
   awaiting the 11:36 midday pass (first-ever CORN fill expected).
 - ZERO breaks; no working orders; stacks intentionally left up for midday
   per the new protocol.
+
+## 2026-08-03 — Day-10 MIDDAY pass: CORN'S FIRST FILLS — all six instruments now execute
+- First midday pass (12:06-12:15). Gateway had died again since morning
+  (route-flip issue, fix still awaiting user sudo) — relaunched cleanly.
+- OPERATOR ERROR, harmless but logged: first handler invocation had a typo
+  ($HOOME) so private config didn't load and the connection tried default
+  port 4001 (nothing listens there) and failed cleanly. No orders, no side
+  effects. Re-ran correctly. Lesson: the private-config fallback silently
+  targets DEFAULT ports — a wrapper script exporting the env var would
+  remove this class of error.
+- CORN FIRST FILLS: 2 x -1 @ 469.75 / 470.00 -> position -2. With this,
+  ALL SIX instruments have executed through the full pipeline. Remaining
+  CORN -19 carries (limit-clipped grind, as designed).
+- ZERO breaks across all six positions (V2X -17, EUROSTX +4, US10 -2,
+  CORN -2, MXP -2, SOFR -6); no working orders.
+- Option 1 schedule fully validated: EUREX morning + CORN midday both
+  delivered on day one.
