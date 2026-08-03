@@ -886,3 +886,14 @@ Entry template:
   deleted.
 - Expected from tomorrow: V2X/EUROSTX execute in the morning, CORN gets its
   first fill at midday. All session-only crons; renew by 2026-08-07/09.
+
+## 2026-08-03 — Day-10 MORNING pass: Option 1 schedule VALIDATED — V2X trades again
+- First session on the 08:57 schedule; handler pass ran 09:28-09:32, well
+  inside the EUREX window. All six LIVE; data sane; no trio spikes.
+- Fill: V2X 3 x -1 @ 19.45 (1 limit + 2 market — algo escalation working)
+  -> position -17, converging toward optimal ~-62. First V2X execution
+  since 07-27; the timing gap is closed.
+- US10/MXP/SOFR inside buffers — no orders (correct). CORN -21 on stack
+  awaiting the 11:36 midday pass (first-ever CORN fill expected).
+- ZERO breaks; no working orders; stacks intentionally left up for midday
+  per the new protocol.
