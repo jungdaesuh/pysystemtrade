@@ -927,3 +927,19 @@ Entry template:
 - Day-10 was the first fully-covered day: EUREX executed in the morning
   pass, CORN at midday, all six instruments now proven through the
   pipeline. Days pending user ruling: 3,4,5,6,7,8,9,10.
+
+## 2026-08-04 — Day-11: single combined pass at 13:14 (both scheduled passes missed)
+- SCHEDULE DEVIATION, disclosed: the 08:57 morning and 11:36 midday prompts
+  both queued while the session was interrupted; work resumed 13:13 on the
+  user's "carry on". Ran ONE combined pass at 13:14 — inside the CORN
+  (11:30-14:20) and US (10:00-15:00) windows, but AFTER the EUREX close
+  (10:00), so V2X/EUROSTX could not trade today. Not a pipeline defect;
+  an operator/timing consequence of the interruption.
+- All six LIVE; data sane; only known noise flags.
+- Fill: CORN 4 x -1 @ 465.25-465.50 -> position -6 (converging toward
+  optimal ~-21). V2X -45 order gated closed (EUREX), carries to cleanup.
+  US10/MXP/SOFR inside buffers, no orders.
+- ZERO breaks across all six; no working orders.
+- NLV 1,012,934 (+$4,513 on the day): EUROSTX rallied hard (6463 -> 6517
+  live) against our +4 long, and V2X fell 19.45 -> 19.25 in our favour.
+- Days pending user ruling: 3,4,5,6,7,8,9,10,11.
