@@ -943,3 +943,12 @@ Entry template:
 - NLV 1,012,934 (+$4,513 on the day): EUROSTX rallied hard (6463 -> 6517
   live) against our +4 long, and V2X fell 19.45 -> 19.25 in our favour.
 - Days pending user ruling: 3,4,5,6,7,8,9,10,11.
+
+## 2026-08-04 evening — clean close
+- Cycle succeeded; prices current to 08-04. Only known far-month noise.
+- Cleanup verified: stacks 0/0/0 (CORN -15 and V2X -45 remainders zero-fill
+  completed; regenerate tomorrow at fresh prices).
+- ZERO breaks; V2X -17, EUROSTX +4, US10 -2, CORN -6, MXP -2, SOFR -6.
+- NLV 1,012,991 (+$4,570 on the day, +1.30% since inception). Driven by the
+  European equity rally against the +4 EUROSTX long and vol decline against
+  the V2X short.
