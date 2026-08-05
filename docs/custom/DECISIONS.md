@@ -973,3 +973,17 @@ Entry template:
 - V2X -46 remainder gated closed (EUREX shut at 10:00), carries to cleanup.
 - ZERO breaks across all six; no working orders.
 - NLV 1,014,175 (+$1,184 intraday).
+
+## 2026-08-05 evening — clean close
+- Cycle succeeded; prices current to 08-05. Only known far-month noise
+  flags (8 tonight, all non-trio).
+- Cleanup verified: stacks 0/0/0 (CORN -11 and V2X -46 remainders
+  zero-fill completed; regenerate tomorrow at fresh prices).
+- ZERO breaks; V2X -19, EUROSTX +4, US10 -2, CORN -10, MXP -2, SOFR -6.
+- NLV 1,013,552 (+$561 on the day from 1,012,991; +1.36% since inception).
+- SCHEDULING NOTE: the morning/midday/evening prompts queued together
+  twice today while the session was idle. Morning (09:27) and midday
+  (12:06) had already executed, so the duplicates were correctly skipped
+  rather than re-run; only the evening pass was due and is recorded here.
+  Duplicate-prompt firing is expected when the session sits idle — verify
+  what already ran before executing a queued pass.
