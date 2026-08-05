@@ -963,3 +963,13 @@ Entry template:
   buffers, no orders.
 - ZERO breaks across all six; no working orders; stacks left up for midday
   per protocol.
+
+## 2026-08-05 — Day-12 MIDDAY pass: CORN converging, clean
+- Gateway had died again since the morning pass (route-flip issue, fix
+  still awaiting user sudo) — relaunched cleanly, no state impact.
+- Fill: CORN 4 x -1 @ 459.75-460.00 -> position -10 (from -6; optimal
+  ~-21, so roughly half-converged). CORN fell 465 -> 460 today, so the
+  short is working as it scales in.
+- V2X -46 remainder gated closed (EUREX shut at 10:00), carries to cleanup.
+- ZERO breaks across all six; no working orders.
+- NLV 1,014,175 (+$1,184 intraday).
