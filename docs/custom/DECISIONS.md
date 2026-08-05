@@ -952,3 +952,14 @@ Entry template:
 - NLV 1,012,991 (+$4,570 on the day, +1.30% since inception). Driven by the
   European equity rally against the +4 EUROSTX long and vol decline against
   the V2X short.
+
+## 2026-08-05 — Day-12 MORNING pass: clean, V2X resumes converging
+- Pass ran 09:27-09:31, inside the EUREX window. All six LIVE; data sane;
+  only known noise flags.
+- Fill: V2X 2 x -1 @ 19.35 (limit + market escalation) -> position -19.
+  Optimal deepened to ~-65 as vol fell further, so the gap persists by
+  design (limit-clipped grind).
+- CORN -15 left on stack for the midday pass. US10/MXP/SOFR inside
+  buffers, no orders.
+- ZERO breaks across all six; no working orders; stacks left up for midday
+  per protocol.
