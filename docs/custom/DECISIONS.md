@@ -1016,3 +1016,13 @@ Entry template:
   MXP -2, SOFR -6); no working orders at IB.
 - NLV 1,017,475 (+$1,833 since the morning pass, +1.75% since inception) —
   the newly-full V2X short is now the dominant P&L driver as vol falls.
+
+## 2026-08-06 evening — clean close on the first full-size day
+- Cycle succeeded; prices current to 08-06. Only known non-trio noise.
+- Cleanup verified: stacks 0/0/0 (CORN -1 remainder zero-fill completed;
+  V2X had no residual — it converged fully this morning).
+- ZERO breaks; V2X -69, EUROSTX +4, US10 -2, CORN -11, MXP -2, SOFR -6.
+- NLV 1,015,937 (+$2,385 on the day from 1,013,552; +1.59% inception).
+  Peaked at 1,017,475 midday and gave back ~$1.5k into the close — the
+  first day where intraday swing is visibly larger, as expected now that
+  V2X carries full size. Risk is symmetric: losing days will scale too.
