@@ -1005,3 +1005,14 @@ Entry template:
 - CORN -12 left on stack for the midday pass. US10/MXP/SOFR inside buffers.
 - ZERO breaks across all six; no working orders at IB.
 - NLV 1,015,642 (+$2,090 from last close).
+
+## 2026-08-06 — Day-13 MIDDAY pass: CORN -11, clean
+- Handler ran long (exceeded the 300s foreground timeout and completed in
+  background, exit 0) — the 3-minute fill loop plus IB round-trips. No
+  interruption, no kill; state verified after completion per protocol.
+- Fill: CORN -1 @ 458.00 -> position -11 (optimal ~-21.6, thin book today
+  so a single clip; CORN 460 -> 458 intraday).
+- ZERO breaks across all six (V2X -69, EUROSTX +4, US10 -2, CORN -11,
+  MXP -2, SOFR -6); no working orders at IB.
+- NLV 1,017,475 (+$1,833 since the morning pass, +1.75% since inception) —
+  the newly-full V2X short is now the dominant P&L driver as vol falls.
