@@ -987,3 +987,21 @@ Entry template:
   rather than re-run; only the evening pass was due and is recorded here.
   Duplicate-prompt firing is expected when the session sits idle — verify
   what already ran before executing a queued pass.
+
+## 2026-08-06 — Day-13 MORNING pass: V2X CONVERGED in one pass (-19 -> -69)
+- Pass ran 09:28-09:31 inside the EUREX window. All six LIVE; data sane;
+  only known non-trio noise.
+- LARGE FILL, verified legitimate: the full V2X -50 order executed at 19.20
+  in a single pass, taking the position from -19 to -69 — AT the optimal
+  buffer edge (buffer -78.5/-69.0). First time V2X has reached target.
+  WHY IT DIFFERED from the prior 2-3 lot/session grind: order book depth.
+  Probe showed bid 19.20 x 323 contracts today vs 57-182 on prior sessions,
+  so the algo could size clips against real liquidity instead of dribbling.
+  Not a defect, not a limit change — the execution algo doing its job when
+  the book allows.
+- LIMITS VERIFIED post-fill (largest trade of the program to date):
+  V2X daily trade limit 140, used 49 — within. V2X position limit 140,
+  current -69 — within, roughly half. All other instruments well inside.
+- CORN -12 left on stack for the midday pass. US10/MXP/SOFR inside buffers.
+- ZERO breaks across all six; no working orders at IB.
+- NLV 1,015,642 (+$2,090 from last close).
