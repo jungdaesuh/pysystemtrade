@@ -1026,3 +1026,16 @@ Entry template:
   Peaked at 1,017,475 midday and gave back ~$1.5k into the close — the
   first day where intraday swing is visibly larger, as expected now that
   V2X carries full size. Risk is symmetric: losing days will scale too.
+
+## 2026-08-07 — Day-14 MORNING pass: clean, V2X topped up to -70
+- Pass ran 09:28-09:30 inside the EUREX window. All six LIVE; data sane;
+  only known non-trio noise.
+- Fill: V2X -1 @ 19.20 -> position -70. Order was only -3 (vs -50
+  yesterday) because the position is now inside the optimal buffer
+  (-81.9/-72.3) — the system is topping up, not building. This is the
+  steady state the design intends.
+- CORN -11 left on stack for the midday pass. US10/MXP/SOFR inside buffers.
+- ZERO breaks; no working orders at IB.
+- NLV 1,013,379 (-$2,558 from last close) — first loss day at full V2X
+  size; vol ticked up off its lows. Magnitude is as forecast when the
+  book reached target size.
