@@ -1053,3 +1053,16 @@ Entry template:
 - ZERO breaks across all six (V2X -70, EUROSTX +4, US10 -2, CORN -12,
   MXP -2, SOFR -6); no working orders at IB.
 - NLV 1,012,788 (-$3,149 on the day so far; +1.28% since inception).
+
+## 2026-08-07 evening — clean close, week ends +1.55%
+- Cycle succeeded; prices current to 08-07. Only known non-trio noise.
+- Cleanup verified: stacks 0/0/0 (CORN and V2X remainders zero-fill
+  completed, including the unfilled CORN clip from the midday pass).
+- ZERO breaks; V2X -70, EUROSTX +4, US10 -2, CORN -12, MXP -2, SOFR -6.
+- NLV 1,015,453 (-$484 on the day; recovered ~$2.7k from the midday
+  1,012,788 into the close). +1.55% since inception.
+- WEEK (08-03 to 08-07): 1,008,421 -> 1,015,453, +$7,032 (+0.70%). Five
+  sessions, five clean, zero breaks. Milestones: Option 1 schedule proved
+  out (CORN's first fills, V2X unblocked), V2X converged to full size
+  (-19 -> -70), all six instruments now held and trading.
+- Days pending user ruling: 3 through 14 (twelve).
