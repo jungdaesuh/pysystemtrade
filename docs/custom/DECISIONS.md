@@ -1039,3 +1039,17 @@ Entry template:
 - NLV 1,013,379 (-$2,558 from last close) — first loss day at full V2X
   size; vol ticked up off its lows. Magnitude is as forecast when the
   book reached target size.
+
+## 2026-08-07 — Day-14 MIDDAY pass: CORN -12, clean
+- Handler again exceeded the 300s foreground budget and completed in
+  background (exit 0). Waited for process exit, then verified state per
+  protocol — no kill, no interruption. NOTE: this is now the second
+  consecutive midday overrun; --minutes 2 did not shorten it, so the time
+  is in IB round-trips, not the fill loop. Harmless but worth trimming if
+  it recurs (candidate: shorter poll interval in the handler loop).
+- Fill: CORN -1 @ 465.50 -> position -12 (optimal ~-22.2). A second CORN
+  clip was placed and left unfilled; it did NOT rest at IB (0 working
+  orders confirmed) and carries on the local stack to evening cleanup.
+- ZERO breaks across all six (V2X -70, EUROSTX +4, US10 -2, CORN -12,
+  MXP -2, SOFR -6); no working orders at IB.
+- NLV 1,012,788 (-$3,149 on the day so far; +1.28% since inception).
