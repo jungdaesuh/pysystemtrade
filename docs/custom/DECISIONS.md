@@ -1078,3 +1078,9 @@ Entry template:
 - ZERO breaks; no working orders at IB. NLV 1,014,476.
 - NOTE: G1b continuity re-check is pre-registered for TODAY (2026-08-10)
   — to be run after market ops, before or after the evening cycle.
+
+## 2026-08-10 — Day-15 MIDDAY pass: CORN -15, clean
+- Completed within the foreground window today (no overrun).
+- Fills: CORN 3 x -1 @ 461.50-461.75 -> position -15 (optimal ~-22.9).
+- ZERO breaks (V2X -73, EUROSTX +5, US10 -2, CORN -15, MXP -2, SOFR -6);
+  no working orders at IB. NLV 1,015,536.
