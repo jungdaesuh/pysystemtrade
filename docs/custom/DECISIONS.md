@@ -1084,3 +1084,15 @@ Entry template:
 - Fills: CORN 3 x -1 @ 461.50-461.75 -> position -15 (optimal ~-22.9).
 - ZERO breaks (V2X -73, EUROSTX +5, US10 -2, CORN -15, MXP -2, SOFR -6);
   no working orders at IB. NLV 1,015,536.
+
+## 2026-08-10 evening — clean close; pre-registered G1b re-check PASS
+- Cycle succeeded; prices current to 08-10. Only known non-trio noise.
+- Cleanup verified: stacks 0/0/0. ZERO breaks (V2X -73, EUROSTX +5,
+  US10 -2, CORN -15, MXP -2, SOFR -6).
+- NLV 1,014,879 (-$574 on the day; +1.49% since inception).
+- G1b RE-CHECK (pre-registered 2026-07-10 for today) — PASS on all bands
+  after one month of live daily updates: Sharpe 0.408 (0.478±0.10),
+  ann_std 34.56 (32.87±15%), n_days 14,039 (>13,422), data current to
+  2026-08-10, all six instruments continuity OK. The production data
+  pipeline is not degrading the backtest lineage. Next re-check: judge
+  with the user (suggest monthly cadence, 2026-09-10).
