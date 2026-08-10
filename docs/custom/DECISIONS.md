@@ -1066,3 +1066,15 @@ Entry template:
   out (CORN's first fills, V2X unblocked), V2X converged to full size
   (-19 -> -70), all six instruments now held and trading.
 - Days pending user ruling: 3 through 14 (twelve).
+
+## 2026-08-10 — Day-15 MORNING pass: clean; first BUY of the program (EUROSTX)
+- Pass ran 09:28-09:31 inside the EUREX window. All six LIVE; data sane;
+  no trio spikes over the weekend.
+- Fills: EUROSTX +1 @ 6560.0 -> position 5 (band rose to 4.6/6.0 with the
+  rally — this is the program's FIRST BUY-side execution, completed and
+  cleared in-session); V2X 3 x -1 @ 19.30 -> position -73 (top-up inside
+  the deepened band -85.0/-75.2).
+- CORN -11 left on stack for midday. US10/MXP/SOFR inside buffers.
+- ZERO breaks; no working orders at IB. NLV 1,014,476.
+- NOTE: G1b continuity re-check is pre-registered for TODAY (2026-08-10)
+  — to be run after market ops, before or after the evening cycle.
