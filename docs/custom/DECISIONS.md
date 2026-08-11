@@ -1104,3 +1104,9 @@ Entry template:
   top-up). CORN -9 left for midday. Others inside buffers.
 - ZERO breaks; no working orders. NLV 1,017,761 (+$2,882 from last close;
   +1.78% inception, new high-water mark).
+
+## 2026-08-11 — Day-16 MIDDAY pass: CORN -17, clean
+- Completed in foreground (no overrun). Fills: CORN 2 x -1 @ 459.75 ->
+  position -17 (optimal ~-23.5).
+- ZERO breaks (V2X -74, EUROSTX +5, US10 -2, CORN -17, MXP -2, SOFR -6);
+  no working orders. NLV 1,017,277.
