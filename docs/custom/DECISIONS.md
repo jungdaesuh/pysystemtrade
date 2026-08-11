@@ -1096,3 +1096,11 @@ Entry template:
   2026-08-10, all six instruments continuity OK. The production data
   pipeline is not degrading the backtest lineage. Next re-check: judge
   with the user (suggest monthly cadence, 2026-09-10).
+
+## 2026-08-11 — Day-16 MORNING pass: clean, V2X top-up
+- Pass 09:28-09:30 inside the EUREX window. All six LIVE; data sane; no
+  trio spikes.
+- Fill: V2X -1 @ 19.40 -> position -74 (band -87.2/-77.5; steady-state
+  top-up). CORN -9 left for midday. Others inside buffers.
+- ZERO breaks; no working orders. NLV 1,017,761 (+$2,882 from last close;
+  +1.78% inception, new high-water mark).
