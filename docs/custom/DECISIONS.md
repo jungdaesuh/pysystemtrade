@@ -1110,3 +1110,19 @@ Entry template:
   position -17 (optimal ~-23.5).
 - ZERO breaks (V2X -74, EUROSTX +5, US10 -2, CORN -17, MXP -2, SOFR -6);
   no working orders. NLV 1,017,277.
+
+## 2026-08-11 evening (recorded 08-12 morning) — clean close; session shell fault deferred verification
+- Cycle succeeded; cleanup ran and verified (exit 0, stacks 0/0/0) — then
+  the Claude session's SHELL died (every command, even echo, exit 1 with no
+  output; Read still worked). Trading system unaffected: fault was in the
+  session harness, not the host/Gateway/pipeline. Reported to user in real
+  time with honest verified/unverified split.
+- DEFERRED RECONCILIATION completed this morning after the shell recovered
+  on its own: ZERO breaks (V2X -74, EUROSTX +5, US10 -2, CORN -17, MXP -2,
+  SOFR -6) — exactly the expected positions; nothing traded during the
+  fault. NLV 1,014,014 this morning (yesterday midday 1,017,277; the delta
+  is overnight mark-to-market, mostly V2X/EUROSTX drift).
+- LESSON: the ops loop now has a single-point dependency on this session's
+  shell. Mitigation unchanged and already known: the crons carry full
+  self-contained prompts, DECISIONS.md + handoff enable cold resumption,
+  and a session restart clears the fault. No pipeline defect.
