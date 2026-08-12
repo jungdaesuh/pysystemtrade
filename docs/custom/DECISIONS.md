@@ -1139,3 +1139,16 @@ Entry template:
 - NOTE: host memory tight this morning (27Gi available vs 60-100Gi
   typical; fusion job heavy). Watch for session kills — 07-24 protocol
   stands.
+
+## 2026-08-12 — Day-17 MIDDAY pass: CORN -20; largest loss day so far (-$10k, within design)
+- Fills: CORN 3 x -1 @ 473.50-474.75 -> position -20 (optimal ~-24).
+- MARKET EVENT, not a defect: corn spiked ~+2.3% intraday (463 -> 474,
+  USDA report day) against the standing -17 short. NLV 1,003,520, down
+  ~$10.1k from this morning — the program's largest single-day move.
+  Context: at 25% vol target the DESIGNED daily sigma is ~$15.6k; a -1%
+  day at full book size is normal operation, the first time we've seen it
+  because the book only reached full size on 08-06. The morning-generated
+  order executed into the spike per the daily-cadence design (optimals
+  refresh tonight).
+- ZERO breaks (V2X -76, EUROSTX +5, US10 -2, CORN -20, MXP -2, SOFR -6);
+  no working orders.
