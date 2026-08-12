@@ -1152,3 +1152,15 @@ Entry template:
   refresh tonight).
 - ZERO breaks (V2X -76, EUROSTX +5, US10 -2, CORN -20, MXP -2, SOFR -6);
   no working orders.
+
+## 2026-08-12 evening — clean close; -$14.6k day (~1 sigma), NLV dips below inception
+- Cycle succeeded; prices current. NOTABLE: no CORN trio spike flag despite
+  the +2.3% day — within the guard's tolerance.
+- Cleanup verified: stacks 0/0/0. ZERO breaks (V2X -76, EUROSTX +5,
+  US10 -2, CORN -20, MXP -2, SOFR -6).
+- NLV 999,002: -$14,611 on the day (corn spike extended into the close;
+  vol up against V2X). First close below inception since the book was
+  built; -0.10% net. Magnitude ~0.94 designed daily sigma ($15.6k) —
+  statistically normal at full size, and the reason Gate 2s exists.
+  No action taken; reacting to a single day is the failure mode the
+  pre-registration discipline exists to prevent.
