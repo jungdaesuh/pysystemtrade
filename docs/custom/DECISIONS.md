@@ -1126,3 +1126,16 @@ Entry template:
   shell. Mitigation unchanged and already known: the crons carry full
   self-contained prompts, DECISIONS.md + handoff enable cold resumption,
   and a session restart clears the fault. No pipeline defect.
+
+## 2026-08-12 — Day-17 MORNING pass: clean; shell recovered, deferred work closed
+- Shell alive again this morning; deferred 08-11 reconciliation completed
+  FIRST (zero break, entry above) before the trading sequence.
+- Pass 09:28-09:31 inside the EUREX window. All six LIVE; data sane; no
+  trio spikes.
+- Fill: V2X 2 x -1 @ 19.35 (limit + market) -> position -76 (band deepened
+  to -91.9/-81.9 as vol keeps falling — top-up continues). CORN -7 left
+  for midday. Others inside buffers.
+- ZERO breaks; no working orders. NLV 1,013,613.
+- NOTE: host memory tight this morning (27Gi available vs 60-100Gi
+  typical; fusion job heavy). Watch for session kills — 07-24 protocol
+  stands.
