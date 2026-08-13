@@ -1177,3 +1177,9 @@ Entry template:
   V2X -1 @ 19.30 -> position -77. Others inside buffers.
 - ZERO breaks; no working orders. NLV 1,001,508 (+$2,506 from last close,
   recovering; +0.15% inception).
+
+## 2026-08-13 — Day-18 MIDDAY pass: quiet, no fills, clean
+- No CORN order today (self-corrected inside band per morning entry); V2X
+  window closed; no US orders pending. Handler pass ran, nothing to fill.
+- ZERO breaks (V2X -77, EUROSTX +6, US10 -2, CORN -20, MXP -2, SOFR -6);
+  no working orders. NLV 1,004,745 (recovering, +0.47% inception).
