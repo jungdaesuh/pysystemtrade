@@ -1183,3 +1183,11 @@ Entry template:
   window closed; no US orders pending. Handler pass ran, nothing to fill.
 - ZERO breaks (V2X -77, EUROSTX +6, US10 -2, CORN -20, MXP -2, SOFR -6);
   no working orders. NLV 1,004,745 (recovering, +0.47% inception).
+
+## 2026-08-13 evening — clean close, recovery day
+- Cycle succeeded; prices current. Cleanup verified: stacks 0/0/0.
+- ZERO breaks (V2X -77, EUROSTX +6, US10 -2, CORN -20, MXP -2, SOFR -6).
+- NLV 1,006,800 (+$7,798 on the day; +0.68% inception). Corn eased and
+  vol settled; ~half of yesterday's -$14.6k recovered. Two-day sequence
+  (-14.6k / +7.8k) is the designed risk level operating normally.
+- 18 sessions, 18 clean reconciliations. Days pending user ruling: 3-18.
