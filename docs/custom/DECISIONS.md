@@ -1164,3 +1164,16 @@ Entry template:
   statistically normal at full size, and the reason Gate 2s exists.
   No action taken; reacting to a single day is the failure mode the
   pre-registration discipline exists to prevent.
+
+## 2026-08-13 — Day-18 MORNING pass: clean; system self-corrected on CORN
+- Pass 09:28-09:30 inside the EUREX window. All six LIVE; data sane; no
+  trio spikes (yesterday's corn move absorbed without quarantine).
+- SYSTEM RESPONSE TO THE SPIKE, as designed: CORN optimal shrank -24.3 ->
+  -19.6 overnight (trend signal weakened), putting the -20 position INSIDE
+  the band — no CORN order generated; the system stopped adding to the
+  short on its own. This is the risk process working, worth noting for the
+  Gate 2s judgment.
+- Fills: EUROSTX +1 @ 6574 -> position 6 (second buy-side execution);
+  V2X -1 @ 19.30 -> position -77. Others inside buffers.
+- ZERO breaks; no working orders. NLV 1,001,508 (+$2,506 from last close,
+  recovering; +0.15% inception).
