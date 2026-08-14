@@ -1191,3 +1191,25 @@ Entry template:
   vol settled; ~half of yesterday's -$14.6k recovered. Two-day sequence
   (-14.6k / +7.8k) is the designed risk level operating normally.
 - 18 sessions, 18 clean reconciliations. Days pending user ruling: 3-18.
+
+## 2026-08-14 — Day-19 MORNING pass: clean, V2X -78
+- Pass 09:28-09:30 inside the EUREX window. All six LIVE; data sane; no
+  trio spikes.
+- Fill: V2X -1 @ 19.15 -> position -78 (band -96.2/-85.8; vol keeps
+  grinding down, target keeps deepening). No CORN order (still inside its
+  band post-spike); others inside buffers. Quiet midday expected.
+- ZERO breaks; no working orders. NLV 1,002,785 (-$4.0k from last close;
+  corn firmed again overnight).
+
+## 2026-08-14 — Immigration-branch update: CIEE sponsor reply (received 08-11) interpreted
+- Sponsor (CIEE program manager, in writing): "Passive personal
+  investments would generally fall outside the scope of your J-1 program"
+  — supports the standard position that personal investing is not
+  employment and not sponsor-regulated. Hedge words "generally"/"passive"
+  deliberately do not address automated systematic trading — the exact
+  gray zone the pre-registered attorney consult covers. Attorney gate
+  BEFORE live go-live STANDS, now with strong supporting evidence
+  (proactive sponsor inquiry documented + low-turnover personal-funds
+  framing). Compensation from any non-host org is prohibited — reinforces
+  the standing no-clients/no-fund rule. Tax questions -> tax professional
+  (already on the list: PFIC/FBAR). User advised to archive the email.
