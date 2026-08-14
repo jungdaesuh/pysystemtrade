@@ -1221,3 +1221,18 @@ Entry template:
   no working orders. NLV 998,091 (-$8.7k intraday: corn +477 and vol
   bouncing off lows against both shorts; -0.19% inception). Within the
   designed daily range; no action.
+
+## 2026-08-14 evening — clean close; red week at full size
+- Cycle succeeded; prices current. Cleanup verified: stacks 0/0/0.
+- ZERO breaks (V2X -78, EUROSTX +6, US10 -2, CORN -20, MXP -2, SOFR -6).
+- NLV 995,986 (-$6,814 on the day; -0.40% inception; ~2.1% off the 08-11
+  high-water mark of 1,017,761).
+- WEEK (08-10 to 08-14): 1,014,879 -> 995,986, -$18,893 (-1.86%). First
+  red week, and the first full week at designed size. Sequence: corn spike
+  against the short (USDA), vol bottoming against V2X, partial recoveries.
+  Drawdown 2.1% vs backtest-expected drawdowns of 10-25% over the
+  strategy's life — early, normal, and exactly what Gate 2s is meant to
+  measure tolerance for. Zero operational faults all week (19 sessions,
+  19 clean reconciliations; one harness shell fault with verification
+  deferred and closed).
+- Days pending user ruling: 3-19 (seventeen).
