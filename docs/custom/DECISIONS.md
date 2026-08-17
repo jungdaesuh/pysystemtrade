@@ -1254,3 +1254,13 @@ Entry template:
 - ZERO breaks; no working orders. NLV 991,606 (-$4.6k intraday; corn 485+
   and vol firming continue to work against the shorts; -0.84% inception,
   drawdown from HWM ~2.6%).
+
+## 2026-08-17 evening — clean close; drawdown deepens to -2.7% from HWM
+- Cycle succeeded; prices current. Cleanup verified: stacks 0/0/0.
+- ZERO breaks (V2X -79, EUROSTX +6, US10 -2, CORN -20, MXP -2, SOFR -6).
+- NLV 990,782 (-$5,204 on the day; -0.92% inception; -2.65% from the
+  08-11 HWM 1,017,761). Corn trend against the short persists; vol
+  firming. Within backtest-normal drawdown territory (10-25% life range);
+  system risk responses functioning; no intervention.
+- 20 sessions, 20 clean reconciliations. Roll prep this week (MXP first,
+  expiry 09-14). Days pending user ruling: 3-20.
