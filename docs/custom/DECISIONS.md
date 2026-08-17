@@ -1248,3 +1248,9 @@ Entry template:
   the roll decisions are due IMMINENTLY (MXP inside 4 weeks). Playbook
   prep this week; first roll to be executed in a supervised session with
   the user aware. Flagged in the user report.
+
+## 2026-08-17 — Day-20 MIDDAY pass: quiet, no fills, clean
+- Nothing actionable (CORN inside band, V2X window closed). Pass clean.
+- ZERO breaks; no working orders. NLV 991,606 (-$4.6k intraday; corn 485+
+  and vol firming continue to work against the shorts; -0.84% inception,
+  drawdown from HWM ~2.6%).
