@@ -1236,3 +1236,15 @@ Entry template:
   19 clean reconciliations; one harness shell fault with verification
   deferred and closed).
 - Days pending user ruling: 3-19 (seventeen).
+
+## 2026-08-17 — Day-20 MORNING pass: clean, V2X -79; roll dates confirmed
+- Pass 09:28-09:30 inside the EUREX window. All six LIVE; data sane; no
+  trio spikes over the weekend.
+- Fill: V2X -1 @ 19.15 -> position -79 (band -98.4/-87.9). No CORN order
+  (inside band; corn 485, still climbing). Others inside buffers.
+- ZERO breaks; no working orders. NLV 996,231 (roughly flat vs Friday).
+- ROLL WATCH quantified: MXP expires 2026-09-14, EUROSTX 09-18, US10
+  09-21 (V2X Oct). Carver-style rolls happen WEEKS before expiry —
+  the roll decisions are due IMMINENTLY (MXP inside 4 weeks). Playbook
+  prep this week; first roll to be executed in a supervised session with
+  the user aware. Flagged in the user report.
