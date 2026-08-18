@@ -1264,3 +1264,21 @@ Entry template:
   system risk responses functioning; no intervention.
 - 20 sessions, 20 clean reconciliations. Roll prep this week (MXP first,
   expiry 09-14). Days pending user ruling: 3-20.
+
+## 2026-08-18 — Day-21: NO TRADING PASSES (session idle all day); evening ops clean
+- DISCLOSED: the session sat idle through both trading windows — all three
+  cron prompts fired together at 19:17. Morning/midday passes missed and
+  not runnable (windows closed); no orders were generated today (bringup
+  never ran), stacks were flat since last night, so NO state risk — a
+  missed trading day only delays convergence.
+- Evening ops ran timely: cycle succeeded (prices current to 08-18), no
+  trio spikes, cleanup verified 0/0/0.
+- ZERO breaks (V2X -79, EUROSTX +6, US10 -2, CORN -20, MXP -2, SOFR -6).
+- NLV 988,156 (-$2,626 vs yesterday; -1.18% inception; -2.9% from HWM).
+  Positions unchanged all day; the move is pure mark-to-market.
+- RECURRING PATTERN NOTE: idle-session prompt stacking has now cost one
+  full trading day (also partial on 08-04). Root cause is the session-only
+  cron architecture; durable fix candidates for the user: (a) accept
+  occasional missed days during commissioning, or (b) graduate to the
+  production run_stack_handler under system cron post-Gate-2p (already the
+  plan). Flagged in report.
