@@ -1291,3 +1291,10 @@ Entry template:
   overnight (EUROSTX 6554 -> 6490 vs the +6 long) while corn kept climbing
   against the -20 short. -1.66% inception, -3.4% from the 08-11 HWM.
   Multi-leg red patch continues; system responses normal; no intervention.
+
+## 2026-08-19 — Day-22 MIDDAY pass: quiet, no fills, clean
+- Gateway had died again since morning (probe-flip issue) — relaunched.
+- Nothing actionable (CORN inside band, V2X window closed). Pass clean.
+- ZERO breaks; no working orders. NLV 979,810 (-$8.3k intraday; -2.02%
+  inception; -3.7% from HWM). Multi-leg red patch continues; within
+  designed risk; no intervention.
