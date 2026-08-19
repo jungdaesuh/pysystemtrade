@@ -1298,3 +1298,12 @@ Entry template:
 - ZERO breaks; no working orders. NLV 979,810 (-$8.3k intraday; -2.02%
   inception; -3.7% from HWM). Multi-leg red patch continues; within
   designed risk; no intervention.
+
+## 2026-08-19 evening — clean close; drawdown -4.0% from HWM
+- Cycle succeeded; prices current. Cleanup verified: stacks 0/0/0.
+- ZERO breaks (V2X -80, EUROSTX +6, US10 -2, CORN -20, MXP -2, SOFR -6).
+- NLV 976,754 (-$11,402 on the day; -2.32% inception; -4.03% from the
+  08-11 HWM 1,017,761). Seven-day red run ≈ -$41k. Still within designed
+  risk (backtest life drawdowns 10-25%); system responses normal; no
+  intervention. This stretch is the live rehearsal of the psychological
+  reality Gate 2s is meant to calibrate.
