@@ -1282,3 +1282,12 @@ Entry template:
   occasional missed days during commissioning, or (b) graduate to the
   production run_stack_handler under system cron post-Gate-2p (already the
   plan). Flagged in report.
+
+## 2026-08-19 — Day-22 MORNING pass: clean, V2X -80; drawdown -3.4% from HWM
+- Pass 09:28-09:31. All six LIVE; data sane; no trio spikes.
+- Fill: V2X -1 @ 19.05 -> position -80 (band -101.3/-90.6). No CORN order
+  (inside band; corn 490 and still rising). Others inside buffers.
+- ZERO breaks; no working orders. NLV 983,351: equities dropped hard
+  overnight (EUROSTX 6554 -> 6490 vs the +6 long) while corn kept climbing
+  against the -20 short. -1.66% inception, -3.4% from the 08-11 HWM.
+  Multi-leg red patch continues; system responses normal; no intervention.
