@@ -1316,3 +1316,11 @@ Entry template:
 - ZERO breaks; no working orders. NLV 970,063 (-$6.7k overnight; -2.99%
   inception; -4.7% from HWM). Iran/geopolitical risk-off + corn squeeze
   continues per 08-19 market assessment; system responses normal.
+
+## 2026-08-20 — Day-23 MIDDAY pass: quiet, no fills, clean
+- Gateway relaunched (probe-flip death). Nothing actionable (CORN inside
+  band, V2X window closed). Pass clean.
+- ZERO breaks; no working orders. NLV 967,378 (-$2.7k intraday; -3.26%
+  inception; -5.0% from HWM). Drawdown at the psychologically round -5%;
+  still ordinary for the strategy (backtest life range 10-25%); system
+  responses normal; no intervention.
