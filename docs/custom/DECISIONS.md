@@ -1307,3 +1307,12 @@ Entry template:
   risk (backtest life drawdowns 10-25%); system responses normal; no
   intervention. This stretch is the live rehearsal of the psychological
   reality Gate 2s is meant to calibrate.
+
+## 2026-08-20 — Day-23 MORNING pass: clean, V2X -81; corn extends to 503
+- Pass 09:28-09:30. All six LIVE; data sane; no trio spikes.
+- Fill: V2X -1 @ 19.10 -> position -81. CORN optimal cut further overnight
+  (-20.5, position -20 inside band — no order; corn 503.5, +8.7% in six
+  sessions; the system continues refusing to add). EUROSTX 6431.
+- ZERO breaks; no working orders. NLV 970,063 (-$6.7k overnight; -2.99%
+  inception; -4.7% from HWM). Iran/geopolitical risk-off + corn squeeze
+  continues per 08-19 market assessment; system responses normal.
