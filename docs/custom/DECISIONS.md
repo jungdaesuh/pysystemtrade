@@ -1324,3 +1324,9 @@ Entry template:
   inception; -5.0% from HWM). Drawdown at the psychologically round -5%;
   still ordinary for the strategy (backtest life range 10-25%); system
   responses normal; no intervention.
+
+## 2026-08-20 evening — clean close, small recovery into the bell
+- Cycle succeeded; prices current. Cleanup verified: stacks 0/0/0.
+- ZERO breaks (V2X -81, EUROSTX +6, US10 -2, CORN -20, MXP -2, SOFR -6).
+- NLV 969,833 (-$6,921 on the day but +$2.5k off the midday low; -3.02%
+  inception; -4.7% from HWM). 23 sessions, 23 clean reconciliations.
