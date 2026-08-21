@@ -1341,3 +1341,9 @@ Entry template:
 - CRONS RENEWED (expire ~08-28): morning 883ce5a8, midday 36895108,
   evening dd6aab89; old set deleted. Prompts updated: drawdown context
   baked in (no re-diagnosis), roll watch marked URGENT with exact expiries.
+
+## 2026-08-21 — Day-24 MIDDAY pass: quiet, no fills, clean
+- Gateway relaunched (probe-flip). Nothing actionable (CORN inside band,
+  V2X window closed). Pass clean.
+- ZERO breaks; no working orders. NLV 972,327 (-2.77% inception; -4.5%
+  from HWM).
