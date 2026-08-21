@@ -1330,3 +1330,14 @@ Entry template:
 - ZERO breaks (V2X -81, EUROSTX +6, US10 -2, CORN -20, MXP -2, SOFR -6).
 - NLV 969,833 (-$6,921 on the day but +$2.5k off the midday low; -3.02%
   inception; -4.7% from HWM). 23 sessions, 23 clean reconciliations.
+
+## 2026-08-21 — Day-24 MORNING pass: clean, V2X -83; crons renewed
+- Pass 09:28-09:30. All six LIVE; data sane; no trio spikes.
+- Fill: V2X 2 x -1 @ 18.85 -> position -83 (vol easing back — 18.85 vs
+  19.10 yesterday; the short recovering). No CORN order (inside band,
+  corn steady at 503). Others inside buffers.
+- ZERO breaks; no working orders. NLV 974,997 (+$5.2k from last close;
+  -2.5% inception; -4.2% from HWM).
+- CRONS RENEWED (expire ~08-28): morning 883ce5a8, midday 36895108,
+  evening dd6aab89; old set deleted. Prompts updated: drawdown context
+  baked in (no re-diagnosis), roll watch marked URGENT with exact expiries.
