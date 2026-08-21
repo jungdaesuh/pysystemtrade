@@ -1347,3 +1347,16 @@ Entry template:
   V2X window closed). Pass clean.
 - ZERO breaks; no working orders. NLV 972,327 (-2.77% inception; -4.5%
   from HWM).
+
+## 2026-08-21 evening — clean close; week -0.56%, drawdown stabilizing
+- Cycle succeeded; prices current. Cleanup verified: stacks 0/0/0.
+- ZERO breaks (V2X -83, EUROSTX +6, US10 -2, CORN -20, MXP -2, SOFR -6).
+- NLV 971,289 (-$1,038 on the day; -2.87% inception; -4.6% from HWM).
+- WEEK (08-17 to 08-21): 990,782 -> 971,289, -$19,493... vs prior Friday
+  995,986: week change -$24,697 (-2.48%) including the missed-Tuesday
+  mark-to-market. Second red week; drawdown flattened late-week as vol
+  eased (V2X 18.85) and corn stalled at ~503.
+- Ops: 24 sessions clean; 1 trading day missed (08-18, session idle);
+  crons renewed; roll playbook written and committed (4df348b7). MXP roll
+  scheduled Tue/Wed 08-25/26 per playbook, announced to user.
+- Days pending user ruling: 3-24.
