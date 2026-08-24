@@ -1360,3 +1360,18 @@ Entry template:
   crons renewed; roll playbook written and committed (4df348b7). MXP roll
   scheduled Tue/Wed 08-25/26 per playbook, announced to user.
 - Days pending user ruling: 3-24.
+
+## 2026-08-24 — Day-25 MORNING pass: clean; corn extends to 520
+- Pass 09:28-09:30. All six LIVE; data sane; no trio spikes.
+- Fills: EUROSTX +1 @ ~6455 -> position 7 (third buy-side); V2X -1 @ 18.65
+  (market order) -> position -84. SOFR -1 left for the US-window/midday
+  pass. CORN optimal cut again (-19.8; position -20 now ~at/below target —
+  the first BUY may come within days if the rally persists).
+- Corn 520 (+3.4% over the weekend, +12.3% since 08-12) — the squeeze
+  continues against the -20 short. V2X 18.65 in the short's favor.
+- ZERO breaks; no working orders. NLV 961,693 (-$9.6k vs Friday close;
+  -3.83% inception; -5.5% from HWM). New drawdown low; still ordinary
+  scale for the strategy; no intervention.
+- MXP ROLL: scheduled tomorrow or Wednesday per playbook (announced to the
+  user 08-21). Pre-checks to run in tomorrow's session before setting
+  Force.
