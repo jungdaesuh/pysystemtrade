@@ -1381,3 +1381,11 @@ Entry template:
   (completed in-session). No CORN order. V2X remainder gated (window).
 - ZERO breaks (V2X -84, EUROSTX +7, US10 -2, CORN -20, MXP -2, SOFR -7);
   no working orders. NLV 959,699 (-4.03% inception; -5.7% from HWM).
+
+## 2026-08-24 evening — clean close; recovery into the bell
+- Cycle succeeded; prices current. Cleanup verified: stacks 0/0/0.
+- ZERO breaks (V2X -84, EUROSTX +7, US10 -2, CORN -20, MXP -2, SOFR -7).
+- NLV 963,701 (-$7,588 on the day but +$4k off the midday low; -3.63%
+  inception; -5.3% from HWM). Corn closed off its highs; vol eased.
+- TOMORROW: MXP roll per playbook — pre-checks, Force state, spread order
+  in the US window, verify, Roll_Adjusted when complete. User informed.
