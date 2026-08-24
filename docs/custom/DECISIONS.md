@@ -1375,3 +1375,9 @@ Entry template:
 - MXP ROLL: scheduled tomorrow or Wednesday per playbook (announced to the
   user 08-21). Pre-checks to run in tomorrow's session before setting
   Force.
+
+## 2026-08-24 — Day-25 MIDDAY pass: SOFR -7, clean
+- Gateway relaunched (probe-flip). Fill: SOFR -1 @ 95.89 -> position -7
+  (completed in-session). No CORN order. V2X remainder gated (window).
+- ZERO breaks (V2X -84, EUROSTX +7, US10 -2, CORN -20, MXP -2, SOFR -7);
+  no working orders. NLV 959,699 (-4.03% inception; -5.7% from HWM).
