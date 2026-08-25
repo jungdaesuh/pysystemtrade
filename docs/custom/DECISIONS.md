@@ -1405,3 +1405,19 @@ Entry template:
   i.e., buy back Sep shorts, open Dec shorts) inside MXP's 10:00-15:00
   window. Watch: NEW code path (spread order, cross-contract booking) —
   Day-1 treatment, verify everything.
+
+## 2026-08-25 — Day-26 MIDDAY: FIRST ROLL HALF-EXECUTED + FIRST CORN BUY-BACK — both clean
+- CORN +1 FILLED -> position -19 (first buy-back; algo waited out a 14:1
+  book imbalance before filling — patience logic working).
+- MXP ROLL: generate_force_roll_orders() created the Zero-roll instrument
+  order + spread contract order [+2 Sep, -2 Dec]. First clip FILLED at
+  0.00044 differential (matches quoted Sep/Dec gap — sane). Position now
+  SPLIT: Sep -1 + Dec -1, system == broker on BOTH legs, zero break.
+  Remaining [+1,-1] clip: regenerate tomorrow morning (the commissioning
+  script does NOT call generate_force_roll_orders — run it manually before
+  the handler pass while roll state stays Force; evening cleanup will
+  zero-complete today's remainder, which is safe — state persists).
+- NOTE for playbook v2: roll clips execute 1-lot like regular orders; a
+  2-lot roll takes 2 clips/passes. V2X's 80+ lot roll will need MANY
+  passes or a Passive strategy — plan accordingly.
+- ZERO breaks across 7 contract positions; no working orders; NLV 958,848.
