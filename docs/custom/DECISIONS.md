@@ -1389,3 +1389,19 @@ Entry template:
   inception; -5.3% from HWM). Corn closed off its highs; vol eased.
 - TOMORROW: MXP roll per playbook — pre-checks, Force state, spread order
   in the US window, verify, Roll_Adjusted when complete. User informed.
+
+## 2026-08-25 — Day-26 MORNING pass + MXP ROLL INITIATED (first roll of the program)
+- Morning pass clean: V2X -1 @ 18.65 -> -85; CORN's FIRST BUY order (+1)
+  generated as predicted (target shrank past the -20 position) — executes
+  in the midday window. ZERO breaks; NLV 966,098.
+- MXP ROLL, per playbook (announced to user 08-21, 08-24):
+  PRE-CHECKS PASS — forward 20261200 sampled and current (322 rows,
+  through 08-24); both legs live-quoted (Sep 0.05895/96 deep; Dec
+  0.05851/54, 3-tick spread, adequate for 2 lots); zero break; trio
+  already carry/forward-aligned to Dec.
+  STATE SET: No_Roll -> Force via updatePositions.set_roll_state (the same
+  call interactive_update_roll_status makes). The midday stack-handler
+  pass should generate the intra-market spread order (-2 Sep / +2 Dec ...
+  i.e., buy back Sep shorts, open Dec shorts) inside MXP's 10:00-15:00
+  window. Watch: NEW code path (spread order, cross-contract booking) —
+  Day-1 treatment, verify everything.
