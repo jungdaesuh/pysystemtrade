@@ -1421,3 +1421,18 @@ Entry template:
   2-lot roll takes 2 clips/passes. V2X's 80+ lot roll will need MANY
   passes or a Passive strategy — plan accordingly.
 - ZERO breaks across 7 contract positions; no working orders; NLV 958,848.
+
+## 2026-08-25 evening — MISSED (session idle); catch-up completed 08-26 morning
+- The 18:47 evening prompt did not fire (idle-session stacking). The
+  system-cron daily cycle DID run (prices current to 08-25; no trio
+  spikes). Catch-up cleanup ran 08-26 09:28: stacks cleared 0/0/0; zero
+  break; stale roll remainder zero-completed as designed (roll state
+  persists).
+
+## 2026-08-26 — Day-27 MORNING pass: clean; roll clip regenerated; V2X -86
+- Combined catch-up + morning session. All six LIVE; data sane.
+- generate_force_roll_orders() correctly regenerated the REMAINING MXP
+  clip [+1 Sep, -1 Dec] (sized to the split position — machinery handles
+  partial rolls right). Executes at midday with CORN's next +1 buy-back.
+- Fill: V2X -1 @ 18.55 -> -86. ZERO breaks across 7 contract positions;
+  no working orders. NLV 955,968 (-4.4% inception; corn 527 continues).
