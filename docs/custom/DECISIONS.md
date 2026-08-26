@@ -1436,3 +1436,17 @@ Entry template:
   partial rolls right). Executes at midday with CORN's next +1 buy-back.
 - Fill: V2X -1 @ 18.55 -> -86. ZERO breaks across 7 contract positions;
   no working orders. NLV 955,968 (-4.4% inception; corn 527 continues).
+
+## 2026-08-26 — Day-27 MIDDAY: FIRST ROLL COMPLETE (MXP Sep->Dec), end to end
+- Second spread clip FILLED: MXP now entirely in 20261200 (Dec) at -2;
+  Sep flat. CORN +1 filled -> -18 (second buy-back). V2X remainder gated.
+- FINALIZED via state_change_to_roll_adjusted_prices (the interactive
+  tool's own function, confirm=False after manual verification):
+  multiple+adjusted prices rolled (panama stitch), priced contract
+  promoted 20260900 -> 20261200, roll state auto-reset to No_Roll.
+  VERIFIED: priced=20261200; adjusted tail continuous (~0.0585, no
+  artificial jump); ZERO breaks; NLV 949,178.
+- FULL ROLL CYCLE PROVEN: Force -> spread clips (2 passes) -> split-state
+  reconciliation -> Roll_Adjusted -> promotion. Playbook validated;
+  EUROSTX and US10 rolls next week are now routine; V2X (86 lots,
+  mid-Sept) should use Passive per the 08-25 lesson — decide with user.
