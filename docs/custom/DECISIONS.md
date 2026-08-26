@@ -1450,3 +1450,14 @@ Entry template:
   reconciliation -> Roll_Adjusted -> promotion. Playbook validated;
   EUROSTX and US10 rolls next week are now routine; V2X (86 lots,
   mid-Sept) should use Passive per the 08-25 lesson — decide with user.
+
+## 2026-08-26 evening — clean close; post-roll state verified stable
+- Cycle succeeded (first cycle over the rolled MXP chain — no spikes, no
+  mapping errors; the promotion is fully absorbed). Cleanup verified:
+  stacks 0/0/0.
+- ZERO breaks (MXP -2 Dec, V2X -86, EUROSTX +7, US10 -2, CORN -18,
+  SOFR -7).
+- NLV 947,012 (-$16.7k on the day; -5.30% inception; -6.95% from HWM).
+  Corn 527 and vol-of-vol chop drove the day. Deepest drawdown yet; still
+  inside designed risk (life range 10-25%); no intervention. The 27-day
+  streak of clean reconciliations continues.
