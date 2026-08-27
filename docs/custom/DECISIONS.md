@@ -1461,3 +1461,12 @@ Entry template:
   Corn 527 and vol-of-vol chop drove the day. Deepest drawdown yet; still
   inside designed risk (life range 10-25%); no intervention. The 27-day
   streak of clean reconciliations continues.
+
+## 2026-08-27 — Day-28 MORNING pass: clean, V2X -89
+- Pass 09:28-09:30. All six LIVE (probe now resolves MXP to Dec —
+  promotion fully propagated). Data sane; no trio spikes.
+- Fills: V2X 3 x -1 @ 18.50 -> position -89 (band -108.5/-97.4; vol
+  18.45, still drifting down in the short's favor). CORN +1 (third
+  buy-back) left for midday; corn 533, rally continues, target now -16.8.
+- ZERO breaks; no working orders. NLV 946,999 (flat vs last close;
+  -5.30% inception).
