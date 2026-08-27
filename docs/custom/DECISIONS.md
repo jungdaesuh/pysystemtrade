@@ -1470,3 +1470,8 @@ Entry template:
   buy-back) left for midday; corn 533, rally continues, target now -16.8.
 - ZERO breaks; no working orders. NLV 946,999 (flat vs last close;
   -5.30% inception).
+
+## 2026-08-27 — Day-28 MIDDAY pass: CORN -17, clean
+- Fill: CORN +1 (third buy-back, completed in-session) -> position -17.
+- ZERO breaks (MXP -2, V2X -89, EUROSTX +7, US10 -2, CORN -17, SOFR -7);
+  no working orders. NLV 944,996 (-5.50% inception; -7.15% from HWM).
