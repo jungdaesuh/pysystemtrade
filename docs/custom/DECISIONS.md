@@ -1475,3 +1475,9 @@ Entry template:
 - Fill: CORN +1 (third buy-back, completed in-session) -> position -17.
 - ZERO breaks (MXP -2, V2X -89, EUROSTX +7, US10 -2, CORN -17, SOFR -7);
   no working orders. NLV 944,996 (-5.50% inception; -7.15% from HWM).
+
+## 2026-08-27 evening — clean close, recovery day
+- Cycle succeeded; prices current. Cleanup verified: stacks 0/0/0.
+- ZERO breaks (MXP -2, V2X -89, EUROSTX +7, US10 -2, CORN -17, SOFR -7).
+- NLV 949,443 (+$2,431 on the day; -5.06% inception; -6.7% from HWM).
+  V2X earnings + corn easing off 533 into the close.
