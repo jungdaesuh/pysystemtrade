@@ -1491,3 +1491,8 @@ Entry template:
   evening e9ac7e7e. The morning prompt now carries the FULL roll execution
   procedure (proven on MXP): EUROSTX and US10 rolls due ~09-01; V2X roll
   remains a user decision (Passive recommended).
+
+## 2026-08-28 — Day-29 MIDDAY pass: CORN -16, clean
+- Fill: CORN +1 (fourth buy-back, completed in-session) -> position -16.
+- ZERO breaks (MXP -2, V2X -90, EUROSTX +7, US10 -2, CORN -16, SOFR -7);
+  no working orders. NLV 950,647 (-4.94% inception, recovering).
