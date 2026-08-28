@@ -1481,3 +1481,13 @@ Entry template:
 - ZERO breaks (MXP -2, V2X -89, EUROSTX +7, US10 -2, CORN -17, SOFR -7).
 - NLV 949,443 (+$2,431 on the day; -5.06% inception; -6.7% from HWM).
   V2X earnings + corn easing off 533 into the close.
+
+## 2026-08-28 — Day-29 MORNING pass: clean, V2X -90; crons renewed with roll procedures
+- Pass 09:28-09:30. All six LIVE; data sane; no trio spikes.
+- Fill: V2X -1 @ 18.25 -> -90 (vol 18.25, still grinding down). CORN +1
+  (fourth buy-back) left for midday; corn 539. Others inside buffers.
+- ZERO breaks; no working orders. NLV 948,208 (-5.18% inception).
+- CRONS RENEWED (expire ~09-04): morning 09737aae, midday 80cffa59,
+  evening e9ac7e7e. The morning prompt now carries the FULL roll execution
+  procedure (proven on MXP): EUROSTX and US10 rolls due ~09-01; V2X roll
+  remains a user decision (Passive recommended).
