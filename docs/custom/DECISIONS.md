@@ -1496,3 +1496,104 @@ Entry template:
 - Fill: CORN +1 (fourth buy-back, completed in-session) -> position -16.
 - ZERO breaks (MXP -2, V2X -90, EUROSTX +7, US10 -2, CORN -16, SOFR -7);
   no working orders. NLV 950,647 (-4.94% inception, recovering).
+
+## 2026-09-19 — RECOVERY after a three-week outage: chains re-aligned, states set, capital re-synced
+- CONTEXT: the three session-only Claude crons created 08-28 (`09737aae`,
+  `80cffa59`, `e9ac7e7e`) expired ~09-04 with their session. No trading
+  pass ran 08-29..09-18; last `custom:` commit was `0dc5ec3d`
+  (08-28 12:11 ET). The durable 18:30 system cron kept running, so PRICES
+  and the nightly cycle stayed current — only the human/agent passes died.
+  No orders were generated or executed during the gap.
+- RECOVERY STEPS COMPLETED TODAY (Saturday, markets closed, no trades):
+  Gateway relaunched on 4002 (`~/ibc/gatewaystart-headless.sh`); EUROSTX
+  Sep cash-settled 09-18 at 6278 and was booked as a balance trade
+  (position +7 -> 0, no contract left to close); a stale V2X order family
+  left over from 08-28 was cleared; total capital updated to 954,884.02;
+  RECONCILE run: ZERO breaks on all six (CORN -16, MXP -2 Dec, SOFR -7,
+  US10 -2 Sep, V2X -90 Oct, EUROSTX flat); stacks 0/0/0.
+- EUROSTX ROLL FINALIZED (no trades needed — position already flat):
+  No_Roll -> Roll_Adjusted via `modify_roll_state(...,
+  confirm_adjusted_price_change=False)`, i.e. the interactive tool's own
+  function, after a read-only dry run of the stitch (08-26 MXP precedent).
+  The expired Sep price was INFERRED from Dec at 6233 (Dec 6254 minus the
+  5-period median offset of 21) — the machinery deliberately ignores the
+  09-18 05:00 settlement print (offset -18, distorted by the EUREX
+  settlement auction) and uses the robust median instead. Roll
+  differential +21. VERIFIED: priced 20260900 -> 20261200, forward
+  20270300, carry 20270300, state auto-reset to No_Roll; the shifted
+  adjusted history now tracks the actual Dec contract to within 1-3 pts
+  (02:00 6335 vs 6335, 04:00 6320 vs 6320) — no artificial jump; the
+  6299 -> 6254 step over 09-18 05:00..16:00 is real Dec market movement
+  (Dec traded 6296 -> 6254 in those hours). New forward 20270300 is
+  already sampled (316 rows, current to 09-18 15:00 @ 6280), so the
+  FORWARD column refills on the next daily cycle. The re-stitch adds 165
+  NaN rows to the adjusted series; this is the documented behaviour of
+  this production path (MXP carries 1,566 such rows since its 08-26 roll)
+  and is benign. The system re-enters its EUROSTX long Monday through the
+  normal order generator.
+- US10 SET TO Force — MUST ROLL MONDAY, HARD DEADLINE. -2 in 20260900, a
+  DELIVERABLE Treasury: going past last trade means delivery obligation.
+  IB contract details confirm last trade 2026-09-21 (= CME ZN rule: the
+  business day before the last 7 business days of the delivery month;
+  Sep-26 last business day is Wed 09-30, the last 7 are 09-22..09-30, so
+  09-21 Monday, 12:01 CT). IT HAS NOT PASSED. Decisive evidence: the
+  effective trading hours IB returns for 20260900 contain exactly ONE
+  remaining session — Mon 2026-09-21 10:00-13:01 ET — versus five normal
+  10:00-15:00 sessions for 20261200. The 13:01 ET close IS 12:01 CT.
+  NO Sunday-evening Globex roll: our configured US/Central window is
+  10:00-15:00 ET, so the system cannot trade the Sunday 18:00 ET open
+  even though Globex is live; the tradeable window is Monday 10:00-13:01
+  ET only, 3h01m wide.
+- V2X SET TO Passive (the standing recommendation, per the 08-25 lesson
+  that Force spread clips fill ~1 lot/pass — 90 lots would need dozens of
+  passes, and V2X spread liquidity is thin). -90 in 20261000 (expiry
+  2026-10-21); forward 20261100 exists, expiry 2026-11-18, 772 rows of
+  price data current to 09-18 15:00 @ 18.75 and already populating the
+  FORWARD column of multiple prices. No trade placed. Under Passive the
+  position migrates on the system's own closing/opening trades; revisit
+  by ~10-07 and escalate to Force_Outright only with the user.
+- STRATEGY CAPITAL RE-SYNCED (`update_strategy_capital`, the standard
+  daily production step skipped during the outage — not a policy change):
+  paper_classic 1,000,170.58 -> 954,884.02 (-45,286.56, -4.53%), now
+  equal to total capital. Strategy margin written for the first time
+  (264,504.39; it had never existed). Total capital 954,884.02 =
+  -4.53% inception, ~-6.2% from the 08-11 HWM — the same drawdown known
+  since August, not a new loss.
+- MONDAY 09-21 US10 PROCEDURE (deadline 13:01 ET; run it in the MORNING
+  session, do NOT wait for the 11:36 midday cron):
+  1. Pre-open (before 10:00 ET): Gateway up; verify zero break and stacks
+     0/0/0; confirm US10 roll state is still Force and priced is still
+     20260900; quote both legs (Sep 20260900 / Dec 20261200) and eyeball
+     the calendar spread book.
+  2. At 10:00 ET: run `stackHandler.generate_force_roll_orders()` MANUALLY
+     — the commissioning script does not call it (08-25 precedent) — then
+     run the handler pass. Expect a Zero-roll instrument order plus a
+     spread contract order [+2 Sep, -2 Dec] (buy back the Sep shorts,
+     open Dec shorts). Clips fill ~1 lot/pass, so expect TWO passes.
+  3. Re-run the handler every ~15-20 min until Sep position is zero.
+     Per-contract zero break after every fill (a SPLIT Sep -1 / Dec -1 is
+     legitimate mid-roll, 08-25 precedent).
+  4. ESCALATION at 11:30 ET if the spread has not filled: switch to
+     Force_Outright (two outright orders) — Sep liquidity on its last
+     trading day is thin and the spread book may be dead. HARD STOP at
+     12:45 ET: if still short Sep, close the Sep leg outright at market;
+     delivery risk is not an acceptable outcome on a deliverable note.
+  5. When Sep position is zero: finalize with
+     `state_change_to_roll_adjusted_prices(confirm_adjusted_price_change
+     =False)` and VERIFY priced 20260900 -> 20261200, forward 20270300,
+     adjusted-price tail continuous (no jump beyond the roll
+     differential), roll state auto-reset to No_Roll, zero break.
+  6. If the roll completes after 13:01 with Sep still open — it must not —
+     report immediately and contact IB about the delivery obligation.
+- NOT DONE / OPEN: the three Claude crons are still dead — re-create them
+  from `docs/custom/plans/trading_cron_prompts_2026-09.md` (the roll dates
+  in the recovered prompt text are stale, rewrite them first); install
+  `scripts/ops/trading_heartbeat_check.sh` in the system crontab so the
+  next silent expiry raises an alert; decide with the user whether the day
+  counter resumes at Day-30 or the gap is recorded as a break in the
+  Gate 2p streak. V2X carry contract is 20260900, now expired and all-NaN
+  in multiple prices — the V2X carry forecast is running blind and needs a
+  look (not touched today).
+- Judge on: 2026-09-21 close — right if US10 is flat in Sep and priced on
+  Dec with zero break, EUROSTX has re-entered on the rolled chain, and V2X
+  has begun migrating to Nov without a forced spread clip.
