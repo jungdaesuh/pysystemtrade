@@ -1597,3 +1597,14 @@ Entry template:
 - Judge on: 2026-09-21 close — right if US10 is flat in Sep and priced on
   Dec with zero break, EUROSTX has re-entered on the rolled chain, and V2X
   has begun migrating to Nov without a forced spread clip.
+
+## 2026-09-19 — Crons re-created + heartbeat installed (recovery step 5)
+- Session-only crons (expire ~09-26; morning pass owns renewal): morning
+  17d7fa4f (08:57), midday 08075370 (11:36), evening 1ba31351 (18:47).
+  Prompts SSOT: docs/custom/plans/trading_cron_prompts_2026-09.md.
+- System-cron heartbeat INSTALLED: 19:10 weekdays,
+  scripts/ops/trading_heartbeat_check.sh -> alerts (file + notify-send;
+  email not configured) if no DECISIONS entry / custom: commit within
+  1 business day. Independent of any Claude session.
+- OPEN: US10 Sep roll Monday 09-21 (hard stop 12:45 ET); V2X carry
+  contract 20260900 expired/NaN until Passive roll completes.
