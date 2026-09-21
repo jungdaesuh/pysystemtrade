@@ -1668,3 +1668,27 @@ Entry template:
   reconnect. Evening eod_stack_cleanup will hang if it lists/cancels
   orders; expect it to clear only after the trading-day rollover.
 - NLV 945453.77 (-54717 vs inception; morning mark 947,149).
+
+## 2026-09-21 evening — clean close; US10 roll day complete, MXP spike approved
+- Cycle succeeded 18:30 (freshness OK; prices current to 09-21). MXP
+  20261200 (held) quarantined by the cycle: verified vs broker (09-21
+  close 0.05768 vs 0.05766 stored, genuine), approved, multiple/adjusted
+  re-run -> MXP adjusted current to 09-21 16:00 (0.05769). SOFR
+  2026-27/2028-29 far-month flags = noise, ignored.
+- Cleanup: eod_stack_cleanup exit 0, stacks 0/0/0 (no working orders to
+  cancel, so the BAG order-listing hang was not triggered). Unfilled
+  remainders zero-completed: CORN +3, EUROSTX +1, SOFR -4 — regenerate
+  from tomorrow's backtest.
+- ZERO breaks, per contract (DB == IB): CORN -14, EUROSTX +2 Dec,
+  MXP -3 Dec, SOFR -8, US10 -2 Dec, V2X -90 Oct / -2 Nov. US10 20260900:
+  NONE — roll complete. IB open orders 0.
+- NLV 944,458 (-$10,426 / -1.09% on the day vs the 09-19 mark 954,884;
+  -5.57% inception). Day-30 summary: corn 543 (+3% today, squeeze
+  continues against -14), EUROSTX re-entry +2 at 6333 vs 6359 close.
+- Crons: today's MORNING/MIDDAY/evening entries all present; session
+  crons expire ~09-26 (morning pass owns renewal). Heartbeat 19:10 ran
+  (system cron). Gateway killed by memory pressure twice today.
+- OPEN: BAG listing defect (morning entry) unfixed — code change
+  required; expect first clean cross-process listing after the 23:45
+  gateway logoff/relaunch tomorrow morning. V2X carry contract still
+  expired/NaN (Passive roll ongoing). Day NOT judged/counted.
