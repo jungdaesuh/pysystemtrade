@@ -1651,3 +1651,20 @@ Entry template:
   remainder (111/99), SOFR -4 remainder (112/100).
 - NLV 947,149 (-$7,735 vs 09-19 mark 954,884; -5.30% inception).
 - Not counted/judged. V2X carry contract still expired/NaN (known).
+
+## 2026-09-21 — Day-30 MIDDAY pass: CORN -14, clean
+- Pass 11:58-12:03 (cron fired late; gateway had been killed a second
+  time by memory pressure ~11:00 and was relaunched 11:57). Handler pass
+  completed in-window, exit 0.
+- Fills: CORN +2 @ 542.75/543.0 (avg 542.875) -> position -14 (of +5
+  ordered; +3 remainder left on stack). EUROSTX +1 and SOFR -4
+  remainders unfilled (normal).
+- ZERO breaks, per contract (DB == IB): CORN -14, EUROSTX +2 Dec,
+  MXP -3 Dec, SOFR -8, US10 -2 Dec, V2X -90 Oct / -2 Nov. US10 20260900
+  position: NONE (roll complete this morning).
+- DEFECT STILL ACTIVE: dataBroker.get_list_of_orders() hangs in a fresh
+  process (BAG contract-details, see morning entry) EVEN AFTER the
+  gateway restart — IB re-reports the day's completed combo trades on
+  reconnect. Evening eod_stack_cleanup will hang if it lists/cancels
+  orders; expect it to clear only after the trading-day rollover.
+- NLV 945453.77 (-54717 vs inception; morning mark 947,149).
