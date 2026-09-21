@@ -1608,3 +1608,46 @@ Entry template:
   1 business day. Independent of any Claude session.
 - OPEN: US10 Sep roll Monday 09-21 (hard stop 12:45 ET); V2X carry
   contract 20260900 expired/NaN until Passive roll completes.
+
+## 2026-09-21 — Day-30 MORNING pass: US10 ROLLED to Dec (deadline met); code defect found (voids the day per 07-17)
+- Pass 09:27-10:55. Gateway relaunched twice (second time after the
+  harness killed it on machine memory pressure at ~09:45). All six LIVE.
+- Data: US10 20261200 spike (09-18, cycle) verified genuine vs broker
+  (Dec 106.17 -> 105.83, Sep moved alike), approved, multiple/adjusted
+  re-run (forward column healed). EUROSTX/US10 chains checked.
+- Bring-up: total/strategy capital 954,884; backtest + orders generated.
+  Order 108 (normal US10 -2, blocked by Force state and would have
+  blocked roll-order generation) deactivated + removed.
+- EUREX-window fills: V2X -2 @ 18.075 in Nov 20261100 (Passive roll
+  opening leg); EUROSTX +2 Dec @ 6333.5 (of +3).
+- US10 FORCE ROLL: spread order [+2 Sep, -2 Dec] generated 10:00 via
+  generate_force_roll_orders(); clip 1 filled 10:15:55 @ spread 0.25,
+  clip 2 filled 10:20:48 (submitted per-order via
+  create_broker_order_for_contract_order(102) because the sequential
+  handler pass never reached it in a 2-min window). Sep FLAT by 10:21,
+  2h40m before last trade. FINALIZED via
+  state_change_to_roll_adjusted_prices(confirm=False): priced 20261200,
+  forward 20270300, adjusted continuous (roll diff -0.234), No_Roll.
+- CODE DEFECT (root-caused, NOT fixed; voids the day per 2026-07-17):
+  sysbrokers/IB/ib_orders.py:212 -> ib_client.broker_identity_for_contract
+  passes a BAG (combo) contract to reqContractDetails; IB answers error
+  321 ("'BAG' isn't supported"), ib_async logs it as a warning and never
+  resolves the request -> any FRESH process calling
+  dataBroker.get_list_of_orders() hangs forever while a filled combo
+  trade exists in the gateway session (today: the two US10 spread
+  clips; clears at the 23:45 gateway logoff). Consequences today: two
+  handler passes timed out mid-algo, leaving SOFR -1 @ 95.485 (10:12)
+  and MXP -1 @ 0.05773 (10:33) filled at IB but unsynced; both booked
+  via the interactive tool's manual-fill path (fill_order +
+  mark_as_manual_fill + apply_broker_order_fills_to_database) and
+  passed up; MXP family completed. Fix candidate: resolve BAG trades
+  via their first comboLeg conId (already available in
+  add_contract_legs_to_order) instead of the parent contract.
+  WARNING for midday/evening: eod_stack_cleanup and any cross-process
+  fill matching will hang until the gateway restarts tonight.
+- ZERO breaks, per contract (DB == IB): CORN -16, EUROSTX +2 Dec,
+  MXP -3 Dec, SOFR -8, US10 -2 Dec, V2X -90 Oct / -2 Nov. No working
+  orders at IB. Stack left for midday: CORN +5 (110/98), EUROSTX +1
+  remainder (111/99), SOFR -4 remainder (112/100).
+- NLV 947,149 (-$7,735 vs 09-19 mark 954,884; -5.30% inception).
+- Not counted/judged. V2X carry contract still expired/NaN (known).
