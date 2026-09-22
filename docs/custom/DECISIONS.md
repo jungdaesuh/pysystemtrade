@@ -1711,3 +1711,20 @@ Entry template:
 - NLV 949,779 (+$5,320 vs last close 944,458; -5.04% inception).
 - BAG listing defect: not triggered today (no combo trades in session);
   fix still pending. V2X carry NaN (known). Not counted/judged.
+
+## 2026-09-22 — Day-31 MIDDAY pass: US10 -4, SOFR -9, clean (one timeout, one re-run)
+- Pass 11:58-12:07. First handler pass overran the 290s Bash timeout
+  (sequential best-algo on three US-window orders) and was killed at
+  12:03 right after submitting the CORN clip. Protocol followed: IB
+  open orders + positions checked FIRST (zero break held), then ONE
+  re-run (--minutes 1), exit 0. STOP.
+- Fills: US10 -1 @ 105.953 (pass 1) and -1 @ 105.953 (re-run) -> Dec -4
+  (family complete); SOFR -1 @ 95.475 -> -9 (of -4 ordered). CORN +1
+  limit @ 539.75 is WORKING at IB, unmanaged (its algo died with the
+  first pass) — evening cleanup cancels it; CORN +3 remainder normal.
+- ZERO breaks, per contract (DB == IB): CORN -14, EUROSTX +2 Dec,
+  MXP -3 Dec, SOFR -9, US10 -4 Dec, V2X -90 Oct / -3 Nov.
+- NLV 949,980 (+$5,521 vs last close; -5.02% inception).
+- Note: sequential per-order algos (~5 min each) do not fit a 2-min
+  handler window with 3+ US orders — this is the second day it has
+  bitten; consider --minutes 4 with a 400s timeout for midday.
