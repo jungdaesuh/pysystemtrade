@@ -1692,3 +1692,22 @@ Entry template:
   required; expect first clean cross-process listing after the 23:45
   gateway logoff/relaunch tomorrow morning. V2X carry contract still
   expired/NaN (Passive roll ongoing). Day NOT judged/counted.
+
+## 2026-09-22 — Day-31 MORNING pass: clean, V2X Nov -3
+- Pass 09:27-09:33. Gateway relaunched (post-23:45 logoff), up in ~100s.
+  All six LIVE; data sane (priced contracts current to 09-21 16:00; FORWARD
+  and CARRY columns NaN on the last row for EUROSTX/US10/MXP post-roll —
+  new forward 20270300 not yet in the multiple-price tail; cosmetic for
+  now, watch). Last night's spikes: MXP Dec already approved in the
+  evening pass; SOFR far-month flags = noise.
+- Bring-up: capital 954,884 (unchanged); backtest + orders: US10 -2 Dec,
+  CORN +3, SOFR -4, V2X -1.
+- Fill: V2X -1 @ 18.10 in Nov 20261100 (Passive roll opening leg) ->
+  Nov -3, Oct -90. US10/SOFR left for the US window, CORN for midday
+  (stacks I3/C3/B0, not cleaned).
+- ZERO breaks, per contract (DB == IB): CORN -14, EUROSTX +2 Dec,
+  MXP -3 Dec, SOFR -8, US10 -2 Dec, V2X -90 Oct / -3 Nov. IB open
+  orders 0.
+- NLV 949,779 (+$5,320 vs last close 944,458; -5.04% inception).
+- BAG listing defect: not triggered today (no combo trades in session);
+  fix still pending. V2X carry NaN (known). Not counted/judged.
