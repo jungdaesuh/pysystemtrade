@@ -1728,3 +1728,73 @@ Entry template:
 - Note: sequential per-order algos (~5 min each) do not fit a 2-min
   handler window with 3+ US orders — this is the second day it has
   bitten; consider --minutes 4 with a 400s timeout for midday.
+
+## 2026-09-22 evening — PASS NOT EXECUTED: Claude Code shell tool dead (process-wide)
+- DISCLOSED: from 19:17 every Bash call in this Claude Code process
+  returned exit 1/134 with no output (even /bin/echo); a delegated
+  worker and two fresh subagents reproduced it. Machine itself healthy
+  (system-cron heartbeat ran 19:10 HEALTHY; /proc shows no fork/mem
+  limits hit). Suspect the tool layer or disk; needs a Claude Code
+  restart (and a df check) by the user. Entry written with file tools
+  only; NOT committed (no git).
+- Verified read-only: 18:30 cycle SUCCEEDED (freshness OK, all six
+  multiple series current to 09-22).
+- OPEN 1: EUROSTX 20261200 (held, +2) quarantined by the cycle spike
+  check — NOT approved; EUROSTX adjusted stale at 09-21 (6340). The spike
+  email failed (no email_port in private config), so no alert went out.
+- OPEN 2: eod_stack_cleanup NOT run — stacks still I116/117, C104/105,
+  B114/116 from midday; CORN +1 limit @ 539.75 still WORKING at IB
+  unmanaged overnight (a fill would leave DB -14 vs IB -13 until the
+  morning fills sync).
+- NOT verified: DB vs IB positions, NLV. Last verified state (midday):
+  CORN -14, EUROSTX +2 Dec, MXP -3 Dec, SOFR -9, US10 -4 Dec, V2X -90 Oct
+  / -3 Nov; NLV 949,980.
+- TOMORROW FIRST (before the backtest): restart Claude Code; run
+  eod_stack_cleanup.py (cancels the CORN limit, empties stacks); check IB
+  fills vs DB; approve EUROSTX 20261200 spike + re-run multiple/adjusted;
+  then the normal morning sequence. Commit this entry with the morning
+  entry.
+
+## 2026-09-23 — Day-32: NO TRADING PASSES (morning + midday both fired into a dead shell)
+- DISCLOSED: the Claude Code process still has no command execution
+  (echo/date exit 1). Both session crons fired together and neither
+  pass could run: no gateway launch, no probe, no backtest, no handler,
+  no cleanup. No other session ran them (no 09-23 entries before this).
+- Book state UNVERIFIED since midday 09-22: last known CORN -14,
+  EUROSTX +2 Dec, MXP -3 Dec, SOFR -9, US10 -4 Dec, V2X -90 Oct / -3 Nov;
+  CORN +1 limit @ 539.75 possibly still working at IB; stacks dirty
+  (I116/117, C104/105, B114/116); EUROSTX 20261200 spike unapproved.
+- The 18:30 system cron (daily_cycle_pilot) is independent of this
+  process and should still run tonight; the 19:10 heartbeat will now
+  ALERT (no custom: commit since 09-22 12:06).
+- REQUIRED: user restarts Claude Code; new session re-creates the three
+  crons from docs/custom/plans/trading_cron_prompts_2026-09.md, then
+  runs: eod_stack_cleanup -> fills sync/zero-break -> EUROSTX spike
+  approval -> commit these uncommitted entries (09-22 evening, 09-23).
+  Day NOT counted; second missed trading day of the program (08-18).
+
+## 2026-09-23 evening — shell restored (/tmp quota); catch-up done, clean close
+- ROOT CAUSE of the 09-22 19:17 -> 09-23 19:17 outage (operator note in
+  ~/.claude/CLAUDE.md): /tmp tmpfs per-user quota was full, so the Bash
+  tool could not capture output ("Exit code 1", empty) although the
+  machine was healthy. Cleared by the operator; /tmp now 31% used.
+- Cycle 18:30 SUCCEEDED (freshness OK; all six current to 09-23).
+- Catch-up: eod_stack_cleanup exit 0, stacks 0/0/0 (CORN broker order
+  114 zero-completed: "non existent order" at IB because it had FILLED).
+  BREAK FOUND CORN DB -14 vs IB -13 -> booked as a balance trade
+  (create_balance_trade path, +1 @ 539.75 = the limit price; exact
+  fill time unavailable from IB's session-scoped API, recorded as
+  09-22 14:00 ET approx). EUROSTX 20261200 spike (flagged 09-22 and
+  09-23; broker confirms 6351 -> 6325, genuine) approved; multiple/
+  adjusted re-run -> EUROSTX adjusted current to 09-23 16:00 (6313).
+- ZERO breaks, per contract (DB == IB): CORN -13, EUROSTX +2 Dec,
+  MXP -3 Dec, SOFR -9, US10 -4 Dec, V2X -90 Oct / -3 Nov. IB open
+  orders 0.
+- NLV 961,374 (+$11,394 vs last verified 949,980 on 09-22 midday;
+  -3.88% inception). Corn 536 and falling, in the short's favor.
+- Crons: 09-23 MORNING/MIDDAY passes MISSED (dead shell, see Day-32
+  entry); session crons still exist, expire ~09-26. Heartbeat 19:10
+  today should have ALERTED (no custom: commit since 09-22 12:06) —
+  this commit clears it. FORWARD/CARRY still NaN on the last multiple
+  row for EUROSTX (post-roll), watch.
+- Committing the three pending entries (09-22 evening, Day-32, this).
