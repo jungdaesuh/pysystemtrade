@@ -1798,3 +1798,19 @@ Entry template:
   this commit clears it. FORWARD/CARRY still NaN on the last multiple
   row for EUROSTX (post-roll), watch.
 - Committing the three pending entries (09-22 evening, Day-32, this).
+
+## 2026-09-24 — Day-33 MORNING pass: clean, no EUREX-window fills
+- Pass 09:27-09:32. Gateway relaunched (post-logoff), up in ~100s. All
+  six LIVE; data sane (all six current to 09-23 16:00; EUROSTX/MXP
+  FORWARD+CARRY still NaN on the last row post-roll — watch). Last
+  night's EUROSTX Dec spike was approved in the 09-23 evening pass;
+  SOFR far-month flags = noise.
+- Bring-up: capital 954,884; backtest + orders: CORN +2 (midday
+  window), SOFR -3 (US window). V2X/EUROSTX/US10/MXP inside buffers.
+- Handler pass exit 0; no fills (both orders outside their windows);
+  stacks I2/C2/B0 left for midday, not cleaned.
+- ZERO breaks, per contract (DB == IB): CORN -13, EUROSTX +2 Dec,
+  MXP -3 Dec, SOFR -9, US10 -4 Dec, V2X -90 Oct / -3 Nov. IB open
+  orders 0.
+- NLV 959442.58 (vs last close 961,374; -4.07% inception).
+- Crons expire ~09-26: renewal due at tomorrow's (09-25) morning pass.
