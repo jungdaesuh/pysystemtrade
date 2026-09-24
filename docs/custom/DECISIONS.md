@@ -1814,3 +1814,20 @@ Entry template:
   orders 0.
 - NLV 959442.58 (vs last close 961,374; -4.07% inception).
 - Crons expire ~09-26: renewal due at tomorrow's (09-25) morning pass.
+
+## 2026-09-24 — Day-33 MIDDAY pass: CORN -11, SOFR -11, clean (timeout + one re-run + fill sync)
+- Pass 11:58-12:08. First handler pass overran the 290s timeout again
+  (third day). Protocol: IB orders + positions checked FIRST (zero
+  break), ONE re-run (--minutes 1, exit 0), STOP. The orphaned SOFR
+  clip then filled at IB after the re-run's fill sweep -> synced via
+  process_fills_stack (matched at IB, no manual fill needed).
+- Fills: CORN +1 @ 528.5, +1 @ 528.25 -> -11 (family complete);
+  SOFR -1 @ 95.275, -1 @ 95.28 -> -11 (of -3; -1 remainder on stack for
+  evening cleanup).
+- ZERO breaks, per contract (DB == IB): CORN -11, EUROSTX +2 Dec,
+  MXP -3 Dec, SOFR -11, US10 -4 Dec, V2X -90 Oct / -3 Nov. IB open
+  orders 0.
+- NLV 959,367 (-$2,007 vs last close 961,374; -4.08% inception).
+- Standing note: midday needs a longer window (--minutes 4, timeout
+  400s) — user decision on the prompt; the timeout is the only reason
+  fills keep needing post-hoc syncs.
