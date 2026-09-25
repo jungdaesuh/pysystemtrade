@@ -281,3 +281,11 @@ live on micro futures with clean daily reconciliation, scaled per policy.
 - Config (600, outside repo, never commit): `~/pysystemtrade-private/` ·
   `~/ibc/config.ini` · cron backup `~/ibc/crontab_backup_20260712.txt`
 - Mistake book: `~/.claude/skills/crucible/shared/mistake-book.md`
+
+## RESUME POINTER — written 2026-09-25 12:12 ET ahead of a planned machine reboot
+- Session: Claude Code session 2be4af78 (trading ops), cwd /data/code/software/trading/pysystemtrade.
+- State: book clean at 12:06 (zero break; CORN -11, EUROSTX +2 Dec, MXP -3 Dec, SOFR -12, US10 -4 Dec, V2X -90 Oct / -3 Nov; stacks 0/0/0; IB open orders 0; NLV 966,467). Everything committed and pushed (97e714ec).
+- Owned processes: NONE. IB Gateway (paper, port 4002) is NOT owned by this session; it dies on reboot. Relaunch: `~/ibc/gatewaystart-headless.sh` (headless, ~100s; no 2FA on paper). The 18:30 weekday system cron (`daily_cycle_pilot.py`) relaunches it itself. System crontab (18:30 cycle, 19:10 heartbeat) survives the reboot.
+- LOST ON REBOOT: the three session-only Claude crons (d089b9a3 08:57 / 600115aa 11:36 / d0e47293 18:47). After `claude --resume`, FIRST run CronList; if empty, re-create all three from docs/custom/plans/trading_cron_prompts_2026-09.md (verbatim paragraphs under "## 1./2./3.") and log the new IDs in DECISIONS.md. Without this the 18:47 evening pass will not fire.
+- /tmp: nothing needed (scratchpad held only transient logs).
+- Next scheduled work: evening pass 18:47 today (cleanup, spikes, zero break, entry). Open items: BAG order-listing defect, midday --minutes 4 decision, V2X Passive roll (Oct expiry 10-21).

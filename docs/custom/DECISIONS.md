@@ -1882,3 +1882,24 @@ Entry template:
   against a 11:36 schedule; the harness only fires crons while the
   session is idle, so a long-running morning session delays it. Still
   inside the CORN window; no action.
+
+## 2026-09-25 evening — clean close; week +1.7%
+- Machine rebooted 13:19 (NVIDIA driver fix, user-requested); session
+  and the three renewed crons survived the tmux-restored resume; the
+  13:20 duplicate midday firing was skipped correctly.
+- Cycle 18:30 SUCCEEDED (freshness OK; all six current to 09-25; the
+  cycle relaunched the gateway as designed). Spikes: SOFR far-month
+  only = noise; no held contract quarantined.
+- Cleanup exit 0, stacks 0/0/0 (nothing to cancel).
+- ZERO breaks, per contract (DB == IB): CORN -11, EUROSTX +2 Dec,
+  MXP -3 Dec, SOFR -12, US10 -4 Dec, V2X -90 Oct / -3 Nov. IB open
+  orders 0.
+- NLV 964,227 (-$2,240 vs 09-24 evening mark 966,467... vs 09-23 close
+  961,374: +$2,853; -3.59% inception). WEEK (09-18 mark 954,884 ->
+  964,227): +$9,343 (+0.98%); vs 08-28 last-pre-outage 950,647:
+  +1.4%. Drawdown from the 08-11 HWM 1,017,761 now -5.3% (was -7.1%).
+- Crons: MORNING/MIDDAY/evening entries all present today; new set
+  expires ~10-02 (renew 10-01). Heartbeat 19:10 HEALTHY.
+- Open: BAG listing defect; midday --minutes 4 decision; V2X Passive
+  roll (Oct -90, expiry 10-21, escalate ~10-14); post-roll FORWARD/
+  CARRY NaN on EUROSTX/MXP; Days 30-34 pending user judgment.
