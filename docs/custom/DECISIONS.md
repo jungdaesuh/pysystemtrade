@@ -1869,3 +1869,16 @@ Entry template:
   retired; V2X Passive roll finalisation + 10-14 escalation; BAG
   listing, /tmp quota and orphan-fill guidance; anchors as of 09-25.
   Midday window left at --minutes 2 pending the user's decision.
+
+## 2026-09-25 — Day-34 MIDDAY pass: SOFR -12, clean
+- Pass 12:06 (cron fired late again, ~30 min after schedule). Handler
+  pass exit 0 in under 10s: the single SOFR clip filled immediately.
+- Fill: SOFR -1 @ 95.31 -> -12 (family complete). Stacks 0/0/0.
+- ZERO breaks, per contract (DB == IB): CORN -11, EUROSTX +2 Dec,
+  MXP -3 Dec, SOFR -12, US10 -4 Dec, V2X -90 Oct / -3 Nov. IB open
+  orders 0.
+- NLV 966,467 (-$4,348 vs the 09:40 mark 970,815; -3.37% inception).
+- Note: the midday cron has fired ~11:58-12:06 every day this week
+  against a 11:36 schedule; the harness only fires crons while the
+  session is idle, so a long-running morning session delays it. Still
+  inside the CORN window; no action.
