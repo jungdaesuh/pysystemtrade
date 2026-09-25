@@ -1831,3 +1831,22 @@ Entry template:
 - Standing note: midday needs a longer window (--minutes 4, timeout
   400s) — user decision on the prompt; the timeout is the only reason
   fills keep needing post-hoc syncs.
+
+## 2026-09-24 evening — clean close (pass interrupted 19:17, completed 07:00 09-25 on resume)
+- DISCLOSED: the evening session was interrupted right after cleanup
+  (user-side stop); spike handling, verification and this entry were
+  completed at 07:01-07:10 on 09-25 after the user said "resume".
+- Cycle 18:30 SUCCEEDED (freshness OK). Cleanup 19:17: exit 0, stacks
+  0/0/0 (SOFR -1 remainder zero-completed).
+- Spikes (held): MXP 20261200 and SOFR 20290600 quarantined by the
+  cycle; broker confirms both genuine (MXP 0.05675 -> 0.05621, -1.0%;
+  SOFR 95.295 -> 95.29). Approved 09-25 07:08; multiple/adjusted
+  re-run -> both adjusted current to 09-24. Far-month SOFR flags noise.
+- ZERO breaks, per contract (DB == IB, checked 07:05 09-25): CORN -11,
+  EUROSTX +2 Dec, MXP -3 Dec, SOFR -11, US10 -4 Dec, V2X -90 Oct /
+  -3 Nov. IB open orders 0.
+- NLV 969,641 at 07:05 09-25 (+$8,267 vs 09-23 close 961,374; -3.05%
+  inception). Corn 528 and MXP down in the shorts' favor.
+- Crons: MORNING/MIDDAY/evening entries present for 09-24. Session
+  crons expire ~09-26 — RENEWAL DUE at today's (09-25) morning pass.
+  Heartbeat 19:10 HEALTHY.
