@@ -1850,3 +1850,22 @@ Entry template:
 - Crons: MORNING/MIDDAY/evening entries present for 09-24. Session
   crons expire ~09-26 — RENEWAL DUE at today's (09-25) morning pass.
   Heartbeat 19:10 HEALTHY.
+
+## 2026-09-25 — Day-34 MORNING pass: clean, no fills; CRONS RENEWED
+- Pass 09:27-09:40. Gateway already up (relaunched 07:02 on resume).
+  All six LIVE; data sane; last night's held spikes (MXP Dec, SOFR
+  Jun29) were approved at 07:08 (see 09-24 evening entry).
+- Bring-up: capital 954,884; backtest + orders: SOFR -1 only (US
+  window; left on stack I1/C1/B0). All others inside buffers.
+- Handler pass exit 0; no fills.
+- ZERO breaks, per contract (DB == IB): CORN -11, EUROSTX +2 Dec,
+  MXP -3 Dec, SOFR -11, US10 -4 Dec, V2X -90 Oct / -3 Nov. IB open
+  orders 0.
+- NLV 970,815 (+$1,174 vs 07:05 mark; -2.94% inception).
+- CRONS RENEWED (old 17d7fa4f/08075370/1ba31351 deleted): morning
+  d089b9a3 (08:57), midday 600115aa (11:36), evening d0e47293 (18:47);
+  expire ~10-02, renewal due 10-01. Prompts refreshed in
+  docs/custom/plans/trading_cron_prompts_2026-09.md: US10 roll text
+  retired; V2X Passive roll finalisation + 10-14 escalation; BAG
+  listing, /tmp quota and orphan-fill guidance; anchors as of 09-25.
+  Midday window left at --minutes 2 pending the user's decision.
