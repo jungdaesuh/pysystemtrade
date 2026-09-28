@@ -1945,3 +1945,23 @@ Entry template:
 - ROLL WATCH: V2X Oct still -90 with expiry 10-21; Passive has moved
   only 3 lots in a week. Escalation to the user is due ~10-14 per the
   prompt; flagging early that Passive alone will not clear 90 lots.
+
+## 2026-09-28 evening — clean close; US10 Dec spike approved
+- Cycle 18:30 SUCCEEDED (freshness OK; all six multiple series current
+  to 09-28). Midday pass was skipped by rule (empty stack).
+- Spike (held): US10 20261200 quarantined; broker confirms genuine
+  (104.86 -> 104.47, -0.37%); approved 19:19, multiple/adjusted re-run
+  -> US10 adjusted current to 09-28 16:00 (104.47). SOFR far-month noise
+  ignored.
+- Cleanup exit 0, stacks 0/0/0 (nothing to cancel).
+- ZERO breaks, per contract (DB == IB): CORN -11, EUROSTX +2 Dec,
+  MXP -3 Dec, SOFR -12, US10 -4 Dec, V2X -90 Oct / -3 Nov. IB open
+  orders 0.
+- NLV 970,800 (+$6,573 vs Friday close 964,227; -2.94% inception;
+  -4.6% from the 08-11 HWM).
+- Crons: MORNING entry present today (midday skip logged in-session);
+  set expires ~10-02, renewal at the 10-01 morning pass. Heartbeat 19:10
+  HEALTHY.
+- ROLL WATCH: V2X Oct -90 unchanged, expiry 10-21 (17 trading days).
+  Passive is not moving it; user decision needed before ~10-14 (Force
+  roll requires the BAG listing fix first).
