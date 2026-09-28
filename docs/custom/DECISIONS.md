@@ -1903,3 +1903,45 @@ Entry template:
 - Open: BAG listing defect; midday --minutes 4 decision; V2X Passive
   roll (Oct -90, expiry 10-21, escalate ~10-14); post-roll FORWARD/
   CARRY NaN on EUROSTX/MXP; Days 30-34 pending user judgment.
+
+## 2026-09-28 — 2026 holdout study: pre-registered primary lost; carry-on-ags replicated; momentum to forward test
+- Protocol `docs/custom/plans/strategy_2026_holdout_preregistration.md`, frozen
+  before any new-universe data was fetched; amendments A1-A3 (data handling
+  only) each logged and hashed before the step they govern. Results:
+  `results/strategy_2026/RESULTS.md`.
+- Data: 13 of 30 mechanically selected instruments survived a validated IB
+  fetch (FX, OilGas, Vol empty: IB serves many contracts only from listing and
+  returns nothing for contracts expired > ~1 year).
+- PRIMARY P (chapter-15 trend + carry, 13 instruments): 2026 -13.9%, Sharpe
+  -1.60, inside its 2016-24 range at the 5th percentile. Verdict: "P lost in
+  2026 inside its normal range; no evidence the design is broken." Reference
+  C0 (5 instruments): -18.3%.
+- Carry drove it: P vs trend-only differ only by carry; Ags -15.4 vs -2.4
+  points, on canola/soybean/wheat never examined before. The CORN finding
+  replicated out of sample.
+- Secondary S3 (time-series momentum, MOP 2012, untuned): +17.8%, Sharpe 1.26,
+  positive in every asset class, robust across lookbacks (exploratory). Not
+  promoted by protocol: forward test F1 vs F0 registered in
+  `docs/custom/plans/strategy_2026_forward_preregistration.md`, judged on
+  2027-09-24.
+- Root-cause fix shipped with it: `scripts/data_utilities/gap_stitch.py` now
+  accepts an IB contract only if exactly one matches the configured
+  multiplier (the MXP/XRP mechanism); its stitch core is split
+  (`stitch_from_seed`) with an injectable scale validator and an opt-in
+  boundary-gap bridge (off by default). Production data NOT rebuilt yet.
+
+## 2026-09-28 — Day-35 MORNING pass: clean, no orders
+- Pass 09:27-09:33. Gateway already up (weekend relaunch survived). All
+  six LIVE; data sane; no held-contract spikes over the weekend (SOFR
+  far-month noise only).
+- Bring-up: capital 954,884; backtest complete; NO orders — all six
+  inside buffers. V2X optimal has eased to -94.7/-85.0 (position -93
+  across Oct/Nov, inside band); no Passive roll clips this pass.
+- Handler pass exit 0; stacks 0/0/0.
+- ZERO breaks, per contract (DB == IB): CORN -11, EUROSTX +2 Dec,
+  MXP -3 Dec, SOFR -12, US10 -4 Dec, V2X -90 Oct / -3 Nov. IB open
+  orders 0.
+- NLV 970,781 (+$6,554 vs Friday close 964,227; -2.94% inception).
+- ROLL WATCH: V2X Oct still -90 with expiry 10-21; Passive has moved
+  only 3 lots in a week. Escalation to the user is due ~10-14 per the
+  prompt; flagging early that Passive alone will not clear 90 lots.
