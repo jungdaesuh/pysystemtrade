@@ -1965,3 +1965,19 @@ Entry template:
 - ROLL WATCH: V2X Oct -90 unchanged, expiry 10-21 (17 trading days).
   Passive is not moving it; user decision needed before ~10-14 (Force
   roll requires the BAG listing fix first).
+
+## 2026-09-29 — Day-36 MORNING pass: clean, no orders
+- Pass 09:27-09:33. Gateway relaunched (post-logoff), up in ~100s. All
+  six LIVE; data sane; last night's US10 Dec spike already approved in
+  the evening pass; no new held-contract spikes.
+- Bring-up: capital 954,884; backtest complete; NO orders — all six
+  inside buffers (V2X optimal -99.0/-88.9 vs position -93; SOFR
+  -19.1/-15.4 vs -12 is the closest to a trade).
+- Handler pass exit 0; stacks 0/0/0.
+- ZERO breaks, per contract (DB == IB): CORN -11, EUROSTX +2 Dec,
+  MXP -3 Dec, SOFR -12, US10 -4 Dec, V2X -90 Oct / -3 Nov. IB open
+  orders 0.
+- NLV 970,983 (+$183 vs last close 970,800; -2.92% inception).
+- ROLL WATCH: V2X Oct -90, expiry 10-21 (16 trading days); user
+  decision on roll method pending (options logged 09-28 evening).
+  Cron renewal due 10-01 morning pass.
