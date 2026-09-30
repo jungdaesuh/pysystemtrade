@@ -1981,3 +1981,33 @@ Entry template:
 - ROLL WATCH: V2X Oct -90, expiry 10-21 (16 trading days); user
   decision on roll method pending (options logged 09-28 evening).
   Cron renewal due 10-01 morning pass.
+
+## 2026-09-29 — Holdout study CORRECTED after external review (run 1 invalid)
+- Cross-lab review (codex:gpt-6-sol/high, read-only) found data check 2 used the
+  previous price where the protocol says the current price. Applied as written,
+  COPPER-micro fails (genuine 2025-07-31 collapse). Correction A4 logged; run 2
+  on 12 instruments supersedes run 1 (kept as *_run1_INVALID).
+- Run 2: P -13.9% (Sharpe -1.37), comparator -18.3%, trend-only +9.0%,
+  momentum S3 +15.0% (0.97). Verdict unchanged: "P lost in 2026 inside its
+  normal range". Carry ~78% of P's rule-level grain losses but never at the cap;
+  "replicated CORN mechanism" withdrawn. S3 lookback sensitivity is material
+  (+2.4% at 192 days).
+- Forward protocol revised before any forward data: 12 instruments, fresh
+  monthly fetches with dated snapshots, report at 12 months, adopt F1 at
+  2028-09-22 only if its return > 0 and the 90% bootstrap CI of the paired
+  Sharpe difference is entirely above 0.1; stop at -37.65% drawdown.
+
+## 2026-09-29 evening — clean close (pass fired late, 22:16)
+- Evening cron fired ~3.5h late (session busy with a user request);
+  the pass itself was unaffected. Midday was skipped by rule (empty
+  stack).
+- Cycle 18:30 SUCCEEDED (freshness OK; all six current to 09-29, adjusted
+  series current). No held-contract spikes.
+- Cleanup exit 0, stacks 0/0/0 (nothing to cancel).
+- ZERO breaks, per contract (DB == IB): CORN -11, EUROSTX +2 Dec,
+  MXP -3 Dec, SOFR -12, US10 -4 Dec, V2X -90 Oct / -3 Nov. IB open
+  orders 0.
+- NLV 972,621 (+$1,821 vs last close 970,800; -2.75% inception;
+  -4.4% from the 08-11 HWM).
+- Crons: MORNING entry present today; renewal at the 10-01 morning pass.
+  Heartbeat 19:10 HEALTHY. V2X roll-method decision still pending.
